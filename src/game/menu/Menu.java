@@ -27,7 +27,11 @@ public abstract class Menu extends HUDElement implements Clickable{
 	protected static Clickable currentHovered;
 	private boolean isReady = false;
 	
-	protected Menu currentSubMenu;
+	public Menu(MenuController ctrl){
+		controller = ctrl;
+	}
+	
+	protected MenuController controller;
 	
 	private static ByteBuffer buffer1 = BufferUtils.createByteBuffer(Double.BYTES);
 	private static ByteBuffer buffer2= BufferUtils.createByteBuffer(Double.BYTES);
@@ -38,23 +42,18 @@ public abstract class Menu extends HUDElement implements Clickable{
 	}
 	
 	private boolean isReady(){
-		if(currentSubMenu!=null)return currentSubMenu.isReady();
 		return isReady;
 	}
 		
 	@Override
 	public List<Model2D> getModels(){
-		if(currentSubMenu!=null) return currentSubMenu.getModels();
-		else{
-			List<Model2D> res = new LinkedList<>();
-			res.addAll(super.getModels());
-			for(Button btn : buttons) res.addAll(btn.getModels());
-			return res;
-		}
+		List<Model2D> res = new LinkedList<>();
+		res.addAll(super.getModels());
+		for(Button btn : buttons) res.addAll(btn.getModels());
+		return res;
 	}
 	
 	public List<Clickable> getClickables(){
-		if(currentSubMenu!=null) return currentSubMenu.getClickables();
 		List<Clickable> res = new LinkedList<>();
 		res.addAll(clickableElements);
 		res.addAll(buttons);
@@ -62,7 +61,6 @@ public abstract class Menu extends HUDElement implements Clickable{
 	}
 	
 	public boolean handleMouseMovement(long window){
-		if(currentSubMenu!=null) return currentSubMenu.handleMouseMovement(window);
 		glfwGetCursorPos(window, buffer1, buffer2);		
 		float mouseX = (float) buffer1.asDoubleBuffer().get();
 		float mouseY = (float) buffer2.asDoubleBuffer().get();
@@ -84,7 +82,9 @@ public abstract class Menu extends HUDElement implements Clickable{
 	@Override
 	public boolean isInArea(float x, float y){return true;}
 	@Override
-	public String click(){return (currentSubMenu==null)? this.getClass().getSimpleName() : currentSubMenu.click();}
+	public String click(){
+		return this.getClass().getSimpleName();
+	}
 	
 	public void processInput(int key, int action){
 		if(!isReady()) return;
@@ -98,13 +98,20 @@ public abstract class Menu extends HUDElement implements Clickable{
 	}
 	
 	protected void handleClickEvent(String objName){
-		if(!isReady()) return;
-		if(currentSubMenu!=null) currentSubMenu.handleClickEvent(objName);
 		return;
 	}
 	
-	protected void switchToMenu(Menu submenu){
-		//delete Text
+	protected void switchToSubMenu(Menu submenu){
+		clear();
+		controller.setMenu(submenu);
+	}
+	
+	protected void switchToParentMenu(){
+		clear();
+		controller.backToParent();
+	}
+	
+	private void clear(){
 		for(String key: textElements){
 			Text.deleteString(key);
 		}
@@ -113,7 +120,5 @@ public abstract class Menu extends HUDElement implements Clickable{
 			Text.deleteString(btn.getID());
 		}
 		buttons.clear();
-		//set subMenu
-		currentSubMenu = submenu;
 	}
 }

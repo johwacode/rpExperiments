@@ -4,7 +4,7 @@ import static org.lwjgl.system.glfw.GLFW.GLFW_CURSOR;
 import static org.lwjgl.system.glfw.GLFW.GLFW_CURSOR_DISABLED;
 import static org.lwjgl.system.glfw.GLFW.glfwGetInputMode;
 import game.menu.MainMenu;
-import game.menu.Menu;
+import game.menu.MenuController;
 
 import org.lwjgl.system.glfw.GLFW;
 
@@ -92,23 +92,23 @@ public class RacingPlanetsGame {
 	 * And of course choosing what to do next a.k.a. loading a GameMode.
 	 */
 	public class MenuMode extends GameMode{
-		Menu currentMenu;
+		MenuController menuController;
 
 		@Override
 		public void init() {
-			currentMenu = new MainMenu(RacingPlanetsGame.this);
+			menuController = new MenuController(RacingPlanetsGame.this, MainMenu.class);
 		}
 		
 		@Override
 		public void processInput(int key, int action) {
-			currentMenu.processInput(key, action);
+			menuController.getCurrent().processInput(key, action);
 		}
 
 		@Override
 		public void render() {
-			currentMenu.handleMouseMovement(window);
+			menuController.getCurrent().handleMouseMovement(window);
 			
-			renderer.processHUDElement(currentMenu);
+			renderer.processHUDElement(menuController.getCurrent());
 			
 			debugLine.printMessages();
 			renderer.processHUDElement(debugLine);

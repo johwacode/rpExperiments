@@ -39,7 +39,7 @@ import org.lwjgl.system.glfw.GLFWvidmode;
 import org.lwjgl.system.glfw.WindowCallback;
 import org.lwjgl.system.glfw.WindowCallbackAdapter;
  
-public class Gameloop {
+public class RPloopStart {
  
     private long window;
     private RacingPlanetsGame game;
@@ -194,6 +194,6 @@ public class Gameloop {
 			e.printStackTrace();
 		}
     	*/
-        new Gameloop().execute();
+        new RPloopStart().execute();
     }
 }

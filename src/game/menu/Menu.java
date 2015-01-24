@@ -22,7 +22,6 @@ import rpEngine.graphical.objects2d.text.Text;
 
 public abstract class Menu extends HUDElement implements Clickable{
 	protected List<Button> buttons = new ArrayList<>();
-	protected List<Clickable> clickableElements = new ArrayList<>(); //3d-Area?, Button
 	protected List<String> textElements = new ArrayList<>();
 	protected static Clickable currentHovered;
 	private boolean isReady = false;
@@ -53,11 +52,8 @@ public abstract class Menu extends HUDElement implements Clickable{
 		return res;
 	}
 	
-	public List<Clickable> getClickables(){
-		List<Clickable> res = new LinkedList<>();
-		res.addAll(clickableElements);
-		res.addAll(buttons);
-		return res;
+	public List<Button> getButtons(){
+		return buttons;
 	}
 	
 	public boolean handleMouseMovement(long window){
@@ -68,7 +64,7 @@ public abstract class Menu extends HUDElement implements Clickable{
 		mouseX/=buffer1.asIntBuffer().get()/10;
 		mouseY=(1-mouseY/buffer2.asIntBuffer().get())*10;	//TODO: change MenuPosition on resize (and gamerendering)
 		
-		for(Clickable obj: getClickables()){
+		for(Clickable obj: getButtons()){
 			if(obj.isInArea(mouseX, mouseY)){
 				if(currentHovered != obj) System.out.println("currentHovered: "+obj);
 				currentHovered = obj;
@@ -117,8 +113,16 @@ public abstract class Menu extends HUDElement implements Clickable{
 		}
 		textElements.clear();
 		for(Button btn: buttons){
-			Text.deleteString(btn.getID());
+			btn.clear();
 		}
 		buttons.clear();
+	}
+	
+	@Override
+	public String toString(){
+		String result = this.getClass().getSimpleName();
+		result += "\n contains: ";
+		result += "\n "+buttons.size()+" buttons.";
+		return result;
 	}
 }

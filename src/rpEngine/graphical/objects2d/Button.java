@@ -23,13 +23,16 @@ public class Button extends HUDElement implements Clickable{
 		this.y = yPos;
 		state = (isActive)? new Active(): new Inactive();
 		Text.createString("button"+id, label, xPos+0.5f, yPos+0.1f);
+		model.setName("Button-model");
+		modelHovered.setName("Button-model:hovered");
+		modelClicked.setName("Button-model:clicked");
 	}
 	
 	private void changeModel(Model2D newModel){
-		clearModels();
 		if(currentModel!=null)currentModel.removePosition(modelPositionID);
 		currentModel = newModel;
-		addModel(newModel);
+		clearModels();
+		addModel(currentModel);
 		this.modelPositionID = currentModel.addPosition(x, y);
 	}
 	
@@ -46,6 +49,11 @@ public class Button extends HUDElement implements Clickable{
 	public String click() {
 		state.handleClick();
 		return id;
+	}
+	
+	public void clear(){
+		currentModel.removePosition(modelPositionID);
+		Text.deleteString("button"+id);
 	}
 	
 	protected abstract class ButtonState{

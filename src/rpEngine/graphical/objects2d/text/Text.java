@@ -41,10 +41,8 @@ public class Text {
 	 */
 	public static void deleteString(String name){
 		System.out.println("==== removing String \""+name+"\" ====");
-		System.out.println("StringData: ");
 		System.out.println(currentText.get(name));
 		for(Entry<Character, List<Long>> e : currentText.get(name).positions.entrySet()){
-			System.out.println("->removing letter "+e.getKey()+":");
 			getChar(e.getKey()).removePositions(e.getValue());
 		}
 		currentText.remove(name);
@@ -84,6 +82,7 @@ public class Text {
 				charData.x, charData.y
 				};
 		Model2D model = HUDModelGenerator.createRectangle(charData.width*sizeH, charData.height*sizeV, CharacterLookUp.texture, texCoordinates);
+		model.setName("character "+c);
 		models.put(c, model);
 		return model;
 	}
@@ -130,17 +129,14 @@ public class Text {
 		
 		@Override
 		public String toString(){
-			String data = "Map";
-			String keys = "";
-			String values = "\n";
+			String data = "StringData: ";
+			data += "\n ->chars[";
 			for(char c: positions.keySet()){
-				keys += " "+c;
-				values += c+": ";
-				for(long l: positions.get(c)){
-					values += "\t"+l+"\n";
-				}
+				data += " '"+c;
+				data += "'(x"+positions.get(c).size()+")";
 			}
-			return data+keys+values;
+			data+="]";
+			return data;
 		}
 	}
 }

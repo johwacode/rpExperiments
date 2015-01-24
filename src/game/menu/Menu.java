@@ -86,11 +86,18 @@ public abstract class Menu extends HUDElement implements Clickable{
 		if(!isReady()) return;
 		//TODO: current-wechsel über tastatur
 		if(currentHovered==null) return;
-		else if(key==GLFW_MOUSE_BUTTON_LEFT && action==GLFW_PRESS)
-			currentHovered.click(); //klickanimation beginnt, eigentl. click aber erst bei release
-		else if(key==GLFW_MOUSE_BUTTON_LEFT && action==GLFW_RELEASE)
-			System.out.println("klick auf: "+currentHovered.click());
-			handleClickEvent(currentHovered.click());
+		else{
+			if(key==GLFW_MOUSE_BUTTON_LEFT){
+				switch(action){
+				case GLFW_PRESS: currentHovered.click(); //klickanimation beginnt, eigentl. click aber erst bei release
+					break;
+				case GLFW_RELEASE:
+					System.out.println("klick auf: "+currentHovered.click());
+					handleClickEvent(currentHovered.click());
+					break;
+				}
+			}
+		}
 	}
 	
 	protected void handleClickEvent(String objName){

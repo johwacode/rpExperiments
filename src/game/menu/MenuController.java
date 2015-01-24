@@ -38,6 +38,21 @@ public class MenuController {
 		if(menuLevels.size()>1){
 			menuLevels.remove(0);
 		}
+		try {
+			menuLevels.set(0, menuLevels.get(0).getClass().getDeclaredConstructor(this.getClass()).newInstance(this));
+		} catch (InstantiationException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+		} catch (NoSuchMethodException e) {
+			e.printStackTrace();
+		} catch (SecurityException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public Menu getCurrent(){

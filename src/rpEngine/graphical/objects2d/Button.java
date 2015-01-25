@@ -5,10 +5,10 @@ import rpEngine.graphical.objects2d.text.Text;
 
 
 public class Button extends HUDElement implements Clickable{
-	private static final float height=1, width=2.8f;
-	private static Model2D model = HUDModelGenerator.createRectangle(width, height, "lightBall");
-	private static Model2D modelHovered = HUDModelGenerator.createRectangle(width, height, "circle_hover");
-	private static Model2D modelClicked = HUDModelGenerator.createRectangle(width, height, "circle_click");
+	private static final float height=0.7f, width=2.8f;
+	private static Model2D model = HUDModelGenerator.createRectangle(width, height, "btn_active");
+	private static Model2D modelHovered = HUDModelGenerator.createRectangle(width, height, "btn_hover");
+	private static Model2D modelClicked = HUDModelGenerator.createRectangle(width, height, "btn_clicked");
 	
 	private ButtonState state;
 	private String id;
@@ -22,7 +22,7 @@ public class Button extends HUDElement implements Clickable{
 		this.x = xPos;
 		this.y = yPos;
 		state = (isActive)? new Active(): new Inactive();
-		Text.createString("button"+id, label, xPos+0.5f, yPos+0.1f);
+		Text.createString("button"+id, label, xPos+0.5f, yPos-0.05f);
 		model.setName("Button-model");
 		modelHovered.setName("Button-model:hovered");
 		modelClicked.setName("Button-model:clicked");

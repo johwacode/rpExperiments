@@ -290,9 +290,13 @@ public class RacingPlanetsGame {
 		}
 		
 		private void initEnvironment(){
-			scene.addLight(new Light(new Vector3f(300, -40, -10), new Vector3f(1,1,1)));
-			scene.addLight(new Light(new Vector3f(-200, 10, -200), new Vector3f(10,0,0)));
-			scene.addLight(new Light(new Vector3f(200, 10, 200), new Vector3f(0,0,10)));
+			//sun
+			scene.addLight(new Light(new Vector3f(300, -40, -10), new Vector3f(0.4f, 0.4f, 0.4f)));
+			//spots
+			Vector3f attenuation = new Vector3f(1, 0.01f, 0.002f);
+			scene.addLight(new Light(new Vector3f(380, 10, -30), new Vector3f(2,0,0), attenuation));
+			scene.addLight(new Light(new Vector3f(350, 17, -10), new Vector3f(0,2,2), attenuation));
+			scene.addLight(new Light(new Vector3f(370, 8, -80), new Vector3f(2,2,0), attenuation));
 			scene.setChunkMap(new ChunkMap(0, 800, -800, 0));
 		}
 

@@ -42,7 +42,7 @@ public class ParticleStream {
 	 protected Vector3f mainDirection = new Vector3f(0,0,-3);
 	protected float spreadFlow = 0.05f;
 	protected float lifetime = 5;
-	protected Vector2f scale = new Vector2f(0.05f, 0.05f);
+	protected Vector2f scale = new Vector2f(0.08f, 0.08f);
 	
 	//helperVars
 	private double lastTime;

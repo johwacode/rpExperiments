@@ -370,68 +370,112 @@ public class BuilderTool implements UserController, HUDfriendly{
 
 	
 	private class CurveTool implements Tool{
-		private Sphere movableSpot;
-		//damit movableSpot abwechselnd links/rechts erstellt wird
-		private short nextSide = 1;
+		private Vector3f anchorDirection;
+		private Vector3f aimedDirection;
+		private List<Sphere> pathSpots;
+		private ParticlePath connectionStream;
+		private float pitch=-2, angle=0;
+		
+		private CurveTool(){
+			pathSpots = new LinkedList<>();
+			connectionStream = new ParticlePath(new ArrayList<Vector3f>(), camera);
+			anchorDirection = camera.getDirection(0, 1);
+			createTool();
+		}
 		
 		public void createTool() {
-			float posY = 1;
-			Vector3f spotPos = new Vector3f();
-			Vector3f.sub(camera.getPosition(), camera.getDirection(0, 12), spotPos);
-			if(movableSpot!=null)
-				posY = movableSpot.getPosition().y;
-				movableSpot = new Sphere(spotPos, 0.2f, sphereTexture);
-			Vector3f.add(spotPos, camera.getDirection(nextSide * 90, 3.5f), movableSpot.getPosition());
-			nextSide*=-1;
-			movableSpot.getPosition().y = posY;
+			Vector3f center = new Vector3f();
+			Vector3f.add(anchorSpots[0].getPosition(), anchorSpots[1].getPosition(), center);
+			center.scale(0.5f);
+			float posY = (aimedDirection==null)? center.y:aimedDirection.y;
+			aimedDirection = camera.getDirection(angle, 1);
+			aimedDirection.y = posY;
+			Vector3f straightLine = new Vector3f();
+			Vector3f.sub(camera.getPickResult(angle, pitch), center, straightLine);
+			float distance = straightLine.length();
+			
+			pathSpots.clear();
+			Vector3f position = center;
+			
+			pathSpots.add(new Sphere(position.duplicate(), 0.1f, sphereTexture));
+			for(int i=0; i<distance; i++){
+				float factor = (distance-i);
+				factor = factor*factor;
+				position.x -= (factor*anchorDirection.x + i*i*aimedDirection.x)/(distance*distance);
+				position.y -= (factor*anchorDirection.y + i*i*aimedDirection.y)/(distance*distance);
+				position.z -= (factor*anchorDirection.z + i*i*aimedDirection.z)/(distance*distance);
+				
+				pathSpots.add(new Sphere(position.duplicate(), 0.1f, sphereTexture));
+			}
+			refreshParticlePath();
+		}
+		
+		private void refreshParticlePath(){
+			List<Vector3f> path = connectionStream.getPath();
+			path.clear();
+			for(Sphere s: pathSpots){
+				path.add(s.getPosition());
+			}
+		}
+		
+		private void createPrisms(){
+			//TODO: implement
 		}
 
 		@Override
 		public void processInput(int key, int action) {
     		switch(key){
+    		case GLFW_MOUSE_BUTTON_LEFT: if(glfwGetInputMode(window, GLFW_CURSOR)!=GLFW_CURSOR_DISABLED)break;
     		case GLFW_KEY_ENTER:
-    			currentTrackpart = new Trackpart(anchorSpots[0].getPosition(),
-    											anchorSpots[1].getPosition(),
-    											movableSpot.getPosition(),
-    											chunkMap);
-    			setAnchorSpots();
-    			createTool();
+    			createPrisms();
 				break;
-		}
-			
+    		}
 		}
 
 		@Override
 		public void move() {
 			try{
-				if(glfwGetKey(window, GLFW_KEY_UP)==GLFW_PRESS){
-					Vector3f dir = new Vector3f();
-					Vector3f.sub(movableSpot.getPosition(), camera.getPosition(), dir);
-					dir.normalise();
-					dir.scale(0.1f);
-					movableSpot.increasePosition(dir.x, 0, dir.z);
+				if(glfwGetKey(window, GLFW_KEY_LEFT_CONTROL)==GLFW_PRESS)
+					return;
+				
+				if(glfwGetKey(window, GLFW_KEY_W)==GLFW_PRESS ||
+					glfwGetKey(window, GLFW_KEY_A)==GLFW_PRESS ||
+					glfwGetKey(window, GLFW_KEY_S)==GLFW_PRESS ||
+					glfwGetKey(window, GLFW_KEY_D)==GLFW_PRESS){
+					createTool();
 				}
-				if(glfwGetKey(window, GLFW_KEY_DOWN)==GLFW_PRESS){
-					Vector3f dir = new Vector3f();
-					Vector3f.sub(movableSpot.getPosition(), camera.getPosition(), dir);
-					dir.normalise();
-					dir.scale(-0.1f);
-					movableSpot.increasePosition(dir.x, 0, dir.z);
-				}
-		
+				
 				if(glfwGetKey(window, GLFW_KEY_LEFT)==GLFW_PRESS){
-					movableSpot.increasePosition(camera.getDirection(-90, 0.1f));
+					angle+=0.5f;
+					createTool();
 				}
 				if(glfwGetKey(window, GLFW_KEY_RIGHT)==GLFW_PRESS){
-					movableSpot.increasePosition(camera.getDirection(+90, 0.1f));
+					angle-=0.5f;
+					createTool();
+				}
+				if(glfwGetKey(window, GLFW_KEY_UP)==GLFW_PRESS){
+					pitch-=0.2f;
+					createTool();
+				}
+				if(glfwGetKey(window, GLFW_KEY_DOWN)==GLFW_PRESS){
+					pitch+=0.2f;
+					createTool();
 				}
 				if(glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT)==GLFW_PRESS){
-					movableSpot.increasePosition(0, 0.1f, 0);
+					aimedDirection.y+=0.1f;
+					createTool();
 				}
 				if(glfwGetKey(window, GLFW_KEY_SLASH)==GLFW_PRESS){ //Minus-Taste, US-Layout und so..
-					if(movableSpot.getPosition().y>0.6)
-						movableSpot.increasePosition(0, -0.1f, 0);
+					aimedDirection.y-=0.1f;
+					createTool();
+				}
+				if(glfwGetInputMode(window, GLFW_CURSOR)==GLFW_CURSOR_DISABLED){
+					DoubleBuffer xpos = BufferUtils.createDoubleBuffer(1);
+					DoubleBuffer ypos = BufferUtils.createDoubleBuffer(1);
+					GLFW.glfwGetCursorPos(window, xpos, ypos);
 					
+					if(xpos.get()!=0 || ypos.get()!=0)
+						createTool();
 				}
 			}catch(NullPointerException e){
 			}
@@ -440,17 +484,21 @@ public class BuilderTool implements UserController, HUDfriendly{
 		@Override
 		public List<Sphere> getSpheres() {
 			List<Sphere> res = new LinkedList<>();
-			if(movableSpot!=null)res.add(movableSpot);
+			res.addAll(pathSpots);
 			res.add(anchorSpots[0]);
 			res.add(anchorSpots[1]);
 			return res;
 		}
 
 		@Override
-		public List<ParticlePath> getParticleStreams() {
-			return new ArrayList<ParticlePath>();
+		public List<ParticlePath> getParticleStreams(){
+			List<ParticlePath> r = new LinkedList<>();
+			//r.add(connectionStream);
+			return r;
 		}
 	}
+	
+	
 	
 	
 	private class PointerTool implements Tool{

@@ -66,7 +66,7 @@ public abstract class Menu extends HUDElement implements Clickable{
 		
 		for(Clickable obj: getButtons()){
 			if(obj.isInArea(mouseX, mouseY)){
-				if(currentHovered != obj) System.out.println("currentHovered: "+obj);
+				//if(currentHovered != obj) System.out.println("currentHovered: "+obj);
 				currentHovered = obj;
 				return true;
 			}

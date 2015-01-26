@@ -70,7 +70,7 @@ public class OBJLoader {
 			}
 			reader.close();
 		} catch (Exception e) {
-			System.err.println("Error reading the file");
+			System.err.println("Error reading the obj-file \""+objFileName+"\"");
 			System.exit(-1);
 		}
 

@@ -10,6 +10,7 @@ import org.lwjgl.system.glfw.GLFW;
 
 import rpEngine.graphical.model.Loader;
 import rpEngine.graphical.model.Material;
+import rpEngine.graphical.model.Model;
 import rpEngine.graphical.model.Texture;
 import rpEngine.graphical.objects.Camera;
 import rpEngine.graphical.objects.Entity;
@@ -23,6 +24,7 @@ import rpEngine.graphical.objects2d.RPMmeter;
 import rpEngine.graphical.objects2d.ToolBoxDisplay;
 import rpEngine.graphical.objects2d.text.Text;
 import rpEngine.graphical.renderer.MasterRenderer;
+import utils.fileLoader.OBJLoader;
 import utils.math.Vector3f;
 
 public class RacingPlanetsGame {
@@ -223,6 +225,14 @@ public class RacingPlanetsGame {
 			initHUD();
 			initCamera(window);
 			initBuilderTool();
+			/*TODO: delete following*/
+			/*
+			scene.addEntity(new Entity(new Model(OBJLoader.loadOBJ("mustang_gt500kr"),
+												new Texture(Loader.loadTexture(Material.WATER, "surface_water3", true))),
+										new Vector3f(0,0,0),
+										0, 0, 0,
+										1));
+			*/
 		}
 		
 		@Override

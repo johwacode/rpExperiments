@@ -388,7 +388,7 @@ public class BuilderTool implements UserController, HUDfriendly{
 			Vector3f.add(anchorSpots[0].getPosition(), anchorSpots[1].getPosition(), center);
 			center.scale(0.5f);
 			float posY = (aimedDirection==null)? center.y:aimedDirection.y;
-			aimedDirection = camera.getDirection(angle, 1);
+			aimedDirection = getDirection(anchorDirection, angle);
 			aimedDirection.y = posY;
 			Vector3f straightLine = new Vector3f();
 			Vector3f.sub(camera.getPickResult(angle, pitch), center, straightLine);
@@ -428,6 +428,19 @@ public class BuilderTool implements UserController, HUDfriendly{
 			refreshParticlePath();
 		}
 		
+		private Vector3f getDirection(Vector3f startDirection, float angleParam){
+			startDirection.normalise();
+			float angleStartToMinusZ = (float) Math.acos(-startDirection.z);
+			float finalAngle = (float) Math.toRadians(angleParam + angleStartToMinusZ);
+			
+			Vector3f result = new Vector3f(
+					(float) Math.sin(finalAngle),
+					0,
+					(float) Math.cos(finalAngle));
+			result.normalise();
+			return result;
+		}
+		
 		private void refreshParticlePath(){
 			List<Vector3f> path = connectionStream.getPath();
 			path.clear();
@@ -460,7 +473,7 @@ public class BuilderTool implements UserController, HUDfriendly{
 					glfwGetKey(window, GLFW_KEY_A)==GLFW_PRESS ||
 					glfwGetKey(window, GLFW_KEY_S)==GLFW_PRESS ||
 					glfwGetKey(window, GLFW_KEY_D)==GLFW_PRESS){
-					createTool();
+					//createTool();
 				}
 				
 				if(glfwGetKey(window, GLFW_KEY_LEFT)==GLFW_PRESS){
@@ -487,7 +500,9 @@ public class BuilderTool implements UserController, HUDfriendly{
 					aimedDirection.y+=0.05f;
 					createTool();
 				}
-				if(glfwGetInputMode(window, GLFW_CURSOR)==GLFW_CURSOR_DISABLED){
+				/*
+				 if(glfwGetInputMode(window, GLFW_CURSOR)==GLFW_CURSOR_DISABLED){
+				 
 					DoubleBuffer xpos = BufferUtils.createDoubleBuffer(1);
 					DoubleBuffer ypos = BufferUtils.createDoubleBuffer(1);
 					GLFW.glfwGetCursorPos(window, xpos, ypos);
@@ -495,6 +510,7 @@ public class BuilderTool implements UserController, HUDfriendly{
 					if(xpos.get()!=0 || ypos.get()!=0)
 						createTool();
 				}
+				*/
 			}catch(NullPointerException e){
 			}
 		}

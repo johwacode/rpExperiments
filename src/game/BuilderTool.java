@@ -395,17 +395,32 @@ public class BuilderTool implements UserController, HUDfriendly{
 			float distance = straightLine.length();
 			
 			pathSpots.clear();
-			Vector3f position = center;
-			
-			pathSpots.add(new Sphere(position.duplicate(), 0.1f, sphereTexture));
-			for(int i=0; i<distance; i++){
-				float factor = (distance-i);
-				factor = factor*factor;
-				position.x -= (factor*anchorDirection.x + i*i*aimedDirection.x)/(distance*distance);
-				position.y -= (factor*anchorDirection.y + i*i*aimedDirection.y)/(distance*distance);
-				position.z -= (factor*anchorDirection.z + i*i*aimedDirection.z)/(distance*distance);
+			Vector3f position = new Vector3f();
+			Vector3f nextPath = new Vector3f();
+			Vector3f.sub(anchorSpots[1].getPosition(), anchorSpots[0].getPosition(), nextPath);
+			int rows = 9;
+			nextPath.scale(1.0f/(rows-1));
+			for(int path=0; path<rows; path++){
+				position.x = anchorSpots[0].getPosition().x + path*nextPath.x;
+				position.y = anchorSpots[0].getPosition().y + path*nextPath.y;
+				position.z = anchorSpots[0].getPosition().z + path*nextPath.z;
 				
 				pathSpots.add(new Sphere(position.duplicate(), 0.1f, sphereTexture));
+				
+				float stepWidth = (float) (Math.toRadians(90)/distance);
+				//TODO: correct:
+				float pathRadius = (float) ((path-rows/2)*Math.toRadians(angle))/rows;
+				pathRadius = 0;
+				for(int i=0; i<distance; i+=1+pathRadius){
+					float comp1 = (float) Math.cos(stepWidth*i);
+					float comp2 = 1-comp1;
+					
+					position.x -= comp1 * anchorDirection.x + comp2 * aimedDirection.x;
+					position.y -= comp1 * anchorDirection.y + comp2 * aimedDirection.y;
+					position.z -= comp1 * anchorDirection.z + comp2 * aimedDirection.z;
+					
+					pathSpots.add(new Sphere(position.duplicate(), 0.1f, sphereTexture));
+				}
 			}
 			refreshParticlePath();
 		}
@@ -462,11 +477,11 @@ public class BuilderTool implements UserController, HUDfriendly{
 					createTool();
 				}
 				if(glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT)==GLFW_PRESS){
-					aimedDirection.y+=0.1f;
+					aimedDirection.y-=0.05f;
 					createTool();
 				}
 				if(glfwGetKey(window, GLFW_KEY_SLASH)==GLFW_PRESS){ //Minus-Taste, US-Layout und so..
-					aimedDirection.y-=0.1f;
+					aimedDirection.y+=0.05f;
 					createTool();
 				}
 				if(glfwGetInputMode(window, GLFW_CURSOR)==GLFW_CURSOR_DISABLED){

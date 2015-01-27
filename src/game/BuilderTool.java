@@ -394,12 +394,16 @@ public class BuilderTool implements UserController, HUDfriendly{
 			Vector3f.sub(camera.getPickResult(angle, pitch), center, straightLine);
 			float distance = straightLine.length();
 			
+			anchorDirection.normalise();
+			aimedDirection.normalise();
+			
 			pathSpots.clear();
 			Vector3f position = new Vector3f();
 			Vector3f nextPath = new Vector3f();
 			Vector3f.sub(anchorSpots[1].getPosition(), anchorSpots[0].getPosition(), nextPath);
 			int rows = 9;
 			nextPath.scale(1.0f/(rows-1));
+			
 			for(int path=0; path<rows; path++){
 				position.x = anchorSpots[0].getPosition().x + path*nextPath.x;
 				position.y = anchorSpots[0].getPosition().y + path*nextPath.y;
@@ -407,17 +411,16 @@ public class BuilderTool implements UserController, HUDfriendly{
 				
 				pathSpots.add(new Sphere(position.duplicate(), 0.1f, sphereTexture));
 				
-				float stepWidth = (float) (Math.toRadians(90)/distance);
-				//TODO: correct:
-				float pathRadius = (float) ((path-rows/2)*Math.toRadians(angle))/rows;
-				pathRadius = 0;
-				for(int i=0; i<distance; i+=1+pathRadius){
+				float stepWidth = (float) (Math.PI/distance);
+				float factor = (Math.signum(angle)<0)? (path+1.0f)/rows : (rows-path+1.0f)/rows;
+				if(Math.abs(angle)<3) factor = Math.abs(angle)/50+0.5f;
+				for(int i=0; i<distance; i++){
 					float comp1 = (float) Math.cos(stepWidth*i);
 					float comp2 = 1-comp1;
 					
-					position.x -= comp1 * anchorDirection.x + comp2 * aimedDirection.x;
-					position.y -= comp1 * anchorDirection.y + comp2 * aimedDirection.y;
-					position.z -= comp1 * anchorDirection.z + comp2 * aimedDirection.z;
+					position.x -= factor * (comp1 * anchorDirection.x + comp2 * aimedDirection.x);
+					position.y -= factor * (comp1 * anchorDirection.y + comp2 * aimedDirection.y);
+					position.z -= factor * (comp1 * anchorDirection.z + comp2 * aimedDirection.z);
 					
 					pathSpots.add(new Sphere(position.duplicate(), 0.1f, sphereTexture));
 				}

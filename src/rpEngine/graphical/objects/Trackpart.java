@@ -1,6 +1,7 @@
 package rpEngine.graphical.objects;
 
 import java.io.Serializable;
+import java.util.List;
 
 import game.ChunkMap;
 import utils.math.Vector3f;
@@ -11,13 +12,24 @@ public class Trackpart{
 							 DEFINING = 2;
 
 	private Vector3f[] vertices = new Vector3f[3];
-	private Prism prism;
+	private Entity entity;
 	
 	public Trackpart(Vector3f anchor1, Vector3f anchor2, Vector3f newVertex, ChunkMap chunkmap){
 		vertices[ANCHOR1] = anchor1;
 		vertices[ANCHOR2] = anchor2;
 		vertices[DEFINING] = newVertex;
-		prism = new Prism(anchor1, anchor2, newVertex);
+		entity = new Prism(anchor1, anchor2, newVertex);
+		registerinChunkMap(chunkmap);
+	}
+	
+	/**
+	 * constructor for curved TrackParts
+	 * @param vertices
+	 * @param countOfRows
+	 * @param chunkmap
+	 */
+	public Trackpart(List<Vector3f> vertexList, int countOfRows, ChunkMap chunkmap){
+		entity = new CurvePrism(vertexList, countOfRows, chunkmap);
 		registerinChunkMap(chunkmap);
 	}
 
@@ -61,8 +73,8 @@ public class Trackpart{
 		
 	}
 
-	public Prism getEntity(){
-		return prism;
+	public Entity getEntity(){
+		return entity;
 	}
 	
 	public Vector3f[] getAnchors(){
@@ -79,21 +91,29 @@ public class Trackpart{
 	
 
 	private void registerinChunkMap(ChunkMap chunkmap) {
-		//Eckpunkte für Schleife finden
-		float lowestX = vertices[ANCHOR1].x,
-			lowestZ = vertices[ANCHOR1].z,
-			highestX = vertices[ANCHOR1].x,
-			highestZ = vertices[ANCHOR1].z;
-		for(Vector3f pos:vertices){
-			if(pos.x<lowestX) lowestX = pos.x;
-			if(pos.z<lowestZ) lowestZ = pos.z;
-			if(pos.x>highestX) highestX = pos.x;
-			if(pos.z>highestZ) highestZ = pos.z;
+		if(vertices[0]==null){
+			//just4testing -> curved-Part
+			int x = (int) Math.floor(entity.getPosition().x/ChunkMap.RASTERSIZE);
+			int z = (int) Math.floor(entity.getPosition().z/ChunkMap.RASTERSIZE);
+			chunkmap.registerModel(x, z, this);
 		}
-		for(int x = (int) Math.floor(lowestX/ChunkMap.RASTERSIZE); x <= highestX/ChunkMap.RASTERSIZE; x+=1){
-			for(int z = (int) Math.floor(lowestZ/ChunkMap.RASTERSIZE); z <= highestZ/ChunkMap.RASTERSIZE; z+=1){
-				//TODO: testen, ob wirklich innerhalb der Zelle vorhanden
-				chunkmap.registerModel(x, z, this);
+		else{
+			//Eckpunkte für Schleife finden
+			float lowestX = vertices[ANCHOR1].x,
+				lowestZ = vertices[ANCHOR1].z,
+				highestX = vertices[ANCHOR1].x,
+				highestZ = vertices[ANCHOR1].z;
+			for(Vector3f pos:vertices){
+				if(pos.x<lowestX) lowestX = pos.x;
+				if(pos.z<lowestZ) lowestZ = pos.z;
+				if(pos.x>highestX) highestX = pos.x;
+				if(pos.z>highestZ) highestZ = pos.z;
+			}
+			for(int x = (int) Math.floor(lowestX/ChunkMap.RASTERSIZE); x <= highestX/ChunkMap.RASTERSIZE; x+=1){
+				for(int z = (int) Math.floor(lowestZ/ChunkMap.RASTERSIZE); z <= highestZ/ChunkMap.RASTERSIZE; z+=1){
+					//TODO: testen, ob wirklich innerhalb der Zelle vorhanden
+					chunkmap.registerModel(x, z, this);
+				}
 			}
 		}
 		

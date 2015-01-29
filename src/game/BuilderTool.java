@@ -42,6 +42,7 @@ import rpEngine.graphical.objects.ParticlePath;
 import rpEngine.graphical.objects.Sphere;
 import rpEngine.graphical.objects.Terrain;
 import rpEngine.graphical.objects.Trackpart;
+import rpEngine.graphical.objects.CurvePrism;
 import rpEngine.graphical.structs.HUDfriendly;
 import rpEngine.graphical.structs.UserController;
 import utils.fileLoader.RPFileLibrary;
@@ -373,8 +374,10 @@ public class BuilderTool implements UserController, HUDfriendly{
 		private Vector3f anchorDirection;
 		private Vector3f aimedDirection;
 		private List<Sphere> pathSpots;
+		private List<Vector3f> calculatedVertices;
 		private ParticlePath connectionStream;
 		private float pitch=-2, angle=0;
+		private int rowCount = 9;
 		
 		private CurveTool(){
 			pathSpots = new LinkedList<>();
@@ -398,31 +401,36 @@ public class BuilderTool implements UserController, HUDfriendly{
 			aimedDirection.normalise();
 			
 			pathSpots.clear();
+			calculatedVertices = new LinkedList<>();
+			
 			Vector3f position = new Vector3f();
 			Vector3f nextPath = new Vector3f();
 			Vector3f.sub(anchorSpots[1].getPosition(), anchorSpots[0].getPosition(), nextPath);
-			int rows = 9;
-			nextPath.scale(1.0f/(rows-1));
+			nextPath.scale(1.0f/(rowCount-1));
 			
-			for(int path=0; path<rows; path++){
+			for(int path=0; path<rowCount; path++){
 				position.x = anchorSpots[0].getPosition().x + path*nextPath.x;
 				position.y = anchorSpots[0].getPosition().y + path*nextPath.y;
 				position.z = anchorSpots[0].getPosition().z + path*nextPath.z;
 				
-				pathSpots.add(new Sphere(position.duplicate(), 0.1f, sphereTexture));
+				Vector3f rowBaseVertex = position.duplicate();
+				calculatedVertices.add(rowBaseVertex);
+				pathSpots.add(new Sphere(rowBaseVertex, 0.1f, sphereTexture));
 				
 				float stepWidth = (float) (Math.PI/distance);
-				float factor = (Math.signum(angle)<0)? (path+1.0f)/rows : (rows-path+1.0f)/rows;
+				float factor = (Math.signum(angle)<0)? (path+1.0f)/rowCount : (rowCount-path+1.0f)/rowCount;
 				if(Math.abs(angle)<3) factor = Math.abs(angle)/50+0.5f;
 				for(int i=0; i<distance; i++){
 					float comp1 = (float) Math.cos(stepWidth*i);
 					float comp2 = 1-comp1;
 					
 					position.x -= factor * (comp1 * anchorDirection.x + comp2 * aimedDirection.x);
-					position.y -= factor * (comp1 * anchorDirection.y + comp2 * aimedDirection.y);
+					position.y -= factor * (comp1 * anchorDirection.y + comp2 * aimedDirection.y * factor);
 					position.z -= factor * (comp1 * anchorDirection.z + comp2 * aimedDirection.z);
 					
-					pathSpots.add(new Sphere(position.duplicate(), 0.1f, sphereTexture));
+					Vector3f pathVertexI = position.duplicate();
+					calculatedVertices.add(pathVertexI);
+					pathSpots.add(new Sphere(pathVertexI, 0.1f, sphereTexture));
 				}
 			}
 			refreshParticlePath();
@@ -449,8 +457,8 @@ public class BuilderTool implements UserController, HUDfriendly{
 			}
 		}
 		
-		private void createPrisms(){
-			//TODO: implement
+		private void createTrackPart(){
+			new Trackpart(calculatedVertices, rowCount, chunkMap);
 		}
 
 		@Override
@@ -458,7 +466,7 @@ public class BuilderTool implements UserController, HUDfriendly{
     		switch(key){
     		case GLFW_MOUSE_BUTTON_LEFT: if(glfwGetInputMode(window, GLFW_CURSOR)!=GLFW_CURSOR_DISABLED)break;
     		case GLFW_KEY_ENTER:
-    			createPrisms();
+    			createTrackPart();
 				break;
     		}
 		}

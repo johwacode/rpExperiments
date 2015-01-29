@@ -26,6 +26,11 @@ public class Entity {
 		this.scale = scale;
 	}
 	
+	public float getTopPositionAt(float x, float z){
+		//TODO: implement
+		return 0;
+	}
+	
 	public Matrix4f getTransformationMatrix(){
 		if(!matrixUpToDate){
 			transformationMatrix = Matrix4f.createTransformationMatrix(position,

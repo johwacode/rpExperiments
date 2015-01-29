@@ -75,6 +75,7 @@ public class Prism extends Entity {
 	 * calculates the value of the highest Point of the Prism at the given xz-Coordinates
 	 * @return -100 if no intersection, else the y-value of the intersection.
 	 */
+	@Override
 	public float getTopPositionAt(float x, float z){
 		//Point on plain?
 		Vector3f point = new Vector3f(x, -100, z);

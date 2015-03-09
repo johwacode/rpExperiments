@@ -7,7 +7,6 @@ import org.lwjgl.opengl.GL30;
 
 import rpEngine.graphical.model.Loader;
 import rpEngine.graphical.model.VAObject;
-import rpEngine.graphical.objects.Camera;
 import rpEngine.graphical.shader.SkyboxShader;
 
 public class SkyBoxRenderer {
@@ -67,27 +66,39 @@ public class SkyBoxRenderer {
 		"sky_front"
 	};
 	
+	private static String[] NIGHT_TEXTURE_FILES = {
+		"nightRight",
+		"nightLeft",
+		"nightTop",
+		"nightBottom",
+		"nightBack",
+		"nightFront"
+	};
+	
 	private VAObject cube;
-	private int texture;
+	private int textureDay, textureNight;
 	private SkyboxShader shader;
 	
 	public SkyBoxRenderer(SkyboxShader shader){
-		cube = Loader.loadPositionOnlyVAO(VERTICES);
-		texture = Loader.loadCubeMapTexture(TEXTURE_FILES, "SkyBox");
 		this.shader = shader;
-	}
-	
-	public void render(Camera camera){
+		cube = Loader.loadPositionOnlyVAO(VERTICES);
+		textureDay = Loader.loadCubeMapTexture(TEXTURE_FILES, "SkyBox");
+		textureNight = Loader.loadCubeMapTexture(NIGHT_TEXTURE_FILES, "SkyBoxNight");
 		shader.start();
-		shader.loadViewMatrix(camera);
-		GL30.glBindVertexArray(cube.getId());
-		GL20.glEnableVertexAttribArray(0);
-		GL13.glActiveTexture(GL13.GL_TEXTURE0);
-		GL11.glBindTexture(GL13.GL_TEXTURE_CUBE_MAP, texture);
-		GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, cube.getVertexCount());
-		GL20.glDisableVertexAttribArray(0);
-		GL30.glBindVertexArray(0);
+		shader.loadDayAndNightTextures();
 		shader.stop();
 	}
 	
+	public void render(){
+		GL30.glBindVertexArray(cube.getId());
+		GL20.glEnableVertexAttribArray(0);
+		GL13.glActiveTexture(GL13.GL_TEXTURE0);
+		GL11.glBindTexture(GL13.GL_TEXTURE_CUBE_MAP, textureDay);
+		GL13.glActiveTexture(GL13.GL_TEXTURE1);
+		GL11.glBindTexture(GL13.GL_TEXTURE_CUBE_MAP, textureNight);
+		shader.loadBlendFactor(0.6f); //TODO change daytime over time
+		GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, cube.getVertexCount());
+		GL20.glDisableVertexAttribArray(0);
+		GL30.glBindVertexArray(0);
+	}
 }

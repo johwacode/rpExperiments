@@ -26,7 +26,7 @@ import utils.math.Matrix4f;
 public class MasterRenderer {
 
 	private static final float[] backgroundColor = {0.61f,  0.85f,  1f, 1};
-	private static final float[] fogColor = {0.61f,  0.85f,  1f, 1};
+	private static final float[] fogColor = {0.30f,  0.32f,  0.5f, 1};
 	
 	private Matrix4f projectionMatrix;
 	
@@ -98,6 +98,8 @@ public class MasterRenderer {
 		}
 		*/
 		
+		//TODO: method for shaderWorkflow (start-> load-> render-> stop)
+		
 		shader.start();
 		shader.loadFogColour(fogColor[0], fogColor[1], fogColor[2]);
 		shader.loadLight(lights);
@@ -112,16 +114,22 @@ public class MasterRenderer {
 		terrainRenderer.render(terrains);
 		terrainShader.stop();
 		
-		hudShader.start();
-		hudRenderer.render(hudObjects);
-		hudShader.stop();
-		
 		particleShader.start();
 		particleShader.loadViewMatrix(camera);
 		particleRenderer.render(particleStreams);
 		particleShader.stop();
 		
-		skyboxRenderer.render(camera);
+		//SKY: should be last one for depth-test-optimization
+		skyBoxShader.start();
+		skyBoxShader.loadViewMatrix(camera);
+		skyBoxShader.loadFogColor(fogColor[0], fogColor[1], fogColor[2]);
+		skyboxRenderer.render();
+		skyBoxShader.stop();
+		
+		//HUD: is last, due to correct alpha-blending (else no sky behind transparent HUD
+		hudShader.start();
+		hudRenderer.render(hudObjects);
+		hudShader.stop();
 		
 		terrains.clear();
 		entities.clear();

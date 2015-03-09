@@ -12,8 +12,8 @@ public class EntityShader extends ShaderProgram{
 	//TODO: reset value
 	private static final int MAX_LIGHTS = 10;
 	
-	private static String VERTEX_FILE = "vertexShader.glsl";
-	private static String FRAGMENT_FILE = "fragmentShader.glsl";
+	private static String VERTEX_FILE = "entityVertexShader.glsl";
+	private static String FRAGMENT_FILE = "entityFragmentShader.glsl";
 	
 	private int location_transformationMatrix;
 	private int location_projectionMatrix;

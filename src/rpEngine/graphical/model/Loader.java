@@ -3,6 +3,7 @@ package rpEngine.graphical.model;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
@@ -12,13 +13,17 @@ import java.util.Map;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL12;
+import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL14;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
+import org.newdawn.slick.opengl.PNGDecoder;
 import org.newdawn.slick.opengl.TextureLoader;
 
 import rpEngine.graphical.objects.ParticleStream;
+import rpEngine.graphical.structs.TextureData;
 
 
 public class Loader {
@@ -41,6 +46,13 @@ public class Loader {
 		storeDateInAttributeList(2, 3, normals);
 		unbindVAO();
 		return new VAObject(vaoID, indices.length, furthestDistance);
+	}
+	
+	public static VAObject loadCubeMapToVAO(float[] positions){
+		int vaoID = createVAO();
+		storeDateInAttributeList(0, 3, positions);
+		unbindVAO();
+		return new VAObject(vaoID, positions.length/3);
 	}
 	
 	public static VAObject loadBillboardToVAO(
@@ -149,6 +161,53 @@ public class Loader {
 		}
 		return texture.getTextureID();
 	}
+	
+	
+	public static int loadCubeMap(String[] textureFiles, String textureName){
+		int texID = GL11.glGenTextures();
+		GL13.glActiveTexture(GL13.GL_TEXTURE0);
+		GL11.glBindTexture(GL13.GL_TEXTURE_CUBE_MAP, texID);
+		
+		//first position=positiveX, then following
+		int texPosition = GL13.GL_TEXTURE_CUBE_MAP_POSITIVE_X;
+		for (String file: textureFiles){
+			TextureData data = decodeTexureFile(file);
+			GL11.glTexImage2D( texPosition++, 0, GL11.GL_RGBA,
+					data.getWidth(), data.getHeight(), 0,
+					GL30.GL_RGBA_INTEGER,
+					GL11.GL_UNSIGNED_BYTE, data.getBuffer());
+		}
+		GL11.glTexParameteri(GL13.GL_TEXTURE_CUBE_MAP, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
+		GL11.glTexParameteri(GL13.GL_TEXTURE_CUBE_MAP, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
+		GL11.glTexParameteri(GL13.GL_TEXTURE_CUBE_MAP, GL11.GL_TEXTURE_WRAP_S, GL12.GL_CLAMP_TO_EDGE);
+		GL11.glTexParameteri(GL13.GL_TEXTURE_CUBE_MAP, GL11.GL_TEXTURE_WRAP_T, GL12.GL_CLAMP_TO_EDGE);
+		namelessMaterials.put(textureName, texID);
+		return texID;
+	}
+	
+	/**
+	 * creates a TextureData-Object from a PNG-file. Used for the Skybox-Cubemap-Texture
+	 */
+	private static TextureData decodeTexureFile(String fileName){
+		int width = 0, height = 0;
+		ByteBuffer buffer = null;
+		try {
+			InputStream in = Loader.class.getResourceAsStream("/res/"+fileName+".png");
+			PNGDecoder decoder = new PNGDecoder(in);
+			width = decoder.getWidth();
+			height = decoder.getHeight();
+			buffer = ByteBuffer.allocateDirect(4*width*height);
+			decoder.decode(buffer, width *4, PNGDecoder.RGBA);
+			buffer.flip();
+			in.close();
+		} catch (FileNotFoundException e) {
+			System.out.println(e.getMessage());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return new TextureData(buffer, width, height);
+	}
+	
 	
 	public static void cleanUp(){
 		for(int vao:vaos){

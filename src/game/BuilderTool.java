@@ -409,6 +409,7 @@ public class BuilderTool implements UserController, HUDfriendly{
 			nextPath.scale(1.0f/(rowCount-1));
 			
 			for(int path=0; path<rowCount; path++){
+				//TODO: add part oft Vector to the center -> currently curves spread to much
 				position.x = anchorSpots[0].getPosition().x + path*nextPath.x;
 				position.y = anchorSpots[0].getPosition().y + path*nextPath.y;
 				position.z = anchorSpots[0].getPosition().z + path*nextPath.z;
@@ -459,6 +460,8 @@ public class BuilderTool implements UserController, HUDfriendly{
 		
 		private void createTrackPart(){
 			new Trackpart(calculatedVertices, rowCount, chunkMap);
+			anchorSpots[0] = new Sphere(calculatedVertices.get(calculatedVertices.size()/rowCount-1), 0.1f, sphereTexture);
+			anchorSpots[1] = new Sphere(calculatedVertices.get(calculatedVertices.size()-1), 0.1f, sphereTexture);
 		}
 
 		@Override
@@ -467,6 +470,7 @@ public class BuilderTool implements UserController, HUDfriendly{
     		case GLFW_MOUSE_BUTTON_LEFT: if(glfwGetInputMode(window, GLFW_CURSOR)!=GLFW_CURSOR_DISABLED)break;
     		case GLFW_KEY_ENTER:
     			createTrackPart();
+    			createTool();
 				break;
     		}
 		}

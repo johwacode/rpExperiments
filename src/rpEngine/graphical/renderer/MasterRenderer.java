@@ -17,6 +17,8 @@ import rpEngine.graphical.objects2d.HUDElement;
 import rpEngine.graphical.shader.EntityShader;
 import rpEngine.graphical.shader.HUDShader;
 import rpEngine.graphical.shader.ParticleShader;
+import rpEngine.graphical.shader.SkyBoxRenderer;
+import rpEngine.graphical.shader.SkyboxShader;
 import rpEngine.graphical.shader.TerrainShader;
 import utils.math.Matrix4f;
 
@@ -33,8 +35,10 @@ public class MasterRenderer {
 	private TerrainShader terrainShader = new TerrainShader();
 	private HUDShader hudShader = new HUDShader();
 	private ParticleShader particleShader = new ParticleShader();
+	private SkyboxShader skyBoxShader = new SkyboxShader();
 	private EntityRenderer entityRenderer;
 	private TerrainRenderer terrainRenderer;
+	private SkyBoxRenderer skyboxRenderer;
 	private HUDRenderer hudRenderer;
 	private ParticleRenderer particleRenderer;
 	
@@ -49,6 +53,7 @@ public class MasterRenderer {
 		enableCulling();
 		entityRenderer = new EntityRenderer(shader);
 		terrainRenderer = new TerrainRenderer(terrainShader);
+		skyboxRenderer = new SkyBoxRenderer(skyBoxShader);
 		hudRenderer = new HUDRenderer(hudShader);
 		particleRenderer = new ParticleRenderer(particleShader);
 		setProjectionmatrix(window);
@@ -117,6 +122,8 @@ public class MasterRenderer {
 		particleRenderer.render(particleStreams);
 		particleShader.stop();
 		
+		skyboxRenderer.render(camera);
+		
 		terrains.clear();
 		entities.clear();
 		hudObjects.clear();
@@ -176,5 +183,8 @@ public class MasterRenderer {
 		particleShader.start();
 		particleShader.loadProjectionMatrix(projectionMatrix);
 		particleShader.stop();
+		skyBoxShader.start();
+		skyBoxShader.loadProjectionMatrix(projectionMatrix);
+		skyBoxShader.stop();
 	}
 }

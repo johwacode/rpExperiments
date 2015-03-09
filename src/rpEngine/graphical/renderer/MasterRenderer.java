@@ -17,7 +17,6 @@ import rpEngine.graphical.objects2d.HUDElement;
 import rpEngine.graphical.shader.EntityShader;
 import rpEngine.graphical.shader.HUDShader;
 import rpEngine.graphical.shader.ParticleShader;
-import rpEngine.graphical.shader.SkyBoxRenderer;
 import rpEngine.graphical.shader.SkyboxShader;
 import rpEngine.graphical.shader.TerrainShader;
 import utils.math.Matrix4f;

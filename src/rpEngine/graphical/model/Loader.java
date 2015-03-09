@@ -48,7 +48,7 @@ public class Loader {
 		return new VAObject(vaoID, indices.length, furthestDistance);
 	}
 	
-	public static VAObject loadCubeMapToVAO(float[] positions){
+	public static VAObject loadPositionOnlyVAO(float[] positions){
 		int vaoID = createVAO();
 		storeDateInAttributeList(0, 3, positions);
 		unbindVAO();
@@ -163,18 +163,19 @@ public class Loader {
 	}
 	
 	
-	public static int loadCubeMap(String[] textureFiles, String textureName){
+	public static int loadCubeMapTexture(String[] textureFiles, String textureName){
+		if(namelessMaterials.containsKey(textureName)) return namelessMaterials.get(textureName);
+		
 		int texID = GL11.glGenTextures();
 		GL13.glActiveTexture(GL13.GL_TEXTURE0);
 		GL11.glBindTexture(GL13.GL_TEXTURE_CUBE_MAP, texID);
-		
-		//first position=positiveX, then following
-		int texPosition = GL13.GL_TEXTURE_CUBE_MAP_POSITIVE_X;
-		for (String file: textureFiles){
-			TextureData data = decodeTexureFile(file);
-			GL11.glTexImage2D( texPosition++, 0, GL11.GL_RGBA,
+
+		for (int i=0; i<6; i++){
+			TextureData data = decodeTexureFile(textureFiles[i]);
+			GL11.glTexImage2D(GL13.GL_TEXTURE_CUBE_MAP_POSITIVE_X +i,
+					0, GL11.GL_RGBA,
 					data.getWidth(), data.getHeight(), 0,
-					GL30.GL_RGBA_INTEGER,
+					GL11.GL_RGBA,
 					GL11.GL_UNSIGNED_BYTE, data.getBuffer());
 		}
 		GL11.glTexParameteri(GL13.GL_TEXTURE_CUBE_MAP, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);

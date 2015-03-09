@@ -1,4 +1,4 @@
-package rpEngine.graphical.shader;
+package rpEngine.graphical.renderer;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
@@ -8,6 +8,7 @@ import org.lwjgl.opengl.GL30;
 import rpEngine.graphical.model.Loader;
 import rpEngine.graphical.model.VAObject;
 import rpEngine.graphical.objects.Camera;
+import rpEngine.graphical.shader.SkyboxShader;
 
 public class SkyBoxRenderer {
 
@@ -16,7 +17,7 @@ public class SkyBoxRenderer {
 	private static final float[] VERTICES = {        
 	    -SIZE,  SIZE, -SIZE,
 	    -SIZE, -SIZE, -SIZE,
-	    SIZE, -SIZE, -SIZE,
+	     SIZE, -SIZE, -SIZE,
 	     SIZE, -SIZE, -SIZE,
 	     SIZE,  SIZE, -SIZE,
 	    -SIZE,  SIZE, -SIZE,
@@ -71,8 +72,8 @@ public class SkyBoxRenderer {
 	private SkyboxShader shader;
 	
 	public SkyBoxRenderer(SkyboxShader shader){
-		cube = Loader.loadCubeMapToVAO(VERTICES);
-		texture = Loader.loadCubeMap(TEXTURE_FILES, "SkyBox");
+		cube = Loader.loadPositionOnlyVAO(VERTICES);
+		texture = Loader.loadCubeMapTexture(TEXTURE_FILES, "SkyBox");
 		this.shader = shader;
 	}
 	

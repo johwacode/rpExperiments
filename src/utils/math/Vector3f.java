@@ -57,6 +57,12 @@ public class Vector3f implements Serializable{
 		dest.y=left.y+right.y;
 		dest.z=left.z+right.z;
 	}
+	
+	public static Vector3f add(Vector3f left, Vector3f right) {
+		Vector3f dest = new Vector3f();
+		Vector3f.add(left, right, dest);
+		return dest;
+	}
 
 	public static void sub(Vector3f left, Vector3f right,
 			Vector3f dest) {

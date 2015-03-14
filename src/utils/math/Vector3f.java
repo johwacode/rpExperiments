@@ -117,6 +117,17 @@ public class Vector3f implements Serializable{
 		return left.x*right.x+left.y*right.y+left.z*right.z;
 	}
 	
+	/**
+	 * rotates the given Vector in XZ.
+	 * @param angle
+	 */
+	public void rotateXZ(float angle){
+		float cos = (float) Math.cos(angle);
+		float sin = (float) Math.sin(angle);
+		x = cos*x - sin*z;
+		z = sin*x + cos*z;
+	}
+	
 	public boolean equals(Vector3f vec){
 		return (x==vec.x && y==vec.y && z==vec.z);
 	}

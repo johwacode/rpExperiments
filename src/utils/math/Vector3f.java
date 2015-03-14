@@ -124,8 +124,11 @@ public class Vector3f implements Serializable{
 	public void rotateXZ(float angle){
 		float cos = (float) Math.cos(angle);
 		float sin = (float) Math.sin(angle);
+		
+		float sinX = sin*x; //tmp for x
+		
 		x = cos*x - sin*z;
-		z = sin*x + cos*z;
+		z = sinX + cos*z;
 	}
 	
 	public boolean equals(Vector3f vec){

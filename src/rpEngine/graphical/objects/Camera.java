@@ -85,8 +85,8 @@ public class Camera implements UserController{
 		
 		//If no intersection save highestBeneath and lowestAbove
 		try{
-			for(Trackpart trackPart: scene.getChunkMap().getModels(testPoint.x, testPoint.z)){
-				float height = trackPart.getEntity().getTopPositionAt(testPoint.x, testPoint.z);
+			for(Curve curve: scene.getChunkMap().getModels(testPoint.x, testPoint.z)){
+				float height = curve.getTopPositionAt(testPoint.x, testPoint.z);
 				if(height>highestBeneath){
 					//Prism inside PlayerBox?
 					if(height<yPlayerTop && height>yPlayerBottom)return true;

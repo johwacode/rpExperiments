@@ -21,7 +21,14 @@ public class Curve extends Entity{
 		this.aim = lastAim;
 	}
 	
+	public Curve() {
+		super(createModel(lastAim, 0, 0, 1, 0), lastAim.getPosition(), 0, 0, 0, 1);	
+		this.anchor = anchor;
+		this.aim = lastAim;
+	}
+	
 	private static Model createModel(TrackAnchor anchorStart, float angleXZ, float height, float distance, float pitch){
+		if(anchorStart==null) throw new IllegalStateException("No AnchorPoint defined!");
 		//cut into min 10 steps:
 		int stepCount = (distance>10)? (int)Math.ceil(distance) : 10;
 		float stepwidth = distance/stepCount; // ~=1, if distance>10
@@ -126,5 +133,9 @@ public class Curve extends Entity{
 		lastAim = new TrackAnchor(aimPosition, direction, curPitch);
 		
 		return new Model(Loader.loadEntityToVAO(vertexArray, textureCoords, normals, indices, distance), asphalt);
+	}
+	
+	public TrackAnchor getAim(){
+		return aim;
 	}
 }

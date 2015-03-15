@@ -26,9 +26,9 @@ import static org.lwjgl.system.glfw.GLFW.glfwGetKey;
 import java.nio.DoubleBuffer;
 import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Date;
 import java.util.Locale;
 
 import org.lwjgl.BufferUtils;
@@ -38,12 +38,13 @@ import rpEngine.graphical.model.Loader;
 import rpEngine.graphical.model.Material;
 import rpEngine.graphical.model.Texture;
 import rpEngine.graphical.objects.Camera;
+import rpEngine.graphical.objects.Curve;
 import rpEngine.graphical.objects.ParticlePath;
 import rpEngine.graphical.objects.Sphere;
 import rpEngine.graphical.objects.Terrain;
 import rpEngine.graphical.objects.Trackpart;
-import rpEngine.graphical.objects.CurvePrism;
 import rpEngine.graphical.structs.HUDfriendly;
+import rpEngine.graphical.structs.TrackAnchor;
 import rpEngine.graphical.structs.UserController;
 import utils.fileLoader.RPFileLibrary;
 import utils.math.Vector3f;
@@ -371,97 +372,24 @@ public class BuilderTool implements UserController, HUDfriendly{
 
 	
 	private class CurveTool implements Tool{
-		private Vector3f anchorDirection;
-		private Vector3f aimedDirection;
-		private List<Sphere> pathSpots;
-		private List<Vector3f> calculatedVertices;
-		private ParticlePath connectionStream;
-		private float pitch=-2, angle=0;
-		private int rowCount = 9;
+		private TrackAnchor anchor;
+		private float pitch, angleXY, distance, heightDifference;
 		
 		private CurveTool(){
-			pathSpots = new LinkedList<>();
-			connectionStream = new ParticlePath(new ArrayList<Vector3f>(), camera);
-			anchorDirection = camera.getDirection(0, 1);
 			createTool();
 		}
 		
 		public void createTool() {
-			Vector3f center = new Vector3f();
-			Vector3f.add(anchorSpots[0].getPosition(), anchorSpots[1].getPosition(), center);
-			center.scale(0.5f);
-			float posY = (aimedDirection==null)? center.y:aimedDirection.y;
-			aimedDirection = getDirection(anchorDirection, angle);
-			aimedDirection.y = posY;
-			Vector3f straightLine = new Vector3f();
-			Vector3f.sub(camera.getPickResult(angle, pitch), center, straightLine);
-			float distance = straightLine.length();
-			
-			anchorDirection.normalise();
-			aimedDirection.normalise();
-			
-			pathSpots.clear();
-			calculatedVertices = new LinkedList<>();
-			
-			Vector3f position = new Vector3f();
-			Vector3f nextPath = new Vector3f();
-			Vector3f.sub(anchorSpots[1].getPosition(), anchorSpots[0].getPosition(), nextPath);
-			nextPath.scale(1.0f/(rowCount-1));
-			
-			for(int path=0; path<rowCount; path++){
-				//TODO: add part oft Vector to the center -> currently curves spread to much
-				position.x = anchorSpots[0].getPosition().x + path*nextPath.x;
-				position.y = anchorSpots[0].getPosition().y + path*nextPath.y;
-				position.z = anchorSpots[0].getPosition().z + path*nextPath.z;
-				
-				Vector3f rowBaseVertex = position.duplicate();
-				calculatedVertices.add(rowBaseVertex);
-				pathSpots.add(new Sphere(rowBaseVertex, 0.1f, sphereTexture));
-				
-				float stepWidth = (float) (Math.PI/distance);
-				float factor = (Math.signum(angle)<0)? (path+1.0f)/rowCount : (rowCount-path+1.0f)/rowCount;
-				if(Math.abs(angle)<3) factor = Math.abs(angle)/50+0.5f;
-				for(int i=0; i<distance; i++){
-					float comp1 = (float) Math.cos(stepWidth*i);
-					float comp2 = 1-comp1;
-					
-					position.x -= factor * (comp1 * anchorDirection.x + comp2 * aimedDirection.x);
-					position.y -= factor * (comp1 * anchorDirection.y + comp2 * aimedDirection.y * factor);
-					position.z -= factor * (comp1 * anchorDirection.z + comp2 * aimedDirection.z);
-					
-					Vector3f pathVertexI = position.duplicate();
-					calculatedVertices.add(pathVertexI);
-					pathSpots.add(new Sphere(pathVertexI, 0.1f, sphereTexture));
-				}
-			}
-			refreshParticlePath();
-		}
-		
-		private Vector3f getDirection(Vector3f startDirection, float angleParam){
-			startDirection.normalise();
-			float angleStartToMinusZ = (float) Math.acos(-startDirection.z);
-			float finalAngle = (float) Math.toRadians(angleParam + angleStartToMinusZ);
-			
-			Vector3f result = new Vector3f(
-					(float) Math.sin(finalAngle),
-					0,
-					(float) Math.cos(finalAngle));
-			result.normalise();
-			return result;
-		}
-		
-		private void refreshParticlePath(){
-			List<Vector3f> path = connectionStream.getPath();
-			path.clear();
-			for(Sphere s: pathSpots){
-				path.add(s.getPosition());
-			}
+			pitch = 0;
+			angleXY = 0;
+			distance = 5;
+			heightDifference = 0;
 		}
 		
 		private void createTrackPart(){
-			new Trackpart(calculatedVertices, rowCount, chunkMap);
-			anchorSpots[0] = new Sphere(calculatedVertices.get(calculatedVertices.size()/rowCount-1), 0.1f, sphereTexture);
-			anchorSpots[1] = new Sphere(calculatedVertices.get(calculatedVertices.size()-1), 0.1f, sphereTexture);
+			Curve curve = new Curve();
+			anchor = curve.getAim();
+			chunkMap.registerModel(curve);
 		}
 
 		@Override
@@ -489,27 +417,27 @@ public class BuilderTool implements UserController, HUDfriendly{
 				}
 				
 				if(glfwGetKey(window, GLFW_KEY_LEFT)==GLFW_PRESS){
-					angle+=0.5f;
+					angleXY += 0.5f;
 					createTool();
 				}
 				if(glfwGetKey(window, GLFW_KEY_RIGHT)==GLFW_PRESS){
-					angle-=0.5f;
+					angleXY -= 0.5f;
 					createTool();
 				}
 				if(glfwGetKey(window, GLFW_KEY_UP)==GLFW_PRESS){
-					pitch-=0.2f;
+					heightDifference -= 0.2f;
 					createTool();
 				}
 				if(glfwGetKey(window, GLFW_KEY_DOWN)==GLFW_PRESS){
-					pitch+=0.2f;
+					heightDifference += 0.2f;
 					createTool();
 				}
 				if(glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT)==GLFW_PRESS){
-					aimedDirection.y-=0.05f;
+					distance -= 0.05f;
 					createTool();
 				}
 				if(glfwGetKey(window, GLFW_KEY_SLASH)==GLFW_PRESS){ //Minus-Taste, US-Layout und so..
-					aimedDirection.y+=0.05f;
+					distance += 0.05f;
 					createTool();
 				}
 				/*
@@ -530,16 +458,12 @@ public class BuilderTool implements UserController, HUDfriendly{
 		@Override
 		public List<Sphere> getSpheres() {
 			List<Sphere> res = new LinkedList<>();
-			res.addAll(pathSpots);
-			res.add(anchorSpots[0]);
-			res.add(anchorSpots[1]);
 			return res;
 		}
 
 		@Override
 		public List<ParticlePath> getParticleStreams(){
 			List<ParticlePath> r = new LinkedList<>();
-			//r.add(connectionStream);
 			return r;
 		}
 	}

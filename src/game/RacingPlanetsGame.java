@@ -10,9 +10,9 @@ import org.lwjgl.system.glfw.GLFW;
 
 import rpEngine.graphical.model.Loader;
 import rpEngine.graphical.model.Material;
-import rpEngine.graphical.model.Model;
 import rpEngine.graphical.model.Texture;
 import rpEngine.graphical.objects.Camera;
+import rpEngine.graphical.objects.Curve;
 import rpEngine.graphical.objects.Entity;
 import rpEngine.graphical.objects.Light;
 import rpEngine.graphical.objects.ParticleStream;
@@ -24,7 +24,6 @@ import rpEngine.graphical.objects2d.RPMmeter;
 import rpEngine.graphical.objects2d.ToolBoxDisplay;
 import rpEngine.graphical.objects2d.text.Text;
 import rpEngine.graphical.renderer.MasterRenderer;
-import utils.fileLoader.OBJLoader;
 import utils.math.Vector3f;
 
 public class RacingPlanetsGame {
@@ -149,8 +148,8 @@ public class RacingPlanetsGame {
 			
 			renderer.processTerrain(scene.getTerrain());
 			
-			for(Trackpart e:scene.getModels(maxViewDistance)){
-				renderer.processEntity(e.getEntity());
+			for(Curve c:scene.getModels(maxViewDistance)){
+				renderer.processEntity(c);
 			}
 			for(Entity e:scene.getBuilderTool().getSpheres()){
 				renderer.processEntity(e);
@@ -216,7 +215,7 @@ public class RacingPlanetsGame {
 	 * User has a set of tools to build his own race track.
 	 */
 	public class BuildMode extends GameMode{
-		private int maxViewDistance = 25;
+		private int maxViewDistance = 3;
 		
 		@Override
 		public void init() {
@@ -250,8 +249,8 @@ public class RacingPlanetsGame {
 			
 			renderer.processTerrain(scene.getTerrain());
 			
-			for(Trackpart e:scene.getModels(maxViewDistance)){
-				renderer.processEntity(e.getEntity());
+			for(Curve c:scene.getModels(maxViewDistance)){
+				renderer.processEntity(c);
 			}
 			for(Entity e:scene.getBuilderTool().getSpheres()){
 				renderer.processEntity(e);

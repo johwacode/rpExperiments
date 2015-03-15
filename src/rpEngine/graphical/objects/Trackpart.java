@@ -19,7 +19,7 @@ public class Trackpart{
 		vertices[ANCHOR2] = anchor2;
 		vertices[DEFINING] = newVertex;
 		entity = new Prism(anchor1, anchor2, newVertex);
-		registerinChunkMap(chunkmap);
+		//registerinChunkMap(chunkmap);
 	}
 	
 	/**
@@ -30,7 +30,7 @@ public class Trackpart{
 	 */
 	public Trackpart(List<Vector3f> vertexList, int countOfRows, ChunkMap chunkmap){
 		entity = new CurvePrism(vertexList, countOfRows, chunkmap);
-		registerinChunkMap(chunkmap);
+		//registerinChunkMap(chunkmap);
 	}
 
 	public static Trackpart[] generateStart(Vector3f groundPosition, Vector3f direction, ChunkMap chunkmap, Terrain terrain){
@@ -88,8 +88,9 @@ public class Trackpart{
 	public Vector3f[] getVertices(){
 		return vertices;
 	}
-	
 
+
+/*
 	private void registerinChunkMap(ChunkMap chunkmap) {
 		if(vertices[0]==null){
 			//just4testing -> curved-Part
@@ -118,6 +119,7 @@ public class Trackpart{
 		}
 		
 	}
+*/
 
 	public Vector3f getCenter() {
 		Vector3f center = new Vector3f();

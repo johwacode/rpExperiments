@@ -5,10 +5,10 @@ import java.util.LinkedList;
 import java.util.List;
 
 import rpEngine.graphical.objects.Camera;
+import rpEngine.graphical.objects.Curve;
 import rpEngine.graphical.objects.Entity;
 import rpEngine.graphical.objects.Light;
 import rpEngine.graphical.objects.Terrain;
-import rpEngine.graphical.objects.Trackpart;
 import rpEngine.graphical.objects2d.HUDElement;
 
 public class SceneGraph {
@@ -65,7 +65,13 @@ public class SceneGraph {
 	public ChunkMap getChunkMap() {
 		return chunkMap;
 	}
-	public List<Trackpart> getModels(int radiusFromCam) {
+
+	/**
+	 * 	
+	 * @param radiusFromCam in count of Chunks
+	 * @return
+	 */
+	public List<Curve> getModels(int radiusFromCam) {
 		int camPosX =(int) (camera.getPosition().x/ChunkMap.RASTERSIZE);
 		int camPosZ =(int) (camera.getPosition().z/ChunkMap.RASTERSIZE);
 		return chunkMap.getModels(camPosX-radiusFromCam,

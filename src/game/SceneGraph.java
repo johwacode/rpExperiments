@@ -4,12 +4,17 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import rpEngine.graphical.model.Loader;
+import rpEngine.graphical.model.Material;
+import rpEngine.graphical.model.Texture;
 import rpEngine.graphical.objects.Camera;
 import rpEngine.graphical.objects.Curve;
 import rpEngine.graphical.objects.Entity;
 import rpEngine.graphical.objects.Light;
+import rpEngine.graphical.objects.Sphere;
 import rpEngine.graphical.objects.Terrain;
 import rpEngine.graphical.objects2d.HUDElement;
+import utils.math.Vector3f;
 
 public class SceneGraph {
 	private Terrain terrain;
@@ -20,9 +25,18 @@ public class SceneGraph {
 	private ChunkMap chunkMap;
 	private BuilderTool builderTool;
 	
+	private static List<Entity> debugSpheres;
+	private static Texture sphereTex;
+	
 	public SceneGraph(){
 		entities = new LinkedList<>();
+		debugSpheres = new LinkedList<>();
 		hud = new ArrayList<>();
+	}
+	
+	public static void addDebugSphere(Vector3f pos){
+		if(sphereTex==null) sphereTex = new Texture(Loader.loadTexture(Material.RED, "transparentRed", true));
+		debugSpheres.add(new Sphere(pos, 0.1f, sphereTex));
 	}
 	
 	public Terrain getTerrain() {
@@ -32,7 +46,7 @@ public class SceneGraph {
 		this.terrain = terrain;
 	}
 	public List<Entity> getEntities() {
-		return entities;
+		return debugSpheres;
 	}
 	public void addEntity(Entity entity) {
 		this.entities.add(entity);

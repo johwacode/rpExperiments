@@ -99,7 +99,7 @@ public class ChunkMap {
 	}
 	
 	private List<Curve> getModels(int x, int z){
-		printMap(); //debugStuff
+		//printMap(); //debugStuff
 		
 		if(map[x+centerX][z+centerZ]==null)map[x+centerX][z+centerZ] = new LinkedList<Curve>();
 		return map[x+centerX][z+centerZ];

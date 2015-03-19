@@ -20,6 +20,8 @@ import static org.lwjgl.system.glfw.GLFW.GLFW_KEY_UP;
 import static org.lwjgl.system.glfw.GLFW.GLFW_KEY_W;
 import static org.lwjgl.system.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
 import static org.lwjgl.system.glfw.GLFW.GLFW_PRESS;
+import static org.lwjgl.system.glfw.GLFW.GLFW_KEY_I;
+import static org.lwjgl.system.glfw.GLFW.GLFW_KEY_BACKSPACE;
 import static org.lwjgl.system.glfw.GLFW.glfwGetInputMode;
 import static org.lwjgl.system.glfw.GLFW.glfwGetKey;
 
@@ -77,7 +79,7 @@ public class BuilderTool implements UserController, HUDfriendly{
 		
 		createInitialPrisms();
 		
-		tool = new QuadTool();
+		tool = new CurveTool();
 		tool.createTool();
 	}
 	
@@ -91,9 +93,9 @@ public class BuilderTool implements UserController, HUDfriendly{
 	}
 	
 	public void createInitialPrisms(){
-		Vector3f camPos = camera.getPosition();
-		currentTrackpart = Trackpart.generateStart(new Vector3f(camPos.x, -100, camPos.z), camera.getDirection(0, 1), chunkMap, terrain)[1];
-		setAnchorSpots();
+		TrackAnchor start = new TrackAnchor(new Vector3f(375, 8.1f, -0.01f), new Vector3f(0,0,-1), new Vector3f(-1, 0, 0));
+		chunkMap.registerModel(new Curve(start, -0.01f, -0.3f, 20, 0));
+		chunkMap.registerModel(new Curve(Curve.getLastAnchor(), 0.02f, 0.1f, 15, 0));
 	}
 	
 	
@@ -382,14 +384,13 @@ public class BuilderTool implements UserController, HUDfriendly{
 		public void createTool() {
 			pitch = 0;
 			angleXY = 0;
-			distance = 5;
+			distance = 10;
 			heightDifference = 0;
+			anchor = Curve.getLastAnchor();
 		}
 		
 		private void createTrackPart(){
-			Curve curve = new Curve();
-			anchor = curve.getAim();
-			chunkMap.registerModel(curve);
+			chunkMap.registerModel(new Curve(anchor, angleXY, heightDifference, distance, pitch));
 		}
 
 		@Override
@@ -417,20 +418,16 @@ public class BuilderTool implements UserController, HUDfriendly{
 				}
 				
 				if(glfwGetKey(window, GLFW_KEY_LEFT)==GLFW_PRESS){
-					angleXY += 0.5f;
-					createTool();
+					angleXY -= 0.005f;
 				}
 				if(glfwGetKey(window, GLFW_KEY_RIGHT)==GLFW_PRESS){
-					angleXY -= 0.5f;
-					createTool();
+					angleXY += 0.005f;
 				}
 				if(glfwGetKey(window, GLFW_KEY_UP)==GLFW_PRESS){
-					heightDifference -= 0.2f;
-					createTool();
+					heightDifference += 0.1f;
 				}
 				if(glfwGetKey(window, GLFW_KEY_DOWN)==GLFW_PRESS){
-					heightDifference += 0.2f;
-					createTool();
+					heightDifference -= 0.1f;
 				}
 				if(glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT)==GLFW_PRESS){
 					distance -= 0.05f;
@@ -439,6 +436,9 @@ public class BuilderTool implements UserController, HUDfriendly{
 				if(glfwGetKey(window, GLFW_KEY_SLASH)==GLFW_PRESS){ //Minus-Taste, US-Layout und so..
 					distance += 0.05f;
 					createTool();
+				}
+				if(glfwGetKey(window, GLFW_KEY_I)==GLFW_PRESS){ //Minus-Taste, US-Layout und so..
+					chunkMap.printMap();
 				}
 				/*
 				 if(glfwGetInputMode(window, GLFW_CURSOR)==GLFW_CURSOR_DISABLED){

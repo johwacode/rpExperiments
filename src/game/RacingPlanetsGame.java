@@ -151,7 +151,7 @@ public class RacingPlanetsGame {
 			for(Curve c:scene.getModels(maxViewDistance)){
 				renderer.processEntity(c);
 			}
-			for(Entity e:scene.getBuilderTool().getSpheres()){
+			for(Entity e:scene.getBuilderTool().getPreview()){
 				renderer.processEntity(e);
 			}
 
@@ -252,7 +252,7 @@ public class RacingPlanetsGame {
 			for(Curve c:scene.getModels(maxViewDistance)){
 				renderer.processEntity(c);
 			}
-			for(Entity e:scene.getBuilderTool().getSpheres()){
+			for(Entity e:scene.getBuilderTool().getPreview()){
 				renderer.processEntity(e);
 			}
 

@@ -27,15 +27,6 @@ public class Vector3f implements Serializable{
 	public Vector3f duplicate(){
 		return new Vector3f(x, y, z);
 	}
-	
-	public static float angleBetween(Vector3f left, Vector3f right){
-		return (float) Math.acos(dot(left, right)/(left.length()*right.length()));
-	}
-	public static float angleBetweenXZ(Vector3f left, Vector3f right){
-		float dot = left.x*right.x+left.z*right.z;
-		float norm = (float) Math.sqrt(left.x*left.x+left.z*left.z)*(right.x*right.x+right.z*right.z);
-		return (float) Math.acos(dot/norm);
-	}
 
 	public void scale(float scale) {
 		x*=scale;

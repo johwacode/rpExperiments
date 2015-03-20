@@ -56,12 +56,10 @@ public class BuilderTool implements UserController, HUDfriendly{
 	private ChunkMap chunkMap;
 	private Terrain terrain;
 	private Tool tool;
-	private Trackpart currentTrackpart;
 	
 	private long window;
 	private Camera camera;
 	
-	private Texture sphereTexture;
 	private Texture asphalt;
 
 	public BuilderTool(SceneGraph scene){
@@ -90,8 +88,8 @@ public class BuilderTool implements UserController, HUDfriendly{
 	
 	public void createInitialPrisms(){
 		TrackAnchor start = new TrackAnchor(new Vector3f(375, 8.1f, -0.01f), new Vector3f(0,0,-1), new Vector3f(-1, 0, 0));
-		chunkMap.registerModel(Curve.createPreview(start, -0.01f, -0.3f, 20, 0).buildCurve());
-		chunkMap.registerModel(Curve.createPreview(Curve.getLastAnchor(), 0.02f, 0.1f, 15, 0).buildCurve());
+		chunkMap.registerModel(Curve.createPreview(start, -0.01f, -0.3f, 20, 0).buildCurve(chunkMap));
+		chunkMap.registerModel(Curve.createPreview(Curve.getLastAnchor(), 0.02f, 0.1f, 15, 0).buildCurve(chunkMap));
 	}
 	
 
@@ -159,7 +157,7 @@ public class BuilderTool implements UserController, HUDfriendly{
 		}
 		
 		private void createTrackPart(){
-			chunkMap.registerModel(previewCurve.buildCurve());
+			chunkMap.registerModel(previewCurve.buildCurve(chunkMap));
 		}
 
 		@Override

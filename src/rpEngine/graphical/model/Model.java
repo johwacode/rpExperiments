@@ -15,7 +15,8 @@ public class Model {
 	public Texture getTexture() {
 		return texture;
 	}
-	
-	
+	public void changeTexture(Texture texture){
+		this.texture = texture;
+	}
 
 }

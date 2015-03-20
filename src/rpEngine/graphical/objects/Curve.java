@@ -1,5 +1,6 @@
 package rpEngine.graphical.objects;
 
+import game.ChunkMap;
 import game.SceneGraph;
 import rpEngine.graphical.model.Loader;
 import rpEngine.graphical.model.Material;
@@ -9,7 +10,7 @@ import rpEngine.graphical.structs.TrackAnchor;
 import utils.math.Vector3f;
 
 /**
- * serializable Entity out of which Tracks can be built. 
+ * serializable? Entity out of which Tracks can be built. 
  * defined by a start-anchor, XY-angle, distance, pitch, height, ... 
  * @author joh
  *
@@ -22,9 +23,15 @@ public class Curve extends Entity{
 	private static TrackAnchor lastAim;
 	
 	protected TrackAnchor anchor, aim;
+	protected float angleXZ, heightDiff, distance, pitch;
 
-	private Curve(Model model, Vector3f position){
-		super(model, position, 0, 0, 0, 1);
+	private Curve(Model model, TrackAnchor anchor, float angleXZ, float heighDifference, float distance, float pitch){
+		super(model, anchor.getPosition(), 0, 0, 0, 1);
+		this.anchor = anchor;
+		this.angleXZ = angleXZ;
+		this.heightDiff = heighDifference;
+		this.distance = distance;
+		this.pitch = pitch;
 	}
 	
 	public static Preview createPreview(TrackAnchor anchor, float angleXZ, float height,
@@ -49,29 +56,27 @@ public class Curve extends Entity{
 	 *
 	 */
 	public static class Preview extends Curve{
-		private static Texture texture = new Texture(Loader.loadTexture(Material.WATER, "surface_water3", true));
+		private static Texture preViewTexture = new Texture(Loader.loadTexture(Material.WATER, "surface_water3", true));
 		
-		private static float[] vertexArray, normals, textureCoords;
-		private static int[] indices;
 		private static TrackAnchor previewAim;
 		
-		private Preview(TrackAnchor anchor, float angleXZ, float height,
+		private Preview(TrackAnchor anchor, float angleXZ, float heightDiff,
 				float distance, float pitch) {
-			super(createModel(anchor, angleXZ, height, distance, pitch, texture), anchor.getPosition());	
-			this.anchor = anchor;
+			super(createModel(anchor, angleXZ, height, distance, pitch, preViewTexture), anchor, angleXZ, heightDiff, distance, pitch);
 			this.aim = previewAim;
 		}
 		
-		public Curve buildCurve(){
-			//calc lenght(only correct for very small angles)
+		public Curve buildCurve(ChunkMap c){
+			//calc length(only correct for very small angles)
 			Vector3f distVec = new Vector3f();
 			Vector3f.sub(anchor.getPosition(), aim.getPosition(), distVec);
 			float distance = distVec.length();
 			//get model
-			Model model = new Model(Loader.loadEntityToVAO(vertexArray, textureCoords, normals, indices, distance), asphalt);
+			Model model = this.getModel();
+			model.changeTexture(asphalt);
 			lastAim = previewAim;
 			//get curve
-			return new Curve(model, getPosition());
+			return new Curve(model, anchor, angleXZ, heightDiff, this.distance, pitch);
 		}
 		
 		private static Model createModel(TrackAnchor anchorStart, float angleXZ, float height, float distance, float pitch, Texture texture){
@@ -83,6 +88,8 @@ public class Curve extends Entity{
 			float stepwidthPitch = pitch/stepCount;
 			
 			//init Vertex-Variables
+			float[] vertexArray, normals, textureCoords;
+			int[] indices;
 			int rowsPerSide = ROWS/2;
 			vertexArray = new float[(stepCount+1)*ROWS*3];
 			Vector3f lastPos = anchorStart.getPosition().duplicate();
@@ -106,8 +113,11 @@ public class Curve extends Entity{
 			for(int i=0; i<=stepCount; i++){
 				if(i>1){
 					//build main-point (center)
+					//System.out.println("rotation: "+angleXZ+", y+: "+stepwidthY);
+					//System.out.println("directionPre: "+direction);
 					direction.rotateXZ(angleXZ);
 					direction.y += stepwidthY;
+					//System.out.println("directionAfter: "+direction);
 					Vector3f.add(lastPos, direction, centerPos);
 					
 					//calc pitch

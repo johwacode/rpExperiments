@@ -42,4 +42,8 @@ public class RPFileLibrary {
 		}
 		return res;
 	}
+	public static File[] readFilenames(String foldername){
+		File folder = new File(foldername);
+		return folder.listFiles();
+	}
 }

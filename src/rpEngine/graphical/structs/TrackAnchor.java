@@ -5,6 +5,7 @@ import java.io.Serializable;
 import utils.math.Vector3f;
 
 public class TrackAnchor implements Serializable {
+	private static final long serialVersionUID = 1L;
 	private Vector3f position;
 	private Vector3f direction;
 	private Vector3f pitch; //="to-left-Vector"

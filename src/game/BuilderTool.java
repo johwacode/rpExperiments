@@ -85,7 +85,6 @@ public class BuilderTool implements UserController, HUDfriendly{
 		case "currentTool": return tool.getClass().getSimpleName(); //TODO: durch int ersetzen?
 		default: return "";
 		}
-		
 	}
 	
 	public void createInitialPrisms(){

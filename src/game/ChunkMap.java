@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import rpEngine.graphical.objects.Curve;
+import rpEngine.graphical.objects.Curve.SerializableCurveData;
 import rpEngine.graphical.objects.Trackpart.ReconstructablePart;
 import utils.math.Vector3f;
 
@@ -110,10 +111,10 @@ public class ChunkMap {
 	}
 	
 	public Serializable getContent(){
-		LinkedList<ReconstructablePart> parts = new LinkedList<>();
+		LinkedList<Serializable> parts = new LinkedList<>();
 		for(Curve c : getModels(currentMinX, currentMaxX, currentMinZ, currentMaxZ)){
-			//ReconstructablePart part = c.getReconstructablePart();
-			//if(!parts.contains(part)) parts.add(part); //TODO: testen ob contains funktioniert
+			SerializableCurveData data = c.getData();
+			if(!parts.contains(data)) parts.add(data);
 		}
 		return parts;
 	}

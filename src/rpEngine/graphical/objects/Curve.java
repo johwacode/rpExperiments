@@ -1,5 +1,7 @@
 package rpEngine.graphical.objects;
 
+import java.io.Serializable;
+
 import game.SceneGraph;
 import rpEngine.graphical.model.Loader;
 import rpEngine.graphical.model.Material;
@@ -16,15 +18,29 @@ import utils.math.Vector3f;
  */
 public class Curve extends Entity{
 	private static Texture asphalt = new Texture(Loader.loadTexture(Material.ASPHALT, "asphalt", true));
-	private static final float height = 0.4f;
+	private static final float HEIGHT = 0.4f;
 	private static int ROWS = 11; //has to be odd (Or even(but odd) prim?!)
 	
 	private static TrackAnchor lastAim;
 	
 	protected TrackAnchor anchor, aim;
+	protected SerializableCurveData data;
 
-	private Curve(Model model, Vector3f position){
-		super(model, position, 0, 0, 0, 1);
+	/**
+	 * Constructor if Model already exists (from preview)
+	 */
+	private Curve(Model model, SerializableCurveData data){
+		super(model, data.anchorStart.getPosition(), 0, 0, 0, 1);
+		this.data = data;
+	}
+	
+	/**
+	 * Constructor that has to be rebuild from serialized Data
+	 * new Curves can be build by createPreview(data).buildCurve();
+	 */
+	public Curve(SerializableCurveData data){
+		super(Preview.createModel(data.anchorStart, data.angleXZ, data.height, data.distance, data.pitch, asphalt),
+				data.anchorStart.getPosition(), 0, 0, 0, 1);
 	}
 	
 	public static Preview createPreview(TrackAnchor anchor, float angleXZ, float height,
@@ -32,6 +48,10 @@ public class Curve extends Entity{
 		return new Preview(anchor, angleXZ, height, distance, pitch);
 	}
 	
+	public SerializableCurveData getData() {
+		return data;
+	}
+
 	public static TrackAnchor getLastAnchor(){
 		return lastAim;
 	}
@@ -43,7 +63,7 @@ public class Curve extends Entity{
 	
 	/**
 	 * The Preview-Class of Curves
-	 * Curve with a different Texture and additional Attribs for easier Converting into a real curve.
+	 * Curve with a different Texture. originally with additional Data, but a little useless at the moment
 	 * There should always be max 1 Instance at a time (~singleton)
 	 * @author joh
 	 *
@@ -55,24 +75,33 @@ public class Curve extends Entity{
 		
 		private Preview(TrackAnchor anchor, float angleXZ, float height,
 				float distance, float pitch) {
-			super(createModel(anchor, angleXZ, height, distance, pitch, texture), anchor.getPosition());	
+			super(createModel(anchor, angleXZ, height, distance, pitch, texture),
+					new SerializableCurveData(anchor, angleXZ, height, distance, pitch));	
 			this.anchor = anchor;
 			this.aim = previewAim;
 		}
 		
+		/**
+		 * @return the real Curve. with final texture etc
+		 */
 		public Curve buildCurve(){
-			//calc length(only correct for very small angles)
-			Vector3f distVec = new Vector3f();
-			Vector3f.sub(anchor.getPosition(), aim.getPosition(), distVec);
-			float distance = distVec.length();
 			//get model
 			Model model = this.getModel();
 			model.setTexture(asphalt);
 			lastAim = previewAim;
 			//get curve
-			return new Curve(model, getPosition());
+			return new Curve(model, data);
 		}
 		
+		/**
+		 * Creates a Curve-Track-Model out of several given Values.
+		 * @param anchorStart
+		 * @param angleXZ
+		 * @param height
+		 * @param distance
+		 * @param pitch
+		 * @param texture
+		 */
 		private static Model createModel(TrackAnchor anchorStart, float angleXZ, float height, float distance, float pitch, Texture texture){
 			if(anchorStart==null) throw new IllegalStateException("No AnchorPoint defined!");
 			//cut into min 10 steps:
@@ -186,6 +215,21 @@ public class Curve extends Entity{
 			previewAim = new TrackAnchor(aimPosition, direction, curPitch);
 			
 			return new Model(Loader.loadEntityToVAO(vertexArray, textureCoords, normals, indices, distance), texture);
+		}
+	}
+
+	public static class SerializableCurveData implements Serializable{
+		private static final long serialVersionUID = 1L;
+		public TrackAnchor anchorStart;
+		public float angleXZ, height, distance, pitch;
+		
+		public SerializableCurveData(TrackAnchor anchorStart, float angleXZ,
+				float height, float distance, float pitch) {
+			this.anchorStart = anchorStart;
+			this.angleXZ = angleXZ;
+			this.height = height;
+			this.distance = distance;
+			this.pitch = pitch;
 		}
 	}
 

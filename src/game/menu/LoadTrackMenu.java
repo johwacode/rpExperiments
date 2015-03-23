@@ -1,10 +1,10 @@
 package game.menu;
 
+import game.RacingPlanetsGame.RPGameMode;
+
 import java.io.File;
 import java.io.Serializable;
-import java.util.List;
 
-import rpEngine.graphical.objects.Curve.SerializableCurveData;
 import rpEngine.graphical.objects2d.Button;
 import rpEngine.graphical.objects2d.HUDModelGenerator;
 import utils.fileLoader.RPFileLibrary;
@@ -42,11 +42,7 @@ public class LoadTrackMenu extends Menu{
 	//TODO create Method in Gamefile for loading TrackData
 	private void loadTrack(int i){
 		System.out.println("..loading Track#"+i+"..");
-		List<Serializable> dataList = (List<Serializable>) RPFileLibrary.readFile("savedTracks/"+files[i].getName());
-		for(Serializable data: dataList){
-			SerializableCurveData curveData = (SerializableCurveData) data;
-			System.out.println("angleXZ: "+curveData.angleXZ);
-		}
-		//controller.getGame().setMode(RPGameMode.BUILDMODE);
+		Serializable dataList = RPFileLibrary.readFile("savedTracks/"+files[i].getName());
+		controller.getGame().setMode(RPGameMode.BUILDMODE, dataList);
 	}
 }

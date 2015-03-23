@@ -1,8 +1,9 @@
 package rpEngine.graphical.objects;
 
+import game.SceneGraph;
+
 import java.io.Serializable;
 
-import game.SceneGraph;
 import rpEngine.graphical.model.Loader;
 import rpEngine.graphical.model.Material;
 import rpEngine.graphical.model.Model;
@@ -41,6 +42,7 @@ public class Curve extends Entity{
 	public Curve(SerializableCurveData data){
 		super(Preview.createModel(data.anchorStart, data.angleXZ, data.height, data.distance, data.pitch, asphalt),
 				data.anchorStart.getPosition(), 0, 0, 0, 1);
+		lastAim = data.anchorStart;
 	}
 	
 	public static Preview createPreview(TrackAnchor anchor, float angleXZ, float height,
@@ -103,7 +105,7 @@ public class Curve extends Entity{
 		 * @param texture
 		 */
 		private static Model createModel(TrackAnchor anchorStart, float angleXZ, float height, float distance, float pitch, Texture texture){
-			if(anchorStart==null) throw new IllegalStateException("No AnchorPoint defined!");
+			if(anchorStart==null) throw new IllegalArgumentException("No AnchorPoint defined!");
 			//cut into min 10 steps:
 			int stepCount = (distance>10)? (int)Math.ceil(distance) : 10;
 			float stepwidth = distance/stepCount; // ~=1, if distance>10

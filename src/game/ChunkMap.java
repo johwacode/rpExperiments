@@ -6,7 +6,6 @@ import java.util.List;
 
 import rpEngine.graphical.objects.Curve;
 import rpEngine.graphical.objects.Curve.SerializableCurveData;
-import rpEngine.graphical.objects.Trackpart.ReconstructablePart;
 import utils.math.Vector3f;
 
 public class ChunkMap {
@@ -22,6 +21,10 @@ public class ChunkMap {
 	public ChunkMap(int minX, int maxX, int minZ, int maxZ){
 		map = new List[(maxX-minX)/RASTERSIZE][(maxZ-minZ)/RASTERSIZE];
 		this.centerX = -minX/RASTERSIZE; this.centerZ = -minZ/RASTERSIZE;
+	}
+	
+	public boolean isEmpty(){
+		return isEmpty;
 	}
 	
 	
@@ -52,6 +55,7 @@ public class ChunkMap {
 	}
 	
 	private void setMinAndMax(int x, int z) {
+		//on first call
 		if(isEmpty){
 			currentMinX = x;
 			currentMaxX = x;
@@ -59,6 +63,7 @@ public class ChunkMap {
 			currentMaxZ = z;
 			isEmpty = false;
 		}
+		//anytime else
 		else{
 			if(x<currentMinX) currentMinX=x;
 			else if(x>currentMaxX) currentMaxX=x;
@@ -110,12 +115,16 @@ public class ChunkMap {
 		getModels(x+centerX, z+centerZ).remove(curve);
 	}
 	
+	/**
+	 * creates a List<Serializable> with serializable data of every contained Item (Curves for now)
+	 */
 	public Serializable getContent(){
 		LinkedList<Serializable> parts = new LinkedList<>();
 		for(Curve c : getModels(currentMinX, currentMaxX, currentMinZ, currentMaxZ)){
 			SerializableCurveData data = c.getData();
 			if(!parts.contains(data)) parts.add(data);
 		}
+		if(!isEmpty)parts.add(Curve.getLastAnchor());
 		return parts;
 	}
 	

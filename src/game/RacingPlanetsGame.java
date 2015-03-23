@@ -6,6 +6,9 @@ import static org.lwjgl.system.glfw.GLFW.glfwGetInputMode;
 import game.menu.MainMenu;
 import game.menu.MenuController;
 
+import java.io.Serializable;
+import java.util.List;
+
 import org.lwjgl.system.glfw.GLFW;
 
 import rpEngine.graphical.model.Loader;
@@ -13,11 +16,11 @@ import rpEngine.graphical.model.Material;
 import rpEngine.graphical.model.Texture;
 import rpEngine.graphical.objects.Camera;
 import rpEngine.graphical.objects.Curve;
+import rpEngine.graphical.objects.Curve.SerializableCurveData;
 import rpEngine.graphical.objects.Entity;
 import rpEngine.graphical.objects.Light;
 import rpEngine.graphical.objects.ParticleStream;
 import rpEngine.graphical.objects.Terrain;
-import rpEngine.graphical.objects.Trackpart;
 import rpEngine.graphical.objects2d.DebugLine;
 import rpEngine.graphical.objects2d.HUDElement;
 import rpEngine.graphical.objects2d.RPMmeter;
@@ -39,15 +42,19 @@ public class RacingPlanetsGame {
 		this.window = window;
 		this.renderer = new MasterRenderer(window);
 		this.scene = new SceneGraph();
-		this.currentMode = new MenuMode();
+		this.currentMode = new MenuMode(null);
 	}
 	
 	public void setMode(RPGameMode newMode){
+		setMode(newMode, null);
+	}
+	
+	public void setMode(RPGameMode newMode, Serializable args){
 		currentMode.cleanUp();
 		switch(newMode){
-		case MENUMODE: currentMode = new MenuMode(); break;
-		case BUILDMODE: currentMode = new BuildMode(); break;
-		case RACINGMODE: currentMode = new Race(); break;
+		case MENUMODE: currentMode = new MenuMode(args); break;
+		case BUILDMODE: currentMode = new BuildMode(args); break;
+		case RACINGMODE: currentMode = new Race(args); break;
 		}
 	}
 	
@@ -69,10 +76,7 @@ public class RacingPlanetsGame {
 	
 	
 	public abstract class GameMode{
-		GameMode(){
-			init();
-		}
-		abstract void init();
+		GameMode(Serializable args){}
 		abstract void render();
 		void processInput(int key, int action){}
 		void cleanUp(){
@@ -95,8 +99,8 @@ public class RacingPlanetsGame {
 	public class MenuMode extends GameMode{
 		MenuController menuController;
 
-		@Override
-		public void init() {
+		public MenuMode(Serializable args) {
+			super(args);
 			menuController = new MenuController(RacingPlanetsGame.this, MainMenu.class);
 		}
 		
@@ -125,8 +129,8 @@ public class RacingPlanetsGame {
 	public class Race extends GameMode{
 	private int maxViewDistance = 25;
 		
-		@Override
-		public void init() {
+		public Race(Serializable args){
+			super(args);
 			initTerrain();
 			initEnvironment();
 			createVehicle();
@@ -217,10 +221,10 @@ public class RacingPlanetsGame {
 	public class BuildMode extends GameMode{
 		private int maxViewDistance = 3;
 		
-		@Override
-		public void init() {
+		public BuildMode(Serializable args) {
+			super(args);
 			initTerrain();
-			initEnvironment();
+			initEnvironment(args);
 			initHUD();
 			initCamera(window);
 			initBuilderTool();
@@ -298,7 +302,8 @@ public class RacingPlanetsGame {
 			scene.addToHUD(new ToolBoxDisplay(9.35f, 7));
 		}
 		
-		private void initEnvironment(){
+		@SuppressWarnings("unchecked")
+		private void initEnvironment(Serializable args){
 			//sun
 			scene.addLight(new Light(new Vector3f(300, -40, -10), new Vector3f(0.4f, 0.4f, 0.4f)));
 			//spots
@@ -306,7 +311,21 @@ public class RacingPlanetsGame {
 			scene.addLight(new Light(new Vector3f(380, 10, -30), new Vector3f(2,0,0), attenuation));
 			scene.addLight(new Light(new Vector3f(350, 17, -10), new Vector3f(0,2,2), attenuation));
 			scene.addLight(new Light(new Vector3f(370, 8, -80), new Vector3f(2,2,0), attenuation));
-			scene.setChunkMap(new ChunkMap(0, 800, -800, 0));
+			ChunkMap chunkMap = new ChunkMap(0, 800, -800, 0);
+			if(args != null){
+					//TODO: set AnchorPoint
+					List<Serializable> dataList = (List<Serializable>) args;
+					for(Serializable data: dataList){
+						SerializableCurveData curveData = (SerializableCurveData) data;
+						try{
+							chunkMap.registerModel(new Curve(curveData));
+						} catch(IllegalArgumentException e){
+							System.out.println("Unknown Data:");
+							System.out.println(curveData);
+						}
+					}
+			}
+			scene.setChunkMap(chunkMap);
 		}
 
 		private void initCamera(long window){

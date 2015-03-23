@@ -56,12 +56,10 @@ public class BuilderTool implements UserController, HUDfriendly{
 	private ChunkMap chunkMap;
 	private Terrain terrain;
 	private Tool tool;
-	private Trackpart currentTrackpart;
 	
 	private long window;
 	private Camera camera;
 	
-	private Texture sphereTexture;
 	private Texture asphalt;
 
 	public BuilderTool(SceneGraph scene){
@@ -74,7 +72,7 @@ public class BuilderTool implements UserController, HUDfriendly{
 		asphalt.setShineDamper(30);
 		asphalt.setReflectivity(5);
 		
-		createInitialPrisms();
+		if(chunkMap.isEmpty()) createInitialPrisms();
 		
 		tool = new CurveTool();
 	}

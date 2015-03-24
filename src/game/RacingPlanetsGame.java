@@ -127,7 +127,7 @@ public class RacingPlanetsGame {
 	 * each opponent built his own track part  
 	 */
 	public class Race extends GameMode{
-	private int maxViewDistance = 25;
+	private int maxViewDistance = 200;
 		
 		public Race(Serializable args){
 			super(args);

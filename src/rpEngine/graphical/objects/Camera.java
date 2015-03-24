@@ -73,6 +73,7 @@ public class Camera implements UserController{
 	 * @return true if collision is detected, false otherwise. Also adjusts the height, if needed. (still little rough)
 	 */
 	public boolean checkForCollision(Vector3f direction){
+		//TODO: rewrite when Curve-collisionDetection is working 
 		//create testpoint
 		Vector3f testPoint = new Vector3f();
 		Vector3f.add(position, direction, testPoint);
@@ -86,7 +87,7 @@ public class Camera implements UserController{
 		//If no intersection save highestBeneath and lowestAbove
 		try{
 			for(Curve curve: scene.getChunkMap().getModels(testPoint.x, testPoint.z)){
-				float height = curve.getTopPositionAt(testPoint.x, testPoint.z);
+				float height = 0; //curve.getTopPositionAt(testPoint.x, testPoint.z);
 				if(height>highestBeneath){
 					//Prism inside PlayerBox?
 					if(height<yPlayerTop && height>yPlayerBottom)return true;

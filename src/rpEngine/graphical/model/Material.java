@@ -8,5 +8,7 @@ public enum Material{
 	MUD,
 	WATER,
 	RED,
-	ASPHALT
+	PREVIEW,
+	ASPHALT,
+	TRACKBORDER
 }

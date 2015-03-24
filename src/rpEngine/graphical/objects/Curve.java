@@ -3,6 +3,8 @@ package rpEngine.graphical.objects;
 import game.SceneGraph;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import rpEngine.graphical.model.Loader;
 import rpEngine.graphical.model.Material;
@@ -19,19 +21,19 @@ import utils.math.Vector3f;
  */
 public class Curve extends Entity{
 	private static Texture asphalt = new Texture(Loader.loadTexture(Material.ASPHALT, "asphalt", true));
+	private static Texture trackborder = new Texture(Loader.loadTexture(Material.TRACKBORDER, "trackborder", true));
 	private static final float HEIGHT = 0.4f;
 	private static int ROWS = 11; //has to be odd (Or even(but odd) prim?!)
 	
 	private static TrackAnchor lastAim;
 	
-	protected TrackAnchor anchor, aim;
 	protected SerializableCurveData data;
 
 	/**
 	 * Constructor if Model already exists (from preview)
 	 */
 	private Curve(Model model, SerializableCurveData data){
-		super(model, data.anchorStart.getPosition(), 0, 0, 0, 1);
+		super(model, data.getWorldPosition(), 0, 0, 0, 1);
 		this.data = data;
 	}
 	
@@ -40,9 +42,9 @@ public class Curve extends Entity{
 	 * new Curves can be build by createPreview(data).buildCurve();
 	 */
 	public Curve(SerializableCurveData data){
-		super(Preview.createModel(data.anchorStart, data.angleXZ, data.height, data.distance, data.pitch, asphalt),
-				data.anchorStart.getPosition(), 0, 0, 0, 1);
-		lastAim = data.anchorStart;
+		super(Preview.createModel(data.getFirstAnchor(), data.angleXZ, data.height, data.distance, data.pitch, asphalt),
+				data.getWorldPosition(), 0, 0, 0, 1);
+		lastAim = data.getLastAnchor();
 	}
 	
 	public static Preview createPreview(TrackAnchor anchor, float angleXZ, float height,
@@ -59,7 +61,8 @@ public class Curve extends Entity{
 	}
 	
 	public TrackAnchor getAim(){
-		return aim;
+		//TODO
+		return null;
 	}
 	
 	
@@ -71,16 +74,14 @@ public class Curve extends Entity{
 	 *
 	 */
 	public static class Preview extends Curve{
-		private static Texture texture = new Texture(Loader.loadTexture(Material.WATER, "surface_water3", true));
+		private static Texture texture = new Texture(Loader.loadTexture(Material.PREVIEW, "surface_water3", true));
 		
 		private static TrackAnchor previewAim;
 		
 		private Preview(TrackAnchor anchor, float angleXZ, float height,
 				float distance, float pitch) {
 			super(createModel(anchor, angleXZ, height, distance, pitch, texture),
-					new SerializableCurveData(anchor, angleXZ, height, distance, pitch));	
-			this.anchor = anchor;
-			this.aim = previewAim;
+					new SerializableCurveData(anchor, angleXZ, height, distance, pitch));
 		}
 		
 		/**
@@ -106,6 +107,10 @@ public class Curve extends Entity{
 		 */
 		private static Model createModel(TrackAnchor anchorStart, float angleXZ, float height, float distance, float pitch, Texture texture){
 			if(anchorStart==null) throw new IllegalArgumentException("No AnchorPoint defined!");
+			
+			System.out.println("=============");
+			System.out.println("Curve: start:"+anchorStart+", angle:"+angleXZ+", height:"+height+", distance:"+distance+", pitch:"+pitch);
+			
 			//cut into min 10 steps:
 			int stepCount = (distance>10)? (int)Math.ceil(distance) : 10;
 			float stepwidth = distance/stepCount; // ~=1, if distance>10
@@ -144,6 +149,7 @@ public class Curve extends Entity{
 					curPitch.rotateXZ(angleXZ);
 					curPitch.y += stepwidthPitch;
 				}
+				
 				
 				
 				//add Vertices (from centerPos +- pitch)
@@ -222,16 +228,33 @@ public class Curve extends Entity{
 
 	public static class SerializableCurveData implements Serializable{
 		private static final long serialVersionUID = 1L;
-		public TrackAnchor anchorStart;
+		public List<TrackAnchor> anchors;
 		public float angleXZ, height, distance, pitch;
 		
 		public SerializableCurveData(TrackAnchor anchorStart, float angleXZ,
 				float height, float distance, float pitch) {
-			this.anchorStart = anchorStart;
+			anchors = new ArrayList<>();
+			addAnchor(anchorStart);
 			this.angleXZ = angleXZ;
 			this.height = height;
 			this.distance = distance;
 			this.pitch = pitch;
+		}
+		
+		private void addAnchor(TrackAnchor anchor){
+			this.anchors.add(anchor);
+		}
+		
+		public Vector3f getWorldPosition(){
+			return anchors.get(0).getPosition();
+		}
+		
+		public TrackAnchor getFirstAnchor(){
+			return anchors.get(0);
+		}
+		
+		public TrackAnchor getLastAnchor(){
+			return this.anchors.get(anchors.size()-1);
 		}
 	}
 
@@ -246,5 +269,11 @@ public class Curve extends Entity{
 				y+worldPos.y,
 				z+worldPos.z
 				));
+	}
+
+	@Override
+	public boolean intersects(Vector3f point) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }

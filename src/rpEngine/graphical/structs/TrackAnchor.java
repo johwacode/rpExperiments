@@ -39,4 +39,13 @@ public class TrackAnchor implements Serializable {
 	public void setPitch(Vector3f pitch) {
 		this.pitch = pitch;
 	}
+	
+	public String toString(){
+		StringBuilder sb = new StringBuilder();
+		sb.append("TrackAnchor(");
+		sb.append("pos:"+position+";");
+		sb.append("dir:"+direction+";");
+		sb.append("pitch:"+pitch+")");
+		return sb.toString();
+	}
 }

@@ -2,14 +2,13 @@ package game;
 
 import static org.lwjgl.system.glfw.GLFW.GLFW_CURSOR;
 import static org.lwjgl.system.glfw.GLFW.GLFW_CURSOR_DISABLED;
-import static org.lwjgl.system.glfw.GLFW.GLFW_KEY_1;
-import static org.lwjgl.system.glfw.GLFW.GLFW_KEY_2;
 import static org.lwjgl.system.glfw.GLFW.GLFW_KEY_3;
-import static org.lwjgl.system.glfw.GLFW.GLFW_KEY_4;
 import static org.lwjgl.system.glfw.GLFW.GLFW_KEY_A;
+import static org.lwjgl.system.glfw.GLFW.GLFW_KEY_BACKSPACE;
 import static org.lwjgl.system.glfw.GLFW.GLFW_KEY_D;
 import static org.lwjgl.system.glfw.GLFW.GLFW_KEY_DOWN;
 import static org.lwjgl.system.glfw.GLFW.GLFW_KEY_ENTER;
+import static org.lwjgl.system.glfw.GLFW.GLFW_KEY_I;
 import static org.lwjgl.system.glfw.GLFW.GLFW_KEY_LEFT;
 import static org.lwjgl.system.glfw.GLFW.GLFW_KEY_LEFT_CONTROL;
 import static org.lwjgl.system.glfw.GLFW.GLFW_KEY_RIGHT;
@@ -20,21 +19,14 @@ import static org.lwjgl.system.glfw.GLFW.GLFW_KEY_UP;
 import static org.lwjgl.system.glfw.GLFW.GLFW_KEY_W;
 import static org.lwjgl.system.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
 import static org.lwjgl.system.glfw.GLFW.GLFW_PRESS;
-import static org.lwjgl.system.glfw.GLFW.GLFW_KEY_I;
-import static org.lwjgl.system.glfw.GLFW.GLFW_KEY_BACKSPACE;
 import static org.lwjgl.system.glfw.GLFW.glfwGetInputMode;
 import static org.lwjgl.system.glfw.GLFW.glfwGetKey;
 
-import java.nio.DoubleBuffer;
 import java.text.DateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
-
-import org.lwjgl.BufferUtils;
-import org.lwjgl.system.glfw.GLFW;
 
 import rpEngine.graphical.model.Loader;
 import rpEngine.graphical.model.Material;
@@ -43,9 +35,7 @@ import rpEngine.graphical.objects.Camera;
 import rpEngine.graphical.objects.Curve;
 import rpEngine.graphical.objects.Entity;
 import rpEngine.graphical.objects.ParticlePath;
-import rpEngine.graphical.objects.Sphere;
 import rpEngine.graphical.objects.Terrain;
-import rpEngine.graphical.objects.Trackpart;
 import rpEngine.graphical.structs.HUDfriendly;
 import rpEngine.graphical.structs.TrackAnchor;
 import rpEngine.graphical.structs.UserController;

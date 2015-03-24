@@ -8,8 +8,19 @@ import utils.math.Vector3f;
 
 public class Sphere extends Entity {
 	private static VAObject vao = OBJLoader.loadOBJ("sphere");
+	private float radius;
 
 	public Sphere(Vector3f position, float size, Texture texture) {
 		super(new Model(vao, texture), position, 0, 0, 0, size);
+		//TODO: check, whether size is Radius or diameter (=2r)
+		radius = size;
 	}
+
+	@Override
+	public boolean intersects(Vector3f point) {
+		Vector3f test = Vector3f.add(point, getPosition());
+		return (test.length()<=radius);
+	}
+
+	
 }

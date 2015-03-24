@@ -77,8 +77,8 @@ public class BuilderTool implements UserController, HUDfriendly{
 	
 	public void createInitialPrisms(){
 		TrackAnchor start = new TrackAnchor(new Vector3f(375, 8.1f, -0.01f), new Vector3f(0,0,-1), new Vector3f(-1, 0, 0));
-		chunkMap.registerModel(Curve.createPreview(start, -0.01f, -0.3f, 20, 0).buildCurve());
-		chunkMap.registerModel(Curve.createPreview(Curve.getLastAnchor(), 0.02f, 0.1f, 15, 0).buildCurve());
+		chunkMap.registerModel(Curve.create(start, -0.2f, -0.3f, 20, 0));
+		chunkMap.registerModel(Curve.create(Curve.getLastAnchor(), 0.3f, 0.1f, 15, 0));
 	}
 	
 
@@ -126,7 +126,7 @@ public class BuilderTool implements UserController, HUDfriendly{
 
 	
 	private class CurveTool implements Tool{
-		private Curve.Preview previewCurve;
+		private Curve previewCurve;
 		private float pitch, angleXZ, distance, heightDifference;
 		
 		private CurveTool(){
@@ -142,7 +142,7 @@ public class BuilderTool implements UserController, HUDfriendly{
 		}
 		
 		public void createTool() {
-			previewCurve = Curve.createPreview(Curve.getLastAnchor(), angleXZ, heightDifference, distance, pitch);
+			previewCurve = Curve.create(Curve.getLastAnchor(), angleXZ, heightDifference, distance, pitch, true);
 		}
 		
 		private void createTrackPart(){
@@ -174,19 +174,19 @@ public class BuilderTool implements UserController, HUDfriendly{
 				}
 				
 				if(glfwGetKey(window, GLFW_KEY_LEFT)==GLFW_PRESS){
-					angleXZ -= 0.005f;
+					angleXZ -= 0.03f;
 					createTool();
 				}
 				if(glfwGetKey(window, GLFW_KEY_RIGHT)==GLFW_PRESS){
-					angleXZ += 0.005f;
+					angleXZ += 0.03f;
 					createTool();
 				}
 				if(glfwGetKey(window, GLFW_KEY_UP)==GLFW_PRESS){
-					distance += 0.1f;
+					distance += 0.2f;
 					createTool();
 				}
 				if(glfwGetKey(window, GLFW_KEY_DOWN)==GLFW_PRESS){
-					distance -= 0.1f;
+					distance -= 0.2f;
 					createTool();
 				}
 				if(glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT)==GLFW_PRESS){

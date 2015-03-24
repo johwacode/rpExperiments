@@ -27,6 +27,7 @@ import rpEngine.graphical.objects2d.RPMmeter;
 import rpEngine.graphical.objects2d.ToolBoxDisplay;
 import rpEngine.graphical.objects2d.text.Text;
 import rpEngine.graphical.renderer.MasterRenderer;
+import rpEngine.graphical.structs.TrackAnchor;
 import utils.math.Vector3f;
 
 public class RacingPlanetsGame {
@@ -316,13 +317,15 @@ public class RacingPlanetsGame {
 					//TODO: set AnchorPoint
 					List<Serializable> dataList = (List<Serializable>) args;
 					for(Serializable data: dataList){
-						SerializableCurveData curveData = (SerializableCurveData) data;
 						try{
+							SerializableCurveData curveData = (SerializableCurveData) data;
 							chunkMap.registerModel(new Curve(curveData));
 						} catch(IllegalArgumentException e){
-							System.out.println("Unknown Data:");
-							System.out.println(curveData);
+							System.out.println("Unknown Data");
 						}
+						  catch(ClassCastException c){
+							  Curve.setLastAnchor((TrackAnchor) data);
+						  }
 					}
 			}
 			scene.setChunkMap(chunkMap);

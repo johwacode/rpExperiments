@@ -145,10 +145,9 @@ public class Curve extends Entity{
 				curPitch.y += stepwidthPitch;
 			}
 			
-			
 			//store the Anchor.
-			Vector3f aimPosition = Vector3f.add(anchorStart.getPosition(), centerPos);
-			data.addAnchor(new TrackAnchor(aimPosition, direction, curPitch));
+			Vector3f anchorPosition = Vector3f.add(anchorStart.getPosition(), centerPos);
+			data.addAnchor(new TrackAnchor(anchorPosition, direction.duplicate(), curPitch.duplicate()));
 			
 			//add Vertices (from centerPos +- pitch)
 			for(int row=-rowsPerSide; row<=rowsPerSide; row++){
@@ -156,65 +155,77 @@ public class Curve extends Entity{
 				vertexArray[vertexNumber+1] = centerPos.y + row*curPitch.y;
 				vertexArray[vertexNumber+2] = centerPos.z + row*curPitch.z;
 				
-				/*addDebugSphere(vertexArray[vertexNumber],
-						vertexArray[vertexNumber+1],
-						vertexArray[vertexNumber+2]
-						, anchorStart.getPosition());
-				*/
-				
 				//TODO: calc real normals -> x,z determined by direction
 				normals[vertexNumber] = 0;
 				normals[vertexNumber+1] = 1;
 				normals[vertexNumber+2] = 0;
 				
-				switch((texNumber/2)%4){
-				case 0: textureCoords[texNumber] = 0;
-					textureCoords[texNumber+1] = 0;
-					break;
-				case 1: textureCoords[texNumber] = 0;
-					textureCoords[texNumber+1] = 1;
-					break;
-				case 2: textureCoords[texNumber] = 1;
-					textureCoords[texNumber+1] = 1;
-					break;
-				case 3: textureCoords[texNumber] = 1;
-					textureCoords[texNumber+1] = 0;
-					break;
-				}
-				
 				vertexNumber += 3;
-				texNumber += 2;
+				
+				texNumber = setTextureCoords(textureCoords, texNumber);
 			}
-			
-			
+						
 			lastPos = centerPos;
 		}
 		
+		return new Model(Loader.loadEntityToVAO(vertexArray,
+				textureCoords,
+				normals,
+				generateIndices(stepCount, ROWS),
+				furthestDistance(data)),
+				texture);
+	}
+	
+	/**
+	 * 
+	 * @param texCoordArray
+	 * @param counter
+	 * @return counter
+	 */
+	private static int setTextureCoords(float[] texCoordArray, int counter){
+		switch((counter/2)%4){
+		case 0: texCoordArray[counter] = 0;
+			texCoordArray[counter+1] = 0;
+			break;
+		case 1: texCoordArray[counter] = 0;
+			texCoordArray[counter+1] = 1;
+			break;
+		case 2: texCoordArray[counter] = 1;
+			texCoordArray[counter+1] = 1;
+			break;
+		case 3: texCoordArray[counter] = 1;
+			texCoordArray[counter+1] = 0;
+			break;
+		}
+		return counter += 2;
+	}
+	
+	private static int[] generateIndices(int stepCount, int rowCount){
 		/*
 		 * n rows with m vertices each
 		 * -> (n-1)(m-1) triangleLines for right-hand-triangles, equally left-hand-ones
 		 * --> *2 -> *3points per triangle
 		 */
-		int[] indices = new int[6*(stepCount)*(ROWS-1)];
+		int[] indices = new int[6*(stepCount)*(rowCount-1)];
 		int i = 0;
 		int currentVertex;
 		for(int stripe=0; stripe<stepCount; stripe++){
 			for(int quad=0; quad<ROWS-1; quad++){
 				
 				//indices for 2 triangles (~ one quad)
-				currentVertex = stripe*ROWS+quad;
+				currentVertex = stripe*rowCount+quad;
 				indices[i+0] = currentVertex;
-				indices[i+1] = currentVertex+ROWS;
+				indices[i+1] = currentVertex+rowCount;
 				indices[i+2] = currentVertex+1;
 				
-				indices[i+3] = currentVertex+ROWS;
-				indices[i+4] = currentVertex+ROWS+1;
+				indices[i+3] = currentVertex+rowCount;
+				indices[i+4] = currentVertex+rowCount+1;
 				indices[i+5] = currentVertex+1;
 				
 				i+=6;
 			}
 		}
-		return new Model(Loader.loadEntityToVAO(vertexArray, textureCoords, normals, indices, furthestDistance(data)), texture);
+		return indices;
 	}
 	
 	private static float furthestDistance(SerializableCurveData data){

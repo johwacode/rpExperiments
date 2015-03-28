@@ -17,7 +17,6 @@ public abstract class Entity {
 	
 	public Entity(Model model, Vector3f position, float rotX,
 			float rotY, float rotZ, float scale) {
-		super();
 		this.model = model;
 		this.position = (position==null)? nullVector : position;
 		this.rotX = rotX;

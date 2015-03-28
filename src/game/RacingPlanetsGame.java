@@ -314,7 +314,7 @@ public class RacingPlanetsGame {
 			scene.addLight(new Light(new Vector3f(370, 8, -80), new Vector3f(2,2,0), attenuation));
 			ChunkMap chunkMap = new ChunkMap(0, 800, -800, 0);
 			if(args != null){
-					//TODO: set AnchorPoint
+					//TODO: organize more flexible and for more datatypes
 					List<Serializable> dataList = (List<Serializable>) args;
 					for(Serializable data: dataList){
 						try{

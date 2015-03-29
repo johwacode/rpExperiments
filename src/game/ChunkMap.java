@@ -7,7 +7,6 @@ import java.util.List;
 import rpEngine.graphical.objects.Curve;
 import rpEngine.graphical.objects.Curve.SerializableCurveData;
 import rpEngine.graphical.structs.TrackAnchor;
-import utils.math.Vector2f;
 
 public class ChunkMap {
 	public static final short RASTERSIZE = 200;
@@ -38,7 +37,7 @@ public class ChunkMap {
 	public void registerModel(Curve curve){
 		int x, z, tmpX=0, tmpZ=0;
 		boolean first = true;
-		System.out.println("===new curveRegistration===");
+		//System.out.println("===new curveRegistration===");
 		for(TrackAnchor anchor: curve.getData().anchors){
 			x = CoordToChunkMapValue(anchor.getPosition().x);
 			z = CoordToChunkMapValue(anchor.getPosition().z);
@@ -51,7 +50,7 @@ public class ChunkMap {
 			else if(x!=tmpX || z!=tmpZ){
 					registerModel(x,z, curve);
 					tmpX = x; tmpZ = z;
-					System.out.println("entry in "+x+", "+z);
+					//System.out.println("entry in "+x+", "+z);
 				}
 		}
 	}

@@ -147,7 +147,8 @@ public class Curve extends Entity{
 			
 			//store the Anchor.
 			Vector3f anchorPosition = Vector3f.add(anchorStart.getPosition(), centerPos);
-			data.addAnchor(new TrackAnchor(anchorPosition, direction.duplicate(), curPitch.duplicate()));
+			TrackAnchor currentAnchor = new TrackAnchor(anchorPosition, direction.duplicate(), curPitch.duplicate());
+			data.addAnchor(currentAnchor);
 			
 			//add Vertices (from centerPos +- pitch)
 			for(int row=-rowsPerSide; row<=rowsPerSide; row++){
@@ -156,9 +157,10 @@ public class Curve extends Entity{
 				vertexArray[vertexNumber+2] = centerPos.z + row*curPitch.z;
 				
 				//TODO: calc real normals -> x,z determined by direction
-				normals[vertexNumber] = 0;
-				normals[vertexNumber+1] = 1;
-				normals[vertexNumber+2] = 0;
+				Vector3f normal = currentAnchor.getNormal();
+				normals[vertexNumber] = normal.x;
+				normals[vertexNumber+1] = normal.y;
+				normals[vertexNumber+2] = normal.z;
 				
 				vertexNumber += 3;
 				
@@ -282,6 +284,32 @@ public class Curve extends Entity{
 	public boolean intersects(Vector3f point) {
 		// TODO Auto-generated method stub
 		return false;
+	}
+	
+	public Vector3f getClosestIntersection(Vector3f point, Vector3f direction){
+		Vector3f[] results = new Vector3f[2];
+		int n=0;
+		for(int i=0; i<data.anchors.size()-1|| n==2; i++){
+			results[n] = getClosestIntersectionWitharea(data.anchors.get(i), data.anchors.get(i+1), point, direction);
+			if(results[n]!=null) n++; //TODO: check whether working without NullpointerException
+		}
+		return new Vector3f();
+	}
+	
+	/**
+	 * 
+	 * @return null if no intersection, result else.
+	 */
+	private Vector3f getClosestIntersectionWitharea(TrackAnchor current, TrackAnchor next, Vector3f point, Vector3f direction){
+		//intersection with a plane:
+		float nDotDir = Vector3f.dot(current.getNormal(), direction);
+		if(nDotDir == 0) return null; //TODO: check additionally for collision from side
+		float lambda = (current.getnDotPos()-Vector3f.dot(current.getNormal(), point))/nDotDir;
+		Vector3f pointInPlane = direction.duplicate();
+		pointInPlane.scale(lambda);
+		Vector3f.add(pointInPlane, point, pointInPlane);
+		//TODO: check if inside or outside the real area. barycentric?
+		return pointInPlane;
 	}
 
 	public static void setLastAnchor(TrackAnchor anchor) {

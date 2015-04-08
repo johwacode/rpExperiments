@@ -283,7 +283,11 @@ public class Curve extends Entity{
 			results[n] = getClosestIntersectionWitharea(data.anchors.get(i), data.anchors.get(i+1), point, direction);
 			if(results[n]!=null) n++; //TODO: check whether working without NullpointerException
 		}
-		return new Vector3f();
+		if(n==0) return null;
+		
+		float distSQ0 = Vector3f.sub(point, results[0]).length2();
+		if(n==2 && Vector3f.sub(point, results[1]).length2()<distSQ0)return results[1];
+		return results[0];
 	}
 	
 	/**
@@ -294,6 +298,7 @@ public class Curve extends Entity{
 		//intersection with a plane:
 		float nDotDir = Vector3f.dot(current.getNormal(), direction);
 		if(nDotDir == 0) return null; //TODO: check additionally for collision from side
+		
 		float lambda = (current.getnDotPos()-Vector3f.dot(current.getNormal(), point))/nDotDir;
 		Vector3f pointInPlane = direction.duplicate();
 		pointInPlane.scale(lambda);
@@ -306,6 +311,7 @@ public class Curve extends Entity{
 		for(int i=1; i<data.anchors.size(); i++){
 			data.anchors.get(i-1).initBarycentricSystem(ROWS, data.anchors.get(i));
 		}
+		System.out.println("[Curve.initBarycentricCTesting] initialized Curve "+this);
 	}
 
 	public static void setLastAnchor(TrackAnchor anchor) {

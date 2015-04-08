@@ -87,8 +87,10 @@ public class TrackAnchor implements Serializable {
 		float vABC = (baryDotCACA*dotBAPA-baryDotCABA*dotCAPA) * baryInvDenomABC;
 		float uACD = (baryDotDADA*dotCAPA-baryDotCADA*dotDAPA) * baryInvDenomACD;
 		float vACD = (baryDotCACA*dotDAPA-baryDotCADA*dotCAPA) * baryInvDenomACD;
-		return ((uABC >= 0) && (vABC >= 0) && (uABC + vABC < 1)) 
+		boolean result = ((uABC >= 0) && (vABC >= 0) && (uABC + vABC < 1)) 
 				|| ((uACD >= 0) && (vACD >= 0) && (uACD + vACD < 1));
+		if(result)System.out.println("[TrackAnchor.isPointInside] braycentric test near "+position+" accepted point. "+point);
+		return result;
 	}
 
 	public String toString(){
@@ -98,18 +100,5 @@ public class TrackAnchor implements Serializable {
 		sb.append("dir:"+direction+";");
 		sb.append("pitch:"+pitch+")");
 		return sb.toString();
-	}
-	
-	
-	/**
-	 * DEBUGSTUFF just adds a sphere at a given position
-	 */
-	private static void addDebugSphere(float x, float y, float z, Vector3f worldPos){
-		SceneGraph.addDebugSphere(new Vector3f(
-				x+worldPos.x,
-				y+worldPos.y,
-				z+worldPos.z
-				));
-	}
-	
+	}	
 }

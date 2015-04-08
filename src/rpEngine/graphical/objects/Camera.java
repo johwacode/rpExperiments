@@ -75,8 +75,7 @@ public class Camera implements UserController{
 	public boolean checkForCollision(Vector3f direction){
 		//TODO: rewrite when Curve-collisionDetection is working 
 		//create testpoint
-		Vector3f testPoint = new Vector3f();
-		Vector3f.add(position, direction, testPoint);
+		Vector3f testPoint = Vector3f.add(position, direction);
 		//set yMin=terrain.height, yMax=250;
 		float yPlayerBottom = testPoint.y-2, yPlayerTop = testPoint.y+0.5f;
 		float highestBeneath = scene.getTerrain().getTerrainHeight(testPoint.x, testPoint.z);
@@ -87,30 +86,15 @@ public class Camera implements UserController{
 		//If no intersection save highestBeneath and lowestAbove
 		try{
 			for(Curve curve: scene.getChunkMap().getModels(testPoint.x, testPoint.z)){
-				float height = 0; //curve.getTopPositionAt(testPoint.x, testPoint.z);
-				if(height>highestBeneath){
-					//Prism inside PlayerBox?
-					if(height<yPlayerTop && height>yPlayerBottom)return true;
-					else{
-						if(height<yPlayerBottom) highestBeneath = height;
-						else if(height<lowestAbove) lowestAbove = height;
-						//not even enoughPlace when inc/dec direction?
-						if(lowestAbove-highestBeneath<3)return true;
-					}
+				Vector3f p = curve.getClosestIntersection(testPoint, direction);
+				if(p!=null){
+					float distSQ = Vector3f.sub(testPoint, p).length2();
+					//debugsphere:
+					SceneGraph.addDebugSphere(p);
+					System.out.println("Point: "+p);
+					System.out.println("Distance² to Point: "+distSQ);
+					if(distSQ<2) return true;	
 				}
-			}
-		
-			//System.out.println("newPos: "+testPoint);
-			//System.out.println("highestBeneath:\t"+highestBeneath);
-			//System.out.println("lowestAbove:\t"+lowestAbove);
-			
-			if(lowestAbove<yPlayerTop+0.2f){
-				direction.y-=0.2f;
-				direction.scale(0.7f);
-			}
-			else if(highestBeneath>yPlayerBottom-0.2f){
-				direction.y+=0.2f;
-				direction.scale(0.7f);
 			}
 			//if playerleaves ChunkMap:
 		} catch(ArrayIndexOutOfBoundsException e){

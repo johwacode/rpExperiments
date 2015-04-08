@@ -45,6 +45,7 @@ public class Curve extends Entity{
 	public Curve(SerializableCurveData data){
 		this(data, asphalt);
 		lastAim = data.getLastAnchor();
+		initBarycentricTesting();
 	}
 	
 	/**
@@ -133,7 +134,7 @@ public class Curve extends Entity{
 		int texNumber = 0;
 		
 		//loop over all steps (plus first Step at i=0 -> connect to AnchorPoint)
-		for(int i=0; i<=stepCount; i++){
+		for(int i=0; i<stepCount; i++){
 			if(i>1){
 				//build main-point (center)
 				direction.rotateXZ(stepAngle);
@@ -269,17 +270,6 @@ public class Curve extends Entity{
 
 
 
-	/**
-	 * DEBUGSTUFF just adds a sphere at a given position
-	 */
-	private static void addDebugSphere(float x, float y, float z, Vector3f worldPos){
-		SceneGraph.addDebugSphere(new Vector3f(
-				x+worldPos.x,
-				y+worldPos.y,
-				z+worldPos.z
-				));
-	}
-
 	@Override
 	public boolean intersects(Vector3f point) {
 		// TODO Auto-generated method stub
@@ -308,8 +298,14 @@ public class Curve extends Entity{
 		Vector3f pointInPlane = direction.duplicate();
 		pointInPlane.scale(lambda);
 		Vector3f.add(pointInPlane, point, pointInPlane);
-		//TODO: check if inside or outside the real area. barycentric?
-		return pointInPlane;
+		if(current.isPointInside(pointInPlane))	return pointInPlane;
+		else return null;
+	}
+	
+	private void initBarycentricTesting(){
+		for(int i=1; i<data.anchors.size(); i++){
+			data.anchors.get(i-1).initBarycentricSystem(ROWS, data.anchors.get(i));
+		}
 	}
 
 	public static void setLastAnchor(TrackAnchor anchor) {

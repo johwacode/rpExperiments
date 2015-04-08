@@ -63,6 +63,12 @@ public class Vector3f implements Serializable{
 		Vector3f.add(left, right, dest);
 		return dest;
 	}
+	
+	public static Vector3f sub(Vector3f left, Vector3f right) {
+		Vector3f dest = new Vector3f();
+		Vector3f.sub(left, right, dest);
+		return dest;
+	}
 
 	public static void sub(Vector3f left, Vector3f right,
 			Vector3f dest) {

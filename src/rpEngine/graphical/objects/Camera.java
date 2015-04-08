@@ -73,7 +73,6 @@ public class Camera implements UserController{
 	 * @return true if collision is detected, false otherwise. Also adjusts the height, if needed. (still little rough)
 	 */
 	public boolean checkForCollision(Vector3f direction){
-		//TODO: rewrite when Curve-collisionDetection is working 
 		//create testpoint
 		Vector3f testPoint = Vector3f.add(position, direction);
 		//set yMin=terrain.height, yMax=250;
@@ -89,10 +88,6 @@ public class Camera implements UserController{
 				Vector3f p = curve.getClosestIntersection(testPoint, direction);
 				if(p!=null){
 					float distSQ = Vector3f.sub(testPoint, p).length2();
-					//debugsphere:
-					SceneGraph.addDebugSphere(p);
-					System.out.println("Point: "+p);
-					System.out.println("Distance² to Point: "+distSQ);
 					if(distSQ<2) return true;	
 				}
 			}

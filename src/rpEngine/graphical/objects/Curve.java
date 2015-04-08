@@ -24,7 +24,7 @@ public class Curve extends Entity{
 	private static Texture previewTexture = new Texture(Loader.loadTexture(Material.PREVIEW, "surface_water3", true));
 	private static Texture trackborder = new Texture(Loader.loadTexture(Material.TRACKBORDER, "trackborder", true));
 	private static final float HEIGHT = 0.4f;
-	private static int ROWS = 11; //has to be odd (Or even(but odd) prim?!)
+	public static final int ROWS = 11; //has to be odd (Or even(but odd) prim?!)
 	
 	private static TrackAnchor lastAim;
 	
@@ -84,6 +84,7 @@ public class Curve extends Entity{
 	public Curve buildCurve(){
 		this.getModel().setTexture(asphalt);
 		Curve.lastAim = this.data.getLastAnchor();
+		initBarycentricTesting();
 		return this;
 	}
 	
@@ -134,7 +135,7 @@ public class Curve extends Entity{
 		int texNumber = 0;
 		
 		//loop over all steps (plus first Step at i=0 -> connect to AnchorPoint)
-		for(int i=0; i<stepCount; i++){
+		for(int i=0; i<=stepCount; i++){
 			if(i>1){
 				//build main-point (center)
 				direction.rotateXZ(stepAngle);
@@ -279,7 +280,8 @@ public class Curve extends Entity{
 	public Vector3f getClosestIntersection(Vector3f point, Vector3f direction){
 		Vector3f[] results = new Vector3f[2];
 		int n=0;
-		for(int i=0; i<data.anchors.size()-1|| n==2; i++){
+		for(int i=0; i<data.anchors.size()-1 || n==2; i++){
+			//TODO: find OutOfArea-Exception-causing array. (size~33/37)
 			results[n] = getClosestIntersectionWitharea(data.anchors.get(i), data.anchors.get(i+1), point, direction);
 			if(results[n]!=null) n++; //TODO: check whether working without NullpointerException
 		}
@@ -309,7 +311,7 @@ public class Curve extends Entity{
 	
 	private void initBarycentricTesting(){
 		for(int i=1; i<data.anchors.size(); i++){
-			data.anchors.get(i-1).initBarycentricSystem(ROWS, data.anchors.get(i));
+			data.anchors.get(i-1).initBaryentricData(data.anchors.get(i));
 		}
 		System.out.println("[Curve.initBarycentricCTesting] initialized Curve "+this);
 	}

@@ -1,7 +1,5 @@
 package rpEngine.graphical.objects;
 
-import game.SceneGraph;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -313,7 +311,7 @@ public class Curve extends Entity{
 		for(int i=1; i<data.anchors.size(); i++){
 			data.anchors.get(i-1).initBaryentricData(data.anchors.get(i));
 		}
-		System.out.println("[Curve.initBarycentricCTesting] initialized Curve "+this);
+		//System.out.println("[Curve.initBarycentricCTesting] initialized Curve "+this);
 	}
 
 	public static void setLastAnchor(TrackAnchor anchor) {

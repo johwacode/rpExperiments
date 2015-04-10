@@ -46,9 +46,9 @@ public class Model2D extends Model {
 	}
 	
 	public void removePositions(List<Long> ids){
-		System.out.println(this);
+		//System.out.println(this);
 		for(long id : ids) removePosition(id);
-		System.out.println("after removing "+ids.size()+" positions: "+this);
+		//System.out.println("after removing "+ids.size()+" positions: "+this);
 	}
 	
 	public void clearPositions(){

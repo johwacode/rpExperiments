@@ -40,13 +40,13 @@ public class Text {
 	 * @param name = id where the string is registered. not it's value!
 	 */
 	public static void deleteString(String name){
-		System.out.println("==== removing String \""+name+"\" ====");
-		System.out.println(currentText.get(name));
+		//System.out.println("==== removing String \""+name+"\" ====");
+		//System.out.println(currentText.get(name));
 		for(Entry<Character, List<Long>> e : currentText.get(name).positions.entrySet()){
 			getChar(e.getKey()).removePositions(e.getValue());
 		}
 		currentText.remove(name);
-		System.out.println("done.\n");
+		//System.out.println("done.\n");
 	}
 	
 	public static List<Model2D> getRenderList(){

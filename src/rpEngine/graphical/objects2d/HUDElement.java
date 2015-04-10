@@ -30,4 +30,15 @@ public class HUDElement {
 	protected void clearModels(){
 		models.clear();
 	}
+	
+	/**
+	 * @param filename in res-folder without ".png" (e.g. "rp_logo")
+	 * @param x - from 0(left) to 10(right)
+	 * @param y - from 0(top) to 10(bottom)
+	 * @param width
+	 * @param height
+	 */
+	protected void addImage(String filename, float x, float y, float width, float height){
+		addModel(HUDModelGenerator.createRectangle(x, y, width, height, filename));
+	}
 }

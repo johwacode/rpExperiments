@@ -56,6 +56,7 @@ public abstract class Menu extends HUDElement implements Clickable{
 		return buttons;
 	}
 	
+	
 	public boolean handleMouseMovement(long window){
 		glfwGetCursorPos(window, buffer1, buffer2);		
 		float mouseX = (float) buffer1.asDoubleBuffer().get();

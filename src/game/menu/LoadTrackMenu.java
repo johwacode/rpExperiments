@@ -6,7 +6,6 @@ import java.io.File;
 import java.io.Serializable;
 
 import rpEngine.graphical.objects2d.Button;
-import rpEngine.graphical.objects2d.HUDModelGenerator;
 import utils.fileLoader.RPFileLibrary;
 
 public class LoadTrackMenu extends Menu{
@@ -15,7 +14,7 @@ public class LoadTrackMenu extends Menu{
 	public LoadTrackMenu(MenuController ctrl){
 		super(ctrl);
 		//Logo
-		this.addModel(HUDModelGenerator.createRectangle(0.5f, 5f, 2.3f, 2f, "rp_logo"));
+		addImage("rp_logo", 0.5f, 5f, 2.3f, 2f);
 		//Files
 		files = RPFileLibrary.readFilenames("savedTracks");
 		for(int i=0; i<files.length; i++){

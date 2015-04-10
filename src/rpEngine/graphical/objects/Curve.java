@@ -283,7 +283,7 @@ public class Curve extends Entity{
 		for(int i=0; i<data.anchors.size()-1 || n==2; i++){
 			//TODO: find OutOfArea-Exception-causing array. (size~33/37)
 			results[n] = getClosestIntersectionWitharea(data.anchors.get(i), data.anchors.get(i+1), point, direction);
-			if(results[n]!=null) n++; //TODO: check whether working without NullpointerException
+			if(results[n]!=null) n++;
 		}
 		if(n==0) return null;
 		

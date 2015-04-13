@@ -51,6 +51,8 @@ public class Camera implements InputHandler{
 		currentMode = new FreeMovementMode();
 		this.scene = scene;
 		checkTerrainHeight();
+		scene.setCamera(this);
+		InputController.registerHandler(this);
 		glfwSetInputMode(InputController.getWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	}
 	

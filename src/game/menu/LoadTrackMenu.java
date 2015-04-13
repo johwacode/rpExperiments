@@ -18,10 +18,10 @@ public class LoadTrackMenu extends Menu{
 		//Files
 		files = RPFileLibrary.readFilenames("savedTracks");
 		for(int i=0; i<files.length; i++){
-			buttons.add(new Button("savedTrack_"+i, files[i].getName(), 3.5f, 4.5f-i, true));
+			buttons.add(new Button("savedTrack_"+i, files[i].getName(), 3.5f, 8.5f-0.8f*i, true));
 		}
 		//back
-		buttons.add(new Button("back", "BACK", 3.5f, 4.5f-files.length, true));
+		buttons.add(new Button("back", "BACK", 3.5f, 8f-0.8f*files.length, true));
 		//ready
 		setReady();
 	}

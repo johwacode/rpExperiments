@@ -1,9 +1,11 @@
 package game;
 
+import static org.lwjgl.opengl.GL11.GL_TRUE;
 import static org.lwjgl.system.glfw.GLFW.GLFW_CURSOR;
 import static org.lwjgl.system.glfw.GLFW.GLFW_CURSOR_DISABLED;
 import static org.lwjgl.system.glfw.GLFW.glfwGetInputMode;
 import game.menu.InGameBuildMenu;
+import game.menu.InGameRaceMenu;
 import game.menu.MainMenu;
 import game.menu.MenuController;
 
@@ -72,6 +74,10 @@ public class RacingPlanetsGame {
 		Loader.cleanUp();
 	}
 	
+	public void quitGame(){
+		GLFW.glfwSetWindowShouldClose(window, GL_TRUE);
+	}
+	
 	
 	public abstract class GameMode{
 		/**
@@ -126,6 +132,7 @@ public class RacingPlanetsGame {
 			initVehicles(args);
 			initHUD();
 			initCamera();
+			initInGameMenu();
 		}
 		
 		@Override
@@ -214,6 +221,10 @@ public class RacingPlanetsGame {
 			scene.setCamera(new Camera(new Vector3f(370, 8, -14), scene));
 		}
 		
+		private void initInGameMenu(){
+			new MenuController(RacingPlanetsGame.this, InGameRaceMenu.class);
+		}
+		
 	}
 	
 	
@@ -222,7 +233,6 @@ public class RacingPlanetsGame {
 	 */
 	public class BuildMode extends GameMode{
 		private int maxViewDistance = 3;
-		private InGameBuildMenu menu;
 		
 		public BuildMode(Serializable args) {
 			super(args);
@@ -282,8 +292,7 @@ public class RacingPlanetsGame {
 		
 		private void initInGameMenu(){
 			MenuController ctr = new MenuController(RacingPlanetsGame.this, InGameBuildMenu.class);
-			menu = (InGameBuildMenu) ctr.getCurrent();
-			menu.setTool(scene.getBuilderTool());
+			((InGameBuildMenu) ctr.getCurrent()).setTool(scene.getBuilderTool());
 		}
 		
 		private void initTerrain(){
@@ -332,9 +341,7 @@ public class RacingPlanetsGame {
 		}
 
 		private void initCamera(){
-			Camera cam = new Camera(new Vector3f(370, 8, -14), scene);
-			scene.setCamera(cam);
-			InputController.registerHandler(cam);
+			new Camera(new Vector3f(370, 8, -14), scene);
 		}
 		
 		private void initBuilderTool(){

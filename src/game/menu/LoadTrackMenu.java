@@ -42,6 +42,6 @@ public class LoadTrackMenu extends Menu{
 	private void loadTrack(int i){
 		System.out.println("..loading Track#"+i+"..");
 		Serializable dataList = RPFileLibrary.readFile("savedTracks/"+files[i].getName());
-		controller.getGame().setMode(RPGameMode.BUILDMODE, dataList);
+		setGameMode(RPGameMode.BUILDMODE, dataList);
 	}
 }

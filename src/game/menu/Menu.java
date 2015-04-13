@@ -5,7 +5,9 @@ import static org.lwjgl.system.glfw.GLFW.GLFW_PRESS;
 import static org.lwjgl.system.glfw.GLFW.GLFW_RELEASE;
 import static org.lwjgl.system.glfw.GLFW.glfwGetCursorPos;
 import static org.lwjgl.system.glfw.GLFW.glfwGetWindowSize;
+import game.RacingPlanetsGame.RPGameMode;
 
+import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -103,6 +105,16 @@ public abstract class Menu extends HUDElement implements Clickable{
 	
 	protected void handleClickEvent(String objName){
 		return;
+	}
+	
+	protected void setGameMode(RPGameMode newMode){
+		clear();
+		controller.getGame().setMode(newMode);
+	}
+	
+	protected void setGameMode(RPGameMode newMode, Serializable data){
+		clear();
+		controller.getGame().setMode(newMode, data);
 	}
 	
 	protected void switchToSubMenu(Menu submenu){

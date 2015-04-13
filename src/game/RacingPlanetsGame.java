@@ -2,7 +2,10 @@ package game;
 
 import static org.lwjgl.system.glfw.GLFW.GLFW_CURSOR;
 import static org.lwjgl.system.glfw.GLFW.GLFW_CURSOR_DISABLED;
+import static org.lwjgl.system.glfw.GLFW.GLFW_KEY_ESCAPE;
+import static org.lwjgl.system.glfw.GLFW.GLFW_PRESS;
 import static org.lwjgl.system.glfw.GLFW.glfwGetInputMode;
+import game.menu.InGameBuildMenu;
 import game.menu.MainMenu;
 import game.menu.MenuController;
 
@@ -23,7 +26,6 @@ import rpEngine.graphical.objects.ParticleStream;
 import rpEngine.graphical.objects.Terrain;
 import rpEngine.graphical.objects2d.DebugLine;
 import rpEngine.graphical.objects2d.HUDElement;
-import rpEngine.graphical.objects2d.RPMmeter;
 import rpEngine.graphical.objects2d.ToolBoxDisplay;
 import rpEngine.graphical.objects2d.text.Text;
 import rpEngine.graphical.renderer.MasterRenderer;
@@ -77,6 +79,9 @@ public class RacingPlanetsGame {
 	
 	
 	public abstract class GameMode{
+		/**
+		 * @param args just an empty constructor -> do what you want
+		 */
 		GameMode(Serializable args){}
 		abstract void render();
 		void processInput(int key, int action){}
@@ -128,26 +133,27 @@ public class RacingPlanetsGame {
 	 * each opponent built his own track part  
 	 */
 	public class Race extends GameMode{
-	private int maxViewDistance = 200;
+		private int maxViewDistance = 3;
 		
-		public Race(Serializable args){
+		public Race(Serializable args) {
 			super(args);
 			initTerrain();
-			initEnvironment();
-			createVehicle();
+			initEnvironment(args);
+			initVehicles(args);
 			initHUD();
 			initCamera(window);
 		}
 		
+
 		@Override
 		public void processInput(int key, int action) {
+			scene.getBuilderTool().processInput(key, action);
 			scene.getCamera().processInput(key, action);
 		}
 
 		@Override
 		public void render() {
 			scene.getCamera().move();
-			scene.getBuilderTool().move();
 			if(glfwGetInputMode(window, GLFW_CURSOR)==GLFW_CURSOR_DISABLED)
 				GLFW.glfwSetCursorPos(window, 0, 0);
 			
@@ -155,13 +161,6 @@ public class RacingPlanetsGame {
 			
 			for(Curve c:scene.getModels(maxViewDistance)){
 				renderer.processEntity(c);
-			}
-			for(Entity e:scene.getBuilderTool().getPreview()){
-				renderer.processEntity(e);
-			}
-
-			for(ParticleStream pStream:scene.getBuilderTool().getParticleStreams()){
-				renderer.processParticleStream(pStream);
 			}
 			
 			for(Entity e:scene.getEntities()){
@@ -171,7 +170,7 @@ public class RacingPlanetsGame {
 			
 			for(HUDElement e: scene.getHUDElements()){
 				try{
-				e.refreshDisplay(scene.getBuilderTool());
+				//e.refreshDisplay(scene.getBuilderTool());
 				}catch(NullPointerException npe){
 					npe.printStackTrace();
 				}
@@ -199,22 +198,48 @@ public class RacingPlanetsGame {
 		}
 		
 		private void initHUD(){
-			scene.addToHUD(new RPMmeter(0.35f, 0.1f));
+			scene.addToHUD(new ToolBoxDisplay(9.35f, 7));
 		}
 		
-		private void initEnvironment(){
-			scene.addLight(new Light(new Vector3f(300, -40, -10), new Vector3f(1,1,1)));
-			scene.setChunkMap(new ChunkMap(0, 800, -800, 0));
+		@SuppressWarnings("unchecked")
+		private void initEnvironment(Serializable args){
+			//sun
+			scene.addLight(new Light(new Vector3f(300, -40, -10), new Vector3f(0.4f, 0.4f, 0.4f)));
+			//spots
+			Vector3f attenuation = new Vector3f(1, 0.01f, 0.002f);
+			scene.addLight(new Light(new Vector3f(380, 10, -30), new Vector3f(2,0,0), attenuation));
+			scene.addLight(new Light(new Vector3f(350, 17, -10), new Vector3f(0,2,2), attenuation));
+			scene.addLight(new Light(new Vector3f(370, 8, -80), new Vector3f(2,2,0), attenuation));
+			ChunkMap chunkMap = new ChunkMap(0, 800, -800, 0);
+			if(args != null){
+					//TODO: organize more flexible and for more datatypes
+					List<Serializable> dataList = (List<Serializable>) args;
+					for(Serializable data: dataList){
+						try{
+							SerializableCurveData curveData = (SerializableCurveData) data;
+							chunkMap.registerModel(new Curve(curveData));
+						} catch(IllegalArgumentException e){
+							System.out.println("Unknown Data");
+						}
+						  catch(ClassCastException c){
+							  Curve.setLastAnchor((TrackAnchor) data);
+						  }
+					}
+			}
+			scene.setChunkMap(chunkMap);
+		}
+		
+		private void initVehicles(Serializable args) {
+			// TODO Auto-generated method stub
+			
 		}
 
 		private void initCamera(long window){
 			scene.setCamera(new Camera(window, new Vector3f(370, 8, -14), scene));
 		}
 		
-		private void createVehicle(){
-		}
-		
 	}
+	
 	
 	/**
 	 * User has a set of tools to build his own race track.
@@ -241,6 +266,10 @@ public class RacingPlanetsGame {
 		
 		@Override
 		public void processInput(int key, int action) {
+			if(key==GLFW_KEY_ESCAPE&&action==GLFW_PRESS){
+				MenuController ctrl = new MenuController(RacingPlanetsGame.this, InGameBuildMenu.class);
+				scene.addToHUD(ctrl.getCurrent());
+			}
 			scene.getBuilderTool().processInput(key, action);
 			scene.getCamera().processInput(key, action);
 		}

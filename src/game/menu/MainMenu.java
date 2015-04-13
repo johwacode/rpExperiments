@@ -19,8 +19,8 @@ public class MainMenu extends Menu{
 	@Override
 	protected void handleClickEvent(String objName) {		
 		switch(objName){
-		case "buildMode": controller.getGame().setMode(RPGameMode.BUILDMODE); break;
-		case "race": break;
+		case "buildMode": setGameMode(RPGameMode.BUILDMODE); break;
+		case "race": setGameMode(RPGameMode.RACINGMODE); break;
 		case "load": switchToSubMenu(new LoadTrackMenu(controller)); break;
 		}
 	}

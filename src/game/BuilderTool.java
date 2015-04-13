@@ -3,9 +3,7 @@ package game;
 import static org.lwjgl.system.glfw.GLFW.GLFW_CURSOR;
 import static org.lwjgl.system.glfw.GLFW.GLFW_CURSOR_DISABLED;
 import static org.lwjgl.system.glfw.GLFW.GLFW_KEY_3;
-import static org.lwjgl.system.glfw.GLFW.GLFW_KEY_A;
 import static org.lwjgl.system.glfw.GLFW.GLFW_KEY_BACKSPACE;
-import static org.lwjgl.system.glfw.GLFW.GLFW_KEY_D;
 import static org.lwjgl.system.glfw.GLFW.GLFW_KEY_DOWN;
 import static org.lwjgl.system.glfw.GLFW.GLFW_KEY_ENTER;
 import static org.lwjgl.system.glfw.GLFW.GLFW_KEY_I;
@@ -16,7 +14,6 @@ import static org.lwjgl.system.glfw.GLFW.GLFW_KEY_RIGHT_SHIFT;
 import static org.lwjgl.system.glfw.GLFW.GLFW_KEY_S;
 import static org.lwjgl.system.glfw.GLFW.GLFW_KEY_SLASH;
 import static org.lwjgl.system.glfw.GLFW.GLFW_KEY_UP;
-import static org.lwjgl.system.glfw.GLFW.GLFW_KEY_W;
 import static org.lwjgl.system.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
 import static org.lwjgl.system.glfw.GLFW.GLFW_PRESS;
 import static org.lwjgl.system.glfw.GLFW.glfwGetInputMode;
@@ -89,7 +86,7 @@ public class BuilderTool implements UserController, HUDfriendly{
 	public void processInput(int key, int action) {
 		if(action!=GLFW_PRESS) return;
 		switch(key){
-		case GLFW_KEY_S: 
+		case GLFW_KEY_S: //safe track to file.
 			if(glfwGetKey(window, GLFW_KEY_LEFT_CONTROL)==GLFW_PRESS){
 				String date = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.LONG, Locale.US).format(new Date());
 				date = date.replaceAll("\\/|\\.|\\:", "");
@@ -97,6 +94,7 @@ public class BuilderTool implements UserController, HUDfriendly{
 				RPFileLibrary.writeToFile("savedTracks", "trackPart-"+date+".rpf", chunkMap.getContent());
 			}
 			break;
+		
 		//case GLFW_KEY_1: if(tool.getClass()!= PrismTool.class) tool = new PrismTool(); break;
 		//case GLFW_KEY_2: if(tool.getClass()!= QuadTool.class) tool = new QuadTool(); break;
 		case GLFW_KEY_3: if(tool.getClass()!= CurveTool.class) tool = new CurveTool(); break;
@@ -165,13 +163,6 @@ public class BuilderTool implements UserController, HUDfriendly{
 			try{
 				if(glfwGetKey(window, GLFW_KEY_LEFT_CONTROL)==GLFW_PRESS)
 					return;
-				
-				if(glfwGetKey(window, GLFW_KEY_W)==GLFW_PRESS ||
-					glfwGetKey(window, GLFW_KEY_A)==GLFW_PRESS ||
-					glfwGetKey(window, GLFW_KEY_S)==GLFW_PRESS ||
-					glfwGetKey(window, GLFW_KEY_D)==GLFW_PRESS){
-					//createTool();
-				}
 				
 				if(glfwGetKey(window, GLFW_KEY_LEFT)==GLFW_PRESS){
 					angleXZ -= 0.03f;

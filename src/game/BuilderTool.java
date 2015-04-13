@@ -28,7 +28,6 @@ import java.util.Locale;
 import rpEngine.graphical.model.Loader;
 import rpEngine.graphical.model.Material;
 import rpEngine.graphical.model.Texture;
-import rpEngine.graphical.objects.Camera;
 import rpEngine.graphical.objects.Curve;
 import rpEngine.graphical.objects.Entity;
 import rpEngine.graphical.objects.ParticlePath;
@@ -45,13 +44,11 @@ public class BuilderTool implements InputHandler, HUDfriendly{
 	private Tool tool;
 	
 	private long window;
-	private Camera camera;
 	
 	private Texture asphalt;
 
 	public BuilderTool(SceneGraph scene){
-		this.camera = scene.getCamera();
-		this.window = camera.getWindow();
+		this.window = InputController.getWindow();
 		this.chunkMap = scene.getChunkMap();
 		this.terrain = scene.getTerrain();
 		
@@ -80,20 +77,22 @@ public class BuilderTool implements InputHandler, HUDfriendly{
 	}
 	
 
-	public void move(){
+	public void move(long window){
 		tool.move();
+	}
+	
+	public void saveTrack(){
+		String date = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.LONG, Locale.US).format(new Date());
+		date = date.replaceAll("\\/|\\.|\\:", "");
+		date = date.replaceAll(" ", "_");
+		RPFileLibrary.writeToFile("savedTracks", "trackPart-"+date+".rpf", chunkMap.getContent());
 	}
 	
 	public boolean processInput(int key, int action) {
 		if(action!=GLFW_PRESS) return false;
 		switch(key){
 		case GLFW_KEY_S: //safe track to file.
-			if(glfwGetKey(window, GLFW_KEY_LEFT_CONTROL)==GLFW_PRESS){
-				String date = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.LONG, Locale.US).format(new Date());
-				date = date.replaceAll("\\/|\\.|\\:", "");
-				date = date.replaceAll(" ", "_");
-				RPFileLibrary.writeToFile("savedTracks", "trackPart-"+date+".rpf", chunkMap.getContent());
-			}
+			if(glfwGetKey(window, GLFW_KEY_LEFT_CONTROL)==GLFW_PRESS) saveTrack();
 			return true;
 		
 		//case GLFW_KEY_1: if(tool.getClass()!= PrismTool.class) tool = new PrismTool(); break;

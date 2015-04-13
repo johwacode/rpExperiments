@@ -78,6 +78,7 @@ public class MenuController implements InputHandler{
 	}
 
 	@Override
-	public void move() {
+	public void move(long window) {
+		getCurrent().handleMouseMovement(window);
 	}
 }

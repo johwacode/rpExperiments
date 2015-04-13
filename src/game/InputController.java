@@ -5,11 +5,25 @@ import java.util.TreeSet;
 
 import rpEngine.graphical.structs.InputHandler;
 
-public class InputController {
+public abstract class InputController {
 	private static TreeSet<InputHandler> queue = new TreeSet<>(new InputComparator());
+	private static long window;
+	
+	public static void setWindow(long windowID){
+		clear();
+		window = windowID;
+	}
+	
+	public static long getWindow(){
+		return window;
+	}
 	
 	public static boolean registerHandler(InputHandler handler){
 		return queue.add(handler);
+	}
+	
+	public static boolean removeHandler(InputHandler handler){
+		return queue.remove(handler);
 	}
 	
 	public static void processInput(int key, int action){
@@ -18,7 +32,7 @@ public class InputController {
 	}
 	
 	public static void move(){
-		for(InputHandler handler: queue) handler.move();
+		for(InputHandler handler: queue) handler.move(window);
 	}
 	
 	public static void clear(){

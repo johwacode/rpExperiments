@@ -3,6 +3,7 @@ package game;
 import static org.lwjgl.system.glfw.GLFW.GLFW_CURSOR;
 import static org.lwjgl.system.glfw.GLFW.GLFW_CURSOR_DISABLED;
 import static org.lwjgl.system.glfw.GLFW.glfwGetInputMode;
+import game.menu.InGameBuildMenu;
 import game.menu.MainMenu;
 import game.menu.MenuController;
 
@@ -59,6 +60,7 @@ public class RacingPlanetsGame {
 	}
 	
 	public void update(){
+		InputController.move();
 		currentMode.render();
 	}
 	
@@ -85,11 +87,6 @@ public class RacingPlanetsGame {
 	
 	
 	
-	
-	
-	
-	
-	
 	/**
 	 * Stay cool man, you're in the Menu-mode. Nothing exiting here,
 	 * just a few settings, loading, connecting and such stuff.
@@ -105,7 +102,6 @@ public class RacingPlanetsGame {
 
 		@Override
 		public void render() {
-			menuController.getCurrent().handleMouseMovement(window);
 			
 			renderer.processHUDElement(menuController.getCurrent());
 			
@@ -129,12 +125,11 @@ public class RacingPlanetsGame {
 			initEnvironment(args);
 			initVehicles(args);
 			initHUD();
-			initCamera(window);
+			initCamera();
 		}
 		
 		@Override
 		public void render() {
-			scene.getCamera().move();
 			if(glfwGetInputMode(window, GLFW_CURSOR)==GLFW_CURSOR_DISABLED)
 				GLFW.glfwSetCursorPos(window, 0, 0);
 			
@@ -215,8 +210,8 @@ public class RacingPlanetsGame {
 			
 		}
 
-		private void initCamera(long window){
-			scene.setCamera(new Camera(window, new Vector3f(370, 8, -14), scene));
+		private void initCamera(){
+			scene.setCamera(new Camera(new Vector3f(370, 8, -14), scene));
 		}
 		
 	}
@@ -227,14 +222,16 @@ public class RacingPlanetsGame {
 	 */
 	public class BuildMode extends GameMode{
 		private int maxViewDistance = 3;
+		private InGameBuildMenu menu;
 		
 		public BuildMode(Serializable args) {
 			super(args);
 			initTerrain();
 			initEnvironment(args);
 			initHUD();
-			initCamera(window);
+			initCamera();
 			initBuilderTool();
+			initInGameMenu();
 			/*TODO: delete following*/
 			/*
 			scene.addEntity(new Entity(new Model(OBJLoader.loadOBJ("mustang_gt500kr"),
@@ -247,8 +244,6 @@ public class RacingPlanetsGame {
 
 		@Override
 		public void render() {
-			scene.getCamera().move();
-			scene.getBuilderTool().move();
 			if(glfwGetInputMode(window, GLFW_CURSOR)==GLFW_CURSOR_DISABLED)
 				GLFW.glfwSetCursorPos(window, 0, 0);
 			
@@ -285,6 +280,11 @@ public class RacingPlanetsGame {
 		}
 		
 		
+		private void initInGameMenu(){
+			MenuController ctr = new MenuController(RacingPlanetsGame.this, InGameBuildMenu.class);
+			menu = (InGameBuildMenu) ctr.getCurrent();
+			menu.setTool(scene.getBuilderTool());
+		}
 		
 		private void initTerrain(){
 			Texture[] texturePack = new Texture[4];
@@ -331,8 +331,8 @@ public class RacingPlanetsGame {
 			scene.setChunkMap(chunkMap);
 		}
 
-		private void initCamera(long window){
-			Camera cam = new Camera(window, new Vector3f(370, 8, -14), scene);
+		private void initCamera(){
+			Camera cam = new Camera(new Vector3f(370, 8, -14), scene);
 			scene.setCamera(cam);
 			InputController.registerHandler(cam);
 		}
@@ -340,7 +340,6 @@ public class RacingPlanetsGame {
 		private void initBuilderTool(){
 			scene.setBuilderTool(new BuilderTool(scene));
 		}
-		
 	}
 
 }

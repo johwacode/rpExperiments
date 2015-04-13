@@ -73,7 +73,8 @@ public class RPloopStart {
         window = glfwCreateWindow(WIDTH, HEIGHT, "RP", NULL, NULL);
         if ( window == NULL )
             throw new RuntimeException("Failed to create the GLFW window");
- 
+        
+        InputController.setWindow(window);
         
         WindowCallback.set(window, new WindowCallbackAdapter() {
             @Override

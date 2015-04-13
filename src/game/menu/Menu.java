@@ -127,7 +127,7 @@ public abstract class Menu extends HUDElement implements Clickable{
 		controller.backToParent();
 	}
 	
-	private void clear(){
+	protected void clear(){
 		for(String key: textElements){
 			Text.deleteString(key);
 		}

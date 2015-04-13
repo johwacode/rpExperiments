@@ -2,20 +2,18 @@ package rpEngine.graphical.objects;
 
 import static org.lwjgl.system.glfw.GLFW.GLFW_CURSOR;
 import static org.lwjgl.system.glfw.GLFW.GLFW_CURSOR_DISABLED;
-import static org.lwjgl.system.glfw.GLFW.GLFW_CURSOR_NORMAL;
 import static org.lwjgl.system.glfw.GLFW.GLFW_KEY_A;
 import static org.lwjgl.system.glfw.GLFW.GLFW_KEY_D;
-import static org.lwjgl.system.glfw.GLFW.GLFW_KEY_ESCAPE;
 import static org.lwjgl.system.glfw.GLFW.GLFW_KEY_LEFT_SHIFT;
 import static org.lwjgl.system.glfw.GLFW.GLFW_KEY_S;
 import static org.lwjgl.system.glfw.GLFW.GLFW_KEY_SPACE;
 import static org.lwjgl.system.glfw.GLFW.GLFW_KEY_V;
 import static org.lwjgl.system.glfw.GLFW.GLFW_KEY_W;
-import static org.lwjgl.system.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
 import static org.lwjgl.system.glfw.GLFW.GLFW_PRESS;
 import static org.lwjgl.system.glfw.GLFW.glfwGetInputMode;
 import static org.lwjgl.system.glfw.GLFW.glfwGetKey;
 import static org.lwjgl.system.glfw.GLFW.glfwSetInputMode;
+import game.InputController;
 import game.SceneGraph;
 
 import java.nio.DoubleBuffer;
@@ -40,7 +38,6 @@ public class Camera implements InputHandler{
 	public float pitch;	//(Höhe)
 	public float yaw;		//left/right 
 	private float roll;		//Neigung
-	private long window;
 	private CameraMode currentMode;
 	private Vehicle vehicle = null;
 	private SceneGraph scene;
@@ -49,12 +46,12 @@ public class Camera implements InputHandler{
 	private boolean matrixUpToDate = false;
 
 	
-	public Camera(long window, Vector3f position, SceneGraph scene){
-		this.window = window;
+	public Camera(Vector3f position, SceneGraph scene){
 		this.position = position;
 		currentMode = new FreeMovementMode();
 		this.scene = scene;
 		checkTerrainHeight();
+		glfwSetInputMode(InputController.getWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	}
 	
 	public void nextMode(){
@@ -166,12 +163,8 @@ public class Camera implements InputHandler{
 		return roll;
 	}
 	
-	public long getWindow(){
-		return window;
-	}
-	
-	public void move(){
-		currentMode.move();
+	public void move(long window){
+		currentMode.move(window);
 	}
 	
 	
@@ -185,13 +178,6 @@ public class Camera implements InputHandler{
 		case GLFW_KEY_V:
 			this.nextMode();
 			return true;
-		case GLFW_KEY_ESCAPE:
-			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-			break;
-		case GLFW_MOUSE_BUTTON_LEFT:
-			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-			GLFW.glfwSetCursorPos(window, 0, 0);
-			break;
 		}
     	return false;
     }
@@ -202,7 +188,7 @@ public class Camera implements InputHandler{
 		protected Vector3f getPosition(){return position;}
 		protected float getPitch(){return pitch;}
 		protected float getYaw(){return yaw;}
-		protected void move(){}
+		protected void move(long window){}
 	}
 	
 	
@@ -286,7 +272,7 @@ public class Camera implements InputHandler{
 		 * ->WASD...
 		 */
 		@Override
-		protected void move(){
+		protected void move(long window){
 			Vector3f direction = new Vector3f();
 			if(glfwGetKey(window, GLFW_KEY_W)==GLFW_PRESS){
 				Vector3f.sub(direction, getDirection(0, 0.3f), direction);

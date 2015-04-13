@@ -13,17 +13,15 @@ import rpEngine.graphical.structs.InputHandler;
 
 public class UserInteractionController implements InputHandler{
 	private Vehicle vehicle;
-	private long window;
 	
-	public UserInteractionController(long window){
-		this.window = window;
+	public UserInteractionController(){
 	}
 	
 	public void setVehicle(Vehicle vehicle){
 		this.vehicle = vehicle;
 	}
 	
-	public void move(){
+	public void move(long window){
 		if(glfwGetKey(window, GLFW_KEY_UP)==GLFW_PRESS){
 			vehicle.getEngine().fuel(0.4f);
 		}

@@ -75,6 +75,7 @@ public class TrackAnchor implements Serializable {
 	
 	
 	private class BarycentricQuadData implements Serializable{
+		private static final long serialVersionUID = 8237882616683264470L;
 		private Vector3f baryPointA, baryPointD,
 				baryVecCA, baryVecBA, baryVecDA;
 		private float baryDotCACA, baryDotCABA, 

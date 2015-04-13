@@ -2,10 +2,7 @@ package game;
 
 import static org.lwjgl.system.glfw.GLFW.GLFW_CURSOR;
 import static org.lwjgl.system.glfw.GLFW.GLFW_CURSOR_DISABLED;
-import static org.lwjgl.system.glfw.GLFW.GLFW_KEY_ESCAPE;
-import static org.lwjgl.system.glfw.GLFW.GLFW_PRESS;
 import static org.lwjgl.system.glfw.GLFW.glfwGetInputMode;
-import game.menu.InGameBuildMenu;
 import game.menu.MainMenu;
 import game.menu.MenuController;
 
@@ -65,10 +62,6 @@ public class RacingPlanetsGame {
 		currentMode.render();
 	}
 	
-	public void processInput(int key, int action) {
-		currentMode.processInput(key, action);
-	}
-	
 	public void cleanUp(){
 		currentMode.cleanUp();
 		debugLine.stopRunning();
@@ -84,8 +77,8 @@ public class RacingPlanetsGame {
 		 */
 		GameMode(Serializable args){}
 		abstract void render();
-		void processInput(int key, int action){}
 		void cleanUp(){
+			InputController.clear();
 			Text.clear();
 		}
 	}
@@ -108,11 +101,6 @@ public class RacingPlanetsGame {
 		public MenuMode(Serializable args) {
 			super(args);
 			menuController = new MenuController(RacingPlanetsGame.this, MainMenu.class);
-		}
-		
-		@Override
-		public void processInput(int key, int action) {
-			menuController.getCurrent().processInput(key, action);
 		}
 
 		@Override
@@ -144,13 +132,6 @@ public class RacingPlanetsGame {
 			initCamera(window);
 		}
 		
-
-		@Override
-		public void processInput(int key, int action) {
-			scene.getBuilderTool().processInput(key, action);
-			scene.getCamera().processInput(key, action);
-		}
-
 		@Override
 		public void render() {
 			scene.getCamera().move();
@@ -263,16 +244,6 @@ public class RacingPlanetsGame {
 										1));
 			*/
 		}
-		
-		@Override
-		public void processInput(int key, int action) {
-			if(key==GLFW_KEY_ESCAPE&&action==GLFW_PRESS){
-				MenuController ctrl = new MenuController(RacingPlanetsGame.this, InGameBuildMenu.class);
-				scene.addToHUD(ctrl.getCurrent());
-			}
-			scene.getBuilderTool().processInput(key, action);
-			scene.getCamera().processInput(key, action);
-		}
 
 		@Override
 		public void render() {
@@ -361,7 +332,9 @@ public class RacingPlanetsGame {
 		}
 
 		private void initCamera(long window){
-			scene.setCamera(new Camera(window, new Vector3f(370, 8, -14), scene));
+			Camera cam = new Camera(window, new Vector3f(370, 8, -14), scene);
+			scene.setCamera(cam);
+			InputController.registerHandler(cam);
 		}
 		
 		private void initBuilderTool(){

@@ -34,12 +34,12 @@ import rpEngine.graphical.objects.Entity;
 import rpEngine.graphical.objects.ParticlePath;
 import rpEngine.graphical.objects.Terrain;
 import rpEngine.graphical.structs.HUDfriendly;
+import rpEngine.graphical.structs.InputHandler;
 import rpEngine.graphical.structs.TrackAnchor;
-import rpEngine.graphical.structs.UserController;
 import utils.fileLoader.RPFileLibrary;
 import utils.math.Vector3f;
 
-public class BuilderTool implements UserController, HUDfriendly{
+public class BuilderTool implements InputHandler, HUDfriendly{
 	private ChunkMap chunkMap;
 	private Terrain terrain;
 	private Tool tool;
@@ -62,6 +62,7 @@ public class BuilderTool implements UserController, HUDfriendly{
 		if(chunkMap.isEmpty()) createInitialPrisms();
 		
 		tool = new CurveTool();
+		InputController.registerHandler(this);
 	}
 	
 	@Override
@@ -83,8 +84,8 @@ public class BuilderTool implements UserController, HUDfriendly{
 		tool.move();
 	}
 	
-	public void processInput(int key, int action) {
-		if(action!=GLFW_PRESS) return;
+	public boolean processInput(int key, int action) {
+		if(action!=GLFW_PRESS) return false;
 		switch(key){
 		case GLFW_KEY_S: //safe track to file.
 			if(glfwGetKey(window, GLFW_KEY_LEFT_CONTROL)==GLFW_PRESS){
@@ -93,7 +94,7 @@ public class BuilderTool implements UserController, HUDfriendly{
 				date = date.replaceAll(" ", "_");
 				RPFileLibrary.writeToFile("savedTracks", "trackPart-"+date+".rpf", chunkMap.getContent());
 			}
-			break;
+			return true;
 		
 		//case GLFW_KEY_1: if(tool.getClass()!= PrismTool.class) tool = new PrismTool(); break;
 		//case GLFW_KEY_2: if(tool.getClass()!= QuadTool.class) tool = new QuadTool(); break;
@@ -101,6 +102,8 @@ public class BuilderTool implements UserController, HUDfriendly{
 		//case GLFW_KEY_4: if(tool.getClass()!= PointerTool.class) tool = new PointerTool(); break;
 		default: tool.processInput(key, action);
 		}
+		
+		return false;
 	}
 	
 	public List<ParticlePath> getParticleStreams() {
@@ -223,5 +226,12 @@ public class BuilderTool implements UserController, HUDfriendly{
 			e.add(previewCurve);
 			return e;
 		}
+	}
+
+
+
+	@Override
+	public int getInputHandlingPriority() {
+		return 5;
 	}
 }

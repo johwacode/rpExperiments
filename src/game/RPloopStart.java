@@ -25,10 +25,6 @@ import static org.lwjgl.system.glfw.GLFW.glfwTerminate;
 import static org.lwjgl.system.glfw.GLFW.glfwWindowHint;
 import static org.lwjgl.system.glfw.GLFW.glfwWindowShouldClose;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
-import java.io.PrintStream;
 import java.nio.ByteBuffer;
 
 import org.lwjgl.opengl.GL11;
@@ -82,11 +78,11 @@ public class RPloopStart {
         WindowCallback.set(window, new WindowCallbackAdapter() {
             @Override
             public void key(long window, int key, int scancode, int action, int mods) {
-               game.processInput(key, action);
+               InputController.processInput(key, action);
             }
             @Override
             public void mouseButton(long window, int button, int action, int mods) {
-               game.processInput(button, action);
+            	InputController.processInput(button, action);
             }
             //TODO: resize content (bisher nur aspectRatio)
             /*

@@ -1,12 +1,15 @@
 package game.menu;
 
+import game.InputController;
 import game.RacingPlanetsGame;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedList;
 import java.util.List;
 
-public class MenuController {
+import rpEngine.graphical.structs.InputHandler;
+
+public class MenuController implements InputHandler{
 	private List<Menu> menuLevels;
 	private RacingPlanetsGame game;
 	
@@ -28,6 +31,7 @@ public class MenuController {
 		} catch (SecurityException e) {
 			e.printStackTrace();
 		}
+		InputController.registerHandler(this);
 	}
 	
 	public void setMenu(Menu menu){
@@ -61,5 +65,19 @@ public class MenuController {
 	
 	public RacingPlanetsGame getGame(){
 		return game;
+	}
+
+	@Override
+	public int getInputHandlingPriority() {
+		return 8;
+	}
+
+	@Override
+	public boolean processInput(int key, int action) {
+		return getCurrent().processInput(key, action);
+	}
+
+	@Override
+	public void move() {
 	}
 }

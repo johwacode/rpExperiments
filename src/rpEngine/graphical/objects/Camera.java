@@ -24,12 +24,12 @@ import org.lwjgl.BufferUtils;
 import org.lwjgl.system.glfw.GLFW;
 
 import rpEngine.graphical.objects2d.DebugLine;
-import rpEngine.graphical.structs.UserController;
+import rpEngine.graphical.structs.InputHandler;
 import rpEngine.vehicle.Vehicle;
 import utils.math.Matrix4f;
 import utils.math.Vector3f;
 
-public class Camera implements UserController{
+public class Camera implements InputHandler{
 	public enum Mode {
 		FIRST_PERSON,
 		THIRD_PERSON,
@@ -179,20 +179,21 @@ public class Camera implements UserController{
 	 * verarbeitet einfache Klicks per Maus & Tastatur.
 	 * Aufruf durch Callback-Adapter.
 	 */
-	public void processInput(int key, int action) {
-		if(action!=GLFW_PRESS) return;
-    		switch(key){
-    		case GLFW_KEY_V:
-				this.nextMode();
-				break;
-    		case GLFW_KEY_ESCAPE:
-    			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-    			break;
-    		case GLFW_MOUSE_BUTTON_LEFT:
-    			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-    			GLFW.glfwSetCursorPos(window, 0, 0);
-    			break;
+	public boolean processInput(int key, int action) {
+		if(action!=GLFW_PRESS) return false;
+		switch(key){
+		case GLFW_KEY_V:
+			this.nextMode();
+			return true;
+		case GLFW_KEY_ESCAPE:
+			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+			break;
+		case GLFW_MOUSE_BUTTON_LEFT:
+			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+			GLFW.glfwSetCursorPos(window, 0, 0);
+			break;
 		}
+    	return false;
     }
 	
 	private abstract class CameraMode{
@@ -332,5 +333,10 @@ public class Camera implements UserController{
 				}
 			}
 		}
+	}
+
+	@Override
+	public int getInputHandlingPriority() {
+		return 6;
 	}
 }

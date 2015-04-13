@@ -57,8 +57,7 @@ public abstract class Menu extends HUDElement implements Clickable{
 	public List<Button> getButtons(){
 		return buttons;
 	}
-	
-	
+		
 	public boolean handleMouseMovement(long window){
 		glfwGetCursorPos(window, buffer1, buffer2);		
 		float mouseX = (float) buffer1.asDoubleBuffer().get();
@@ -85,10 +84,10 @@ public abstract class Menu extends HUDElement implements Clickable{
 		return this.getClass().getSimpleName();
 	}
 	
-	public void processInput(int key, int action){
-		if(!isReady()) return;
+	public boolean processInput(int key, int action){
+		if(!isReady()) return false;
 		//TODO: current-wechsel über tastatur
-		if(currentHovered==null) return;
+		if(currentHovered==null) return false;
 		else{
 			if(key==GLFW_MOUSE_BUTTON_LEFT){
 				switch(action){
@@ -97,10 +96,11 @@ public abstract class Menu extends HUDElement implements Clickable{
 				case GLFW_RELEASE:
 					System.out.println("klick auf: "+currentHovered.click());
 					handleClickEvent(currentHovered.click());
-					break;
+					return true;
 				}
 			}
 		}
+		return false;
 	}
 	
 	protected void handleClickEvent(String objName){
@@ -137,6 +137,7 @@ public abstract class Menu extends HUDElement implements Clickable{
 		}
 		buttons.clear();
 	}
+
 	
 	@Override
 	public String toString(){

@@ -9,9 +9,9 @@ import static org.lwjgl.system.glfw.GLFW.GLFW_KEY_RIGHT_SHIFT;
 import static org.lwjgl.system.glfw.GLFW.GLFW_KEY_UP;
 import static org.lwjgl.system.glfw.GLFW.GLFW_PRESS;
 import static org.lwjgl.system.glfw.GLFW.glfwGetKey;
-import rpEngine.graphical.structs.UserController;
+import rpEngine.graphical.structs.InputHandler;
 
-public class UserInteractionController implements UserController{
+public class UserInteractionController implements InputHandler{
 	private Vehicle vehicle;
 	private long window;
 	
@@ -39,8 +39,8 @@ public class UserInteractionController implements UserController{
 		}
 	}
 	
-	public void processInput(int key, int action) {
-		if(action!=GLFW_PRESS) return;
+	public boolean processInput(int key, int action) {
+		if(action!=GLFW_PRESS) return false;
     		switch(key){
     		case GLFW_KEY_RIGHT_CONTROL:
 				vehicle.startOrStop();
@@ -52,5 +52,11 @@ public class UserInteractionController implements UserController{
 				vehicle.getTransmissionUnit().releaseGear();
 				break;
 		}
+    	return false;
+	}
+
+	@Override
+	public int getInputHandlingPriority() {
+		return 7;
 	}
 }

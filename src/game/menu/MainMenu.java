@@ -21,7 +21,7 @@ public class MainMenu extends Menu{
 	protected void handleClickEvent(String objName) {		
 		switch(objName){
 		case "buildMode": setGameMode(RPGameMode.BUILDMODE); break;
-		case "race": setGameMode(RPGameMode.RACINGMODE); break;
+		case "race": switchToSubMenu(new StartRaceMenu(controller)); break;
 		case "load": switchToSubMenu(new LoadTrackMenu(controller)); break;
 		case "quitGame": controller.getGame().quitGame(); break;
 		}

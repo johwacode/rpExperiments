@@ -5,6 +5,7 @@ import static org.lwjgl.system.glfw.GLFW.GLFW_CURSOR;
 import static org.lwjgl.system.glfw.GLFW.GLFW_CURSOR_DISABLED;
 import static org.lwjgl.system.glfw.GLFW.glfwGetInputMode;
 import game.menu.InGameBuildMenu;
+import game.menu.InGameMenu;
 import game.menu.InGameRaceMenu;
 import game.menu.MainMenu;
 import game.menu.MenuController;
@@ -124,6 +125,7 @@ public class RacingPlanetsGame {
 	 */
 	public class Race extends GameMode{
 		private int maxViewDistance = 3;
+		private MenuController menuController;
 		
 		public Race(Serializable args) {
 			super(args);
@@ -159,6 +161,8 @@ public class RacingPlanetsGame {
 				}
 				renderer.processHUDElement(e);
 			}
+			if(((InGameMenu)menuController.getCurrent()).isActive)renderer.processHUDElement(menuController.getCurrent());
+			
 			debugLine.printMessages();
 			renderer.processHUDElement(debugLine);
 			
@@ -222,7 +226,7 @@ public class RacingPlanetsGame {
 		}
 		
 		private void initInGameMenu(){
-			new MenuController(RacingPlanetsGame.this, InGameRaceMenu.class);
+			menuController = new MenuController(RacingPlanetsGame.this, InGameRaceMenu.class);
 		}
 		
 	}
@@ -233,6 +237,7 @@ public class RacingPlanetsGame {
 	 */
 	public class BuildMode extends GameMode{
 		private int maxViewDistance = 3;
+		private MenuController menuController;
 		
 		public BuildMode(Serializable args) {
 			super(args);
@@ -283,6 +288,7 @@ public class RacingPlanetsGame {
 				}
 				renderer.processHUDElement(e);
 			}
+			if(((InGameMenu)menuController.getCurrent()).isActive)renderer.processHUDElement(menuController.getCurrent());
 			debugLine.printMessages();
 			renderer.processHUDElement(debugLine);
 			
@@ -291,8 +297,8 @@ public class RacingPlanetsGame {
 		
 		
 		private void initInGameMenu(){
-			MenuController ctr = new MenuController(RacingPlanetsGame.this, InGameBuildMenu.class);
-			((InGameBuildMenu) ctr.getCurrent()).setTool(scene.getBuilderTool());
+			menuController = new MenuController(RacingPlanetsGame.this, InGameBuildMenu.class);
+			((InGameBuildMenu) menuController.getCurrent()).setTool(scene.getBuilderTool());
 		}
 		
 		private void initTerrain(){

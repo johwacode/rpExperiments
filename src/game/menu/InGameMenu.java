@@ -64,7 +64,7 @@ public abstract class InGameMenu extends Menu{
 		}
 
 		@Override
-		public void move(long window) {	
+		public void move(long window) {
 		}
 	}
 }

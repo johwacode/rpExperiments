@@ -9,6 +9,7 @@ import rpEngine.graphical.model.Material;
 import rpEngine.graphical.model.Model;
 import rpEngine.graphical.model.Texture;
 import rpEngine.graphical.structs.TrackAnchor;
+import utils.math.Vector2f;
 import utils.math.Vector3f;
 
 /**
@@ -177,6 +178,25 @@ public class Curve extends Entity{
 				furthestDistance(data)),
 				texture);
 	}
+	
+	/**
+	 * calculates a new Model which is cut off at a specified line.
+	 * e.g. everything beyond x=400.
+	 * @param direction x-z-vector to specify the outgoing direction of the Model.
+	 * legal values:
+	 * 		(-1,0) - cut of everything below the given value in x-Direction
+	 * 		 (1,0) - cut above x
+	 * 		(0,-1) - cut below z
+	 * 		 (0,1) - cut above z.
+	 * 
+	 * @param value sets the value in the given direction, at which to cut
+	 * @return a new  Curve-Model.
+	 */
+	private Model createCutOffModel(Vector2f direction, int value){
+		//TODO: implement
+		return null;
+	}
+	
 	
 	/**
 	 * 

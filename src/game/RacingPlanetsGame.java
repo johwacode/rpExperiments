@@ -34,6 +34,8 @@ import rpEngine.graphical.structs.TrackAnchor;
 import utils.math.Vector3f;
 
 public class RacingPlanetsGame {
+	private static final String version = "v.0.08-2";
+	
 	public enum RPGameMode {MENUMODE, BUILDMODE, RACINGMODE}
 	private GameMode currentMode;
 	private MasterRenderer renderer;
@@ -55,10 +57,11 @@ public class RacingPlanetsGame {
 	
 	public void setMode(RPGameMode newMode, Serializable args){
 		currentMode.cleanUp();
+		scene.cleanUp();
 		switch(newMode){
 		case MENUMODE: currentMode = new MenuMode(args); break;
 		case BUILDMODE: currentMode = new BuildMode(args); break;
-		case RACINGMODE: currentMode = new Race(args); break;
+		case RACINGMODE: currentMode = new RaceMode(args); break;
 		}
 	}
 	
@@ -67,11 +70,15 @@ public class RacingPlanetsGame {
 		currentMode.render();
 	}
 	
+	public String getVersionID() {
+		return version;
+	}
+	
 	public void cleanUp(){
 		currentMode.cleanUp();
 		debugLine.stopRunning();
-		
 		renderer.cleanUp();
+		scene.cleanUp();
 		Loader.cleanUp();
 	}
 	
@@ -123,14 +130,16 @@ public class RacingPlanetsGame {
 	 * speed up and win, racing on your custom build tracks, while 
 	 * each opponent built his own track part  
 	 */
-	public class Race extends GameMode{
+	public class RaceMode extends GameMode{
 		private int maxViewDistance = 3;
 		private MenuController menuController;
+		private RaceController raceController;
 		
-		public Race(Serializable args) {
+		public RaceMode(Serializable args) {
 			super(args);
 			initTerrain();
 			initEnvironment(args);
+			raceController = new RaceController(scene);
 			initVehicles(args);
 			initHUD();
 			initCamera();
@@ -354,5 +363,4 @@ public class RacingPlanetsGame {
 			scene.setBuilderTool(new BuilderTool(scene));
 		}
 	}
-
 }

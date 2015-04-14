@@ -5,8 +5,8 @@
 	<classpathentry kind="lib" path="lwjgl3/jar/disruptor.jar"/>
 	<classpathentry kind="lib" path="lwjgl3/jar/lwjgl.jar">
 		<attributes>
-			<attribute name="javadoc_location" value="jar:platform:/resource/RacingPlanets/lwjgl3/doc/javadoc.zip!/"/>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="RacingPlanets/lwjgl3/native/windows/x64"/>
+			<attribute name="javadoc_location" value="jar:platform:/resource/rpExperiments/lwjgl3/doc/javadoc.zip!/"/>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="rpExperiments/lwjgl3/native/windows/x64"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="slick-util.jar">

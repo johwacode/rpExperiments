@@ -32,6 +32,7 @@ public class SceneGraph {
 		entities = new LinkedList<>();
 		debugSpheres = new LinkedList<>();
 		hud = new ArrayList<>();
+		lights = new ArrayList<>();
 	}
 	
 	public static void addDebugSphere(Vector3f pos){
@@ -73,7 +74,6 @@ public class SceneGraph {
 		return lights;
 	}
 	public void addLight(Light light) {
-		if(lights==null) lights = new ArrayList<>();
 		this.lights.add(light);
 	}
 	public ChunkMap getChunkMap() {
@@ -101,5 +101,13 @@ public class SceneGraph {
 	}
 	public void setBuilderTool(BuilderTool builderTool) {
 		this.builderTool = builderTool;
+	}
+	
+	public void cleanUp(){
+		lights.clear();
+		entities.clear();
+		hud.clear();
+		setBuilderTool(null);
+		debugSpheres.clear();
 	}
 }

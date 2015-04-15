@@ -23,8 +23,8 @@ public class Text {
 	public static String createString(String name, String content, float x, float y){
 		if(!Font.fontLoaded) Font.init_calibri_german();
 		
-		currentText.remove(name); //falls bereits vorhanden wird key überschrieben
-		StringData data = new StringData();
+		deleteString(name); //falls bereits vorhanden wird key überschrieben
+		StringData data = new StringData(x,y);
 		
 		float posX = x;
 		for(char c : content.toCharArray()){
@@ -36,17 +36,36 @@ public class Text {
 	}
 	
 	/**
+	 * Method for reposition an existing String.
+	 * reprints an existing String. breaks if either the String doesn't exist or the position of the 
+	 * String didnt't change. [the content of the String is NOT relevant]
+	 * creates a new String, if the position has to be refreshed.
+	 * @param name id of the String
+	 * @param content only needed, if the StringPosition changed for creating a new String.
+	 * @param x
+	 * @param y
+	 */
+	public static void repositionString(String name, String content, float x, float y){
+		StringData sd = currentText.get(name);
+		if(sd==null || (sd.getStringPosX()==x&&sd.getStringPosY()==y))return;
+		createString(name, content, x, y);
+	}
+	
+	public static boolean containsString(String name){
+		return currentText.containsKey(name);
+	}
+	
+	
+	/**
 	 * removes a String from screen
 	 * @param name = id where the string is registered. not it's value!
 	 */
 	public static void deleteString(String name){
-		//System.out.println("==== removing String \""+name+"\" ====");
-		//System.out.println(currentText.get(name));
+		if(!currentText.containsKey(name)) return;
 		for(Entry<Character, List<Long>> e : currentText.get(name).positions.entrySet()){
 			getChar(e.getKey()).removePositions(e.getValue());
 		}
 		currentText.remove(name);
-		//System.out.println("done.\n");
 	}
 	
 	public static List<Model2D> getRenderList(){
@@ -116,15 +135,25 @@ public class Text {
 	 */
 	private static class StringData{
 		private Map<Character, List<Long>> positions;
+		private float stringPosX, stringPosY;
 		
-		private StringData(){
+		private StringData(float stringPosX, float stringPosY){
 			positions = new HashMap<>();
+			this.stringPosX = stringPosX;
+			this.stringPosY = stringPosY;
 		}
 		
 		public void addChar(char c, float posX, float posY){
 			Model2D model = getChar(c);
 			if(!positions.containsKey(c)) positions.put(c, new ArrayList<Long>());
 			positions.get(c).add(model.addPosition(posX, posY));
+		}
+		
+		public float getStringPosX(){
+			return stringPosX;
+		}
+		public float getStringPosY(){
+			return stringPosY;
 		}
 		
 		@Override

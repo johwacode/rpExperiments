@@ -26,6 +26,8 @@ public class MenuController implements InputHandler{
 			e.printStackTrace();
 		} catch (InvocationTargetException e) {
 			e.printStackTrace();
+			System.err.println("InvocationTargetException caused by:");
+			e.getCause().printStackTrace();
 		} catch (NoSuchMethodException e) {
 			e.printStackTrace();
 		} catch (SecurityException e) {

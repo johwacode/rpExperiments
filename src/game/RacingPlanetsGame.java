@@ -34,7 +34,7 @@ import rpEngine.graphical.structs.TrackAnchor;
 import utils.math.Vector3f;
 
 public class RacingPlanetsGame {
-	private static final String version = "v.0.08-2";
+	private static final String version = "v.0.08-35";
 	
 	public enum RPGameMode {MENUMODE, BUILDMODE, RACINGMODE}
 	private GameMode currentMode;
@@ -118,10 +118,7 @@ public class RacingPlanetsGame {
 		public void render() {
 			
 			renderer.processHUDElement(menuController.getCurrent());
-			
 			debugLine.printMessages();
-			renderer.processHUDElement(debugLine);
-			
 			renderer.render2D();
 		}
 	}
@@ -133,14 +130,12 @@ public class RacingPlanetsGame {
 	public class RaceMode extends GameMode{
 		private int maxViewDistance = 3;
 		private MenuController menuController;
-		private RaceController raceController;
 		
 		public RaceMode(Serializable args) {
 			super(args);
 			initTerrain();
 			initEnvironment(args);
-			raceController = new RaceController(scene);
-			initVehicles(args);
+			new RaceController(scene);
 			initHUD();
 			initCamera();
 			initInGameMenu();
@@ -223,11 +218,6 @@ public class RacingPlanetsGame {
 					}
 			}
 			scene.setChunkMap(chunkMap);
-		}
-		
-		private void initVehicles(Serializable args) {
-			// TODO Auto-generated method stub
-			
 		}
 
 		private void initCamera(){

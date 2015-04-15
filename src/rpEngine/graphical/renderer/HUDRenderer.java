@@ -1,4 +1,5 @@
 package rpEngine.graphical.renderer;
+import java.util.ConcurrentModificationException;
 import java.util.List;
 
 import org.lwjgl.opengl.GL11;
@@ -29,10 +30,14 @@ public class HUDRenderer {
 	
 	private void renderModels(List<Model2D> hudObjects){
 		for(Model2D model: hudObjects){
+			try{ //TODO: use threadsafe iterator? or lock while rendering.
 			for(Vector2f position: model.getPositions()){
 				prepareTexturedModel(model, position);
 				GL11.glDrawElements(GL11.GL_TRIANGLES, model.getVao().getVertexCount(), GL11.GL_UNSIGNED_INT, 0);
 				unbindTexturedModel();
+			}
+			}catch (ConcurrentModificationException e){
+				
 			}
 		}
 	}

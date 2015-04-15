@@ -29,18 +29,18 @@ public class DebugLine extends HUDElement implements Runnable{
 	}
 	
 	public String deleteFirstMessage(){
-		timestamps.remove(0);
+		Text.deleteString("Console"+timestamps.remove(0));
 		return messages.remove(0);
 	}
 	
 	public void printMessages(){
-		clearModels();
 		try{
 			int i=messages.size()-1;
 			for(float y = posY; y>0 && i>=0; y-=0.4f){
-				String string = "> "+messages.get(i);
-				//Text.createString(string, posX, y);
-				//TODO: an neue Text-Implementierung anpassen.
+				String id = "Console"+timestamps.get(i);
+				String content = "> "+messages.get(i);
+				if(Text.containsString(id)) Text.repositionString(id, content, posX, y);
+				else Text.createString(id, content, posX, y);
 				i--;
 			}
 		} catch(IndexOutOfBoundsException e){

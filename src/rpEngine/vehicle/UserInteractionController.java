@@ -12,13 +12,8 @@ import static org.lwjgl.system.glfw.GLFW.glfwGetKey;
 import rpEngine.graphical.structs.InputHandler;
 
 public class UserInteractionController extends VehicleController implements InputHandler{
-	private Vehicle vehicle;
-	
-	public UserInteractionController(){
-	}
-	
-	public void setVehicle(Vehicle vehicle){
-		this.vehicle = vehicle;
+	public UserInteractionController(String driverName){
+		super(driverName);
 	}
 	
 	public void move(long window){

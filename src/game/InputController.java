@@ -3,7 +3,6 @@ package game;
 import java.util.Comparator;
 import java.util.TreeSet;
 
-import rpEngine.graphical.objects2d.DebugLine;
 import rpEngine.graphical.structs.InputHandler;
 
 public abstract class InputController {

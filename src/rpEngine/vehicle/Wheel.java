@@ -41,7 +41,7 @@ public class Wheel extends VehicleComponent{
 	}
 
 	public float move(float f) {
-		this.getVehicle().move();
+		//this.getVehicle().move();
 		return 1;
 	}
 }

@@ -59,7 +59,7 @@ public class Engine extends VehicleComponent implements Runnable{
 			mixImpulseWithCurrent(newMoment);
 			
 			try{
-				if(transmissionUnit==null)transmissionUnit = getVehicle().getTransmissionUnit();
+				//if(transmissionUnit==null)transmissionUnit = getVehicle().getTransmissionUnit();
 				float resistance = transmissionUnit.move(currentRpm);
 				
 				currentRpm -= resistance;

@@ -1,15 +1,23 @@
 package game;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
 import rpEngine.vehicle.Vehicle;
 import utils.math.Vector3f;
 
 
 public class RaceController {
 	SceneGraph scene;
+	List<Vehicle> vehicles;
 	
-	public RaceController(SceneGraph sceneGraph){
+	public RaceController(String[] player, SceneGraph sceneGraph, Serializable args){
 		scene = sceneGraph;
-		initVehicles();
+		vehicles= new ArrayList<>();
+		for(String driverName:player){
+			vehicles.add(Vehicle.load(driverName, args));
+		}
 	}
 	
 	public Vehicle getOwnCar(){

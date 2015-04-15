@@ -113,8 +113,13 @@ public abstract class Menu extends HUDElement implements Clickable{
 	}
 	
 	protected void setGameMode(RPGameMode newMode, Serializable data){
+		Serializable[] multipleData = {data};
+		setGameMode(newMode, multipleData);
+	}
+	
+	protected void setGameMode(RPGameMode newMode, Serializable[] multipleData){
 		clear();
-		controller.getGame().setMode(newMode, data);
+		controller.getGame().setMode(newMode, multipleData);
 	}
 	
 	protected void switchToSubMenu(Menu submenu){

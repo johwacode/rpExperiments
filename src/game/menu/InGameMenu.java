@@ -18,6 +18,7 @@ public abstract class InGameMenu extends Menu{
 	
 	public InGameMenu(MenuController ctrl){
 		super(ctrl);
+		clearModels();
 		activationHandler = new ActivationHandler();
 		InputController.registerHandler(activationHandler);
 	}

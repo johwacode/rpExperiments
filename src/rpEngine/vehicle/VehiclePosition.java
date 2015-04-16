@@ -19,6 +19,14 @@ public class VehiclePosition implements Serializable{
 	public Vector3f impulseInner;
 	
 	/**
+	 * front and top are set to (0,0,-1) and (0,1,0) per default.
+	 * @param worldPosition
+	 */
+	public VehiclePosition(Vector3f worldPosition){
+		this(new Vector3f(0,0,-1), new Vector3f(0,1,0), worldPosition);
+	}
+	
+	/**
 	 * @param frontDiretion
 	 * @param topDirection
 	 * @param worldPosition

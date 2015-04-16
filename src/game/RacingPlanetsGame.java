@@ -34,7 +34,7 @@ import rpEngine.graphical.structs.TrackAnchor;
 import utils.math.Vector3f;
 
 public class RacingPlanetsGame {
-	private static final String version = "v.0.08-35";
+	private static final String version = "v.0.08-58";
 	
 	public enum RPGameMode {MENUMODE, BUILDMODE, RACINGMODE}
 	private GameMode currentMode;
@@ -157,6 +157,10 @@ public class RacingPlanetsGame {
 				renderer.processEntity(e);
 			}
 			
+			for(Entity e:SceneGraph.getDebugSpheres()){
+				renderer.processEntity(e);
+			}
+			
 			
 			for(HUDElement e: scene.getHUDElements()){
 				try{
@@ -269,18 +273,22 @@ public class RacingPlanetsGame {
 			
 			renderer.processTerrain(scene.getTerrain());
 			
+			for(ParticleStream pStream:scene.getBuilderTool().getParticleStreams()){
+				renderer.processParticleStream(pStream);
+			}
+			
 			for(Curve c:scene.getModels(maxViewDistance)){
 				renderer.processEntity(c);
 			}
 			for(Entity e:scene.getBuilderTool().getPreview()){
 				renderer.processEntity(e);
 			}
-
-			for(ParticleStream pStream:scene.getBuilderTool().getParticleStreams()){
-				renderer.processParticleStream(pStream);
-			}
 			
 			for(Entity e:scene.getEntities()){
+				renderer.processEntity(e);
+			}
+			
+			for(Entity e:SceneGraph.getDebugSpheres()){
 				renderer.processEntity(e);
 			}
 			

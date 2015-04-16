@@ -46,8 +46,11 @@ public class SceneGraph {
 	public void setTerrain(Terrain terrain) {
 		this.terrain = terrain;
 	}
-	public List<Entity> getEntities() {
+	public static List<Entity> getDebugSpheres() {
 		return debugSpheres;
+	}
+	public List<Entity> getEntities() {
+		return entities;
 	}
 	public void addEntity(Entity entity) {
 		this.entities.add(entity);

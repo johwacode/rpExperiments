@@ -25,7 +25,7 @@ import utils.math.Matrix4f;
 
 public class MasterRenderer {
 
-	private static final float[] backgroundColor = {0.61f,  0.85f,  1f, 1};
+	private static final float[] backgroundColor = {0.2f,  0,  0.1f, 1};
 	private static final float[] fogColor = {0.30f,  0.32f,  0.5f, 1};
 	
 	private Matrix4f projectionMatrix;
@@ -69,34 +69,24 @@ public class MasterRenderer {
 	
 	public void render2D(){
 		prepare();
+
+		skyBoxShader.start();
+		skyBoxShader.loadViewMatrix(new Matrix4f());
+		skyBoxShader.loadFogColor(fogColor[0], fogColor[1], fogColor[2]);
+		skyboxRenderer.render();
+		skyBoxShader.stop();
 		
 		hudShader.start();
 		hudRenderer.render(hudObjects);
 		hudShader.stop();
 		
-		terrains.clear();
-		entities.clear();
+		
 		hudObjects.clear();
-		particleStreams.clear();
 	}
 	
 	
 	public void render(List<Light> lights, Camera camera){
 		prepare();
-		
-		/* Spheres ausklammern
-		
-		System.out.println("-------------");
-		for(List<Entity> entitylist: entities.values()){
-			for(int i=entitylist.size()-1; i>=0; i--){
-				System.out.println("Entity: "+entitylist.get(i));
-				if(entitylist.get(i) instanceof Sphere){
-					System.out.println("entfernt.");
-					entitylist.remove(entitylist.get(i));
-				}
-			}
-		}
-		*/
 		
 		//TODO: method for shaderWorkflow (start-> load-> render-> stop)
 		

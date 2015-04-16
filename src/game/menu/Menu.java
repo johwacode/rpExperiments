@@ -30,6 +30,7 @@ public abstract class Menu extends HUDElement implements Clickable{
 	
 	public Menu(MenuController ctrl){
 		controller = ctrl;
+		addImage("mainmenu_background", 0, -7.0f, 12.9f, 17);
 	}
 	
 	protected MenuController controller;
@@ -49,8 +50,8 @@ public abstract class Menu extends HUDElement implements Clickable{
 	@Override
 	public List<Model2D> getModels(){
 		List<Model2D> res = new LinkedList<>();
-		res.addAll(super.getModels());
 		for(Button btn : buttons) res.addAll(btn.getModels());
+		res.addAll(super.getModels());
 		return res;
 	}
 	

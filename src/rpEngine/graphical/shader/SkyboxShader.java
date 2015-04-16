@@ -29,16 +29,20 @@ public class SkyboxShader extends ShaderProgram{
 		super.loadMatrix(location_projectionMatrix, matrix);
 	}
 
+	public void loadViewMatrix(Matrix4f viewMatrix){
+		//slow rotation
+		currentRotation -= ROTATION_SPEED * 0.016f; //TODO: get real time per frame
+		Matrix4f.rotateY(currentRotation, viewMatrix, viewMatrix);
+		super.loadMatrix(location_viewMatrix, viewMatrix);
+	}
+	
 	public void loadViewMatrix(Camera camera){
 		Matrix4f matrix = camera.getViewMatrix();
 		//no translation relative to Player
 		matrix.m03 = 0;
 		matrix.m13 = 0;
 		matrix.m23 = 0;
-		//slow rotation
-		currentRotation -= ROTATION_SPEED * 0.016f; //TODO: get real time per frame
-		Matrix4f.rotateY(currentRotation, matrix, matrix);
-		super.loadMatrix(location_viewMatrix, matrix);
+		loadViewMatrix(matrix);
 	}
 	
 	public void loadFogColor(float r, float g, float b){

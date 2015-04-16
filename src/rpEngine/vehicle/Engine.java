@@ -2,91 +2,55 @@ package rpEngine.vehicle;
 
 import java.util.Random;
 
-import utils.math.Vector3f;
-
-public class Engine extends VehicleComponent implements Runnable{
-	private TransmissionUnit transmissionUnit;
-
+public class Engine extends VehicleComponent{
+	private static final long serialVersionUID = 6856882182745023485L;
 	private int maxPower;
 	private int size;
+	private int cylinders;
+	private int torque; //(maxValue)
+	private int weight;
 	private int maxRpm; //Drehzahl
 	private float currentRpm;
 	private int maxTemperature;
 	private float currentTemperature; //in °C
-	private int smoothness = 1; //Laufruhe in Aussetzern je 1000 Umdrehungen
+	private float smoothness = 1;
 	public boolean running = false;
-	private Thread engineThread;
 	
 	private float fuelUp_tmp; 
 	
 	private Random rndGenerator = new Random();
 	
-	public Engine(Vector3f position, int weight, Vector3f aeroDragFront,
-			Vector3f aeroDragSide, int maxPower, int size, int maxRpm,
-			int maxTemperature,
-			int smoothness) {
-		super(position, weight, aeroDragFront, aeroDragSide);
+	/**
+	 * @param maxPower in kW
+	 * @param size in cm³ (ccm)
+	 * @param cylinders count (2,3,4,...12)
+	 * @param torque - turningMoment in Nm (maxValue)
+	 * @param maxRpm  in 1000/min
+	 * @param maxTemperature in °C
+	 * @param weight in kg
+	 * @param smoothness [0.2(really rough); 1.0(perfect >RollsRoyce)]
+	 */
+	public Engine(String id, int maxPower, int size, int cylinders, int torque, int maxRpm,
+			int maxTemperature, int weight, float smoothness) {
+		super(id);
 		this.maxPower = maxPower;
 		this.size = size;
+		this.cylinders = cylinders;
+		this.torque = torque;
 		this.maxRpm = maxRpm;
 		this.currentRpm = 0;
 		this.maxTemperature = maxTemperature;
 		this.currentTemperature = 20;
+		this.weight = weight;
 		this.smoothness = smoothness;
 	}
 	
 	public void turnOn(){
 		if(running) return;
-		engineThread = new Thread(this);
 		running = true;
-		engineThread.start();
 	}
 	public void turnOff(){
 		running=false;
-	}
-	
-	public void run(){
-		final int REFRESHRATE = 30;
-		while(running){
-			///////
-			//Leistung = M * Omega
-			//==2Pi * M * Drehzahl
-			//==2Pi * F * r * f
-			//==2Pi*r * F * f
-			//-> F = P / (2*Pi * FREQUENCY)
-			float newMoment = gaussian(maxPower*(5*fuelUp_tmp+1) / 0.63f, 0.2f); //~ (2*2pi*10)
-			fuelUp_tmp = 0;
-			mixImpulseWithCurrent(newMoment);
-			
-			try{
-				//if(transmissionUnit==null)transmissionUnit = getVehicle().getTransmissionUnit();
-				float resistance = transmissionUnit.move(currentRpm);
-				
-				currentRpm -= resistance;
-				
-			} catch( NullPointerException e){
-				e.printStackTrace();
-			}
-			
-				
-				
-			try {
-				Thread.sleep(REFRESHRATE);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-		
-		//slow down.
-		while(currentRpm>20){
-			mixImpulseWithCurrent(0);
-		}
-		currentRpm = 0;
-	}
-	
-	private void mixImpulseWithCurrent(float newMoment){
-		float oldMoment = currentRpm/2f;
-		currentRpm=(0.3f*newMoment+0.7f*oldMoment)*2f;
 	}
 	
 	/**
@@ -96,14 +60,6 @@ public class Engine extends VehicleComponent implements Runnable{
 	public void fuel(float amount){
 		if(!running) return;
 		fuelUp_tmp += amount;
-	}
-
-	public int getMaxPower() {
-		return maxPower;
-	}
-
-	public int getSize() {
-		return size;
 	}
 
 	public int getMaxRpm() {
@@ -120,9 +76,5 @@ public class Engine extends VehicleComponent implements Runnable{
 
 	public float getCurrentTemperature() {
 		return currentTemperature;
-	}
-	
-	private float gaussian(float value, float stretch){
-		return (float) rndGenerator.nextGaussian()*stretch+value;
 	}
 }

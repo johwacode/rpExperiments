@@ -2,9 +2,11 @@ package rpEngine.vehicle;
 
 
 public class Steering extends VehicleComponent{
-	
-	public Steering() {
-		super(null, 0, null, null);
+	private static final long serialVersionUID = -1620266358997169936L;
+	float transmission;
+	public Steering(float transmission) {
+		super("steering"+transmission);
+		this.transmission = transmission;
 	}
 
 	private float value=0;

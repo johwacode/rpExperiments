@@ -16,7 +16,9 @@ public class RaceController {
 		scene = sceneGraph;
 		vehicles= new ArrayList<>();
 		for(String driverName:player){
-			vehicles.add(Vehicle.load(driverName, args));
+			Vehicle v = Vehicle.load(driverName, args);
+			vehicles.add(v);
+			scene.addEntities(v.getModel());
 		}
 	}
 	

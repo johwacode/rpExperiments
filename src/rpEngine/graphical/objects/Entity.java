@@ -4,7 +4,7 @@ import rpEngine.graphical.model.Model;
 import utils.math.Matrix4f;
 import utils.math.Vector3f;
 
-public abstract class Entity {
+public class Entity {
 	public static Vector3f nullVector = new Vector3f(0,0,0);
 
 	private Model model;
@@ -15,6 +15,14 @@ public abstract class Entity {
 	private Matrix4f transformationMatrix;
 	private boolean matrixUpToDate = false;
 	
+	/**
+	 * @param model
+	 * @param position
+	 * @param rotX
+	 * @param rotY
+	 * @param rotZ
+	 * @param scale
+	 */
 	public Entity(Model model, Vector3f position, float rotX,
 			float rotY, float rotZ, float scale) {
 		this.model = model;
@@ -24,9 +32,6 @@ public abstract class Entity {
 		this.rotZ = rotZ;
 		this.scale = scale;
 	}
-		
-	public abstract boolean intersects(Vector3f point);
-	
 	
 	public Matrix4f getTransformationMatrix(){
 		if(!matrixUpToDate){

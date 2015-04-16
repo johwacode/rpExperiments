@@ -2,7 +2,9 @@ package rpEngine.vehicle;
 
 import java.io.Serializable;
 import java.text.DecimalFormat;
+import java.util.List;
 
+import rpEngine.graphical.objects.Entity;
 import rpEngine.graphical.structs.HUDfriendly;
 import utils.math.Vector3f;
 
@@ -18,6 +20,7 @@ public class Vehicle implements HUDfriendly {
 		driver.setVehicle(this);
 		this.parts = parts;
 		this.currentPosition = position;
+		
 	}
 	
 	public static Vehicle load(String drivername, Serializable data){
@@ -48,5 +51,9 @@ public class Vehicle implements HUDfriendly {
 	public Vector3f getCurrentDirection() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	public List<Entity> getModel(){
+		return parts.getDrawables();
 	}
 }

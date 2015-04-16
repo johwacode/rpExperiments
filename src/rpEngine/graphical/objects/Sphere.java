@@ -16,7 +16,6 @@ public class Sphere extends Entity {
 		radius = size;
 	}
 
-	@Override
 	public boolean intersects(Vector3f point) {
 		Vector3f test = Vector3f.add(point, getPosition());
 		return (test.length()<=radius);

@@ -286,14 +286,6 @@ public class Curve extends Entity{
 			return this.anchors.get(anchors.size()-1);
 		}
 	}
-
-
-
-	@Override
-	public boolean intersects(Vector3f point) {
-		// TODO Auto-generated method stub
-		return false;
-	}
 	
 	public Vector3f getClosestIntersection(Vector3f point, Vector3f direction){
 		Vector3f[] results = new Vector3f[2];

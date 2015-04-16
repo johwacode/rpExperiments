@@ -1,10 +1,5 @@
 package rpEngine.vehicle;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-
-import utils.math.Vector3f;
 
 /**
  * 
@@ -12,19 +7,21 @@ import utils.math.Vector3f;
  *	Getriebe, Differential, ...
  */
 public class TransmissionUnit extends VehicleComponent{
-	private static final int R=0, N=20; //reservierte Gänge 
+	private static final long serialVersionUID = -7028220949640427976L;
+
+	private static final int R=21, N=22; //reservierte Gänge 
 	
 	private short currentGear;
-	private float[] transmission;
-	
-	private List<Wheel> wheels;
+	private float[] transmission; //effectiveTransmission = AxisTransmission(=[0]) * transmission[gear] * Wheels.radius
 
-	public TransmissionUnit(Vector3f position, int weight,
-			float[] transmission) {
-		super(position, weight, null, null);
+	/**
+	 * @param weight in kg
+	 * @param transmission float values for transmissions {AxisTransmission, 1.Gear, 2nd Gear, 3. Gear, ...}
+	 */
+	public TransmissionUnit(String id, int weight, float... transmission) {
+		super(id);
 		this.currentGear = N;
 		this.transmission = transmission;
-		wheels = new ArrayList<>();
 	}
 	
 	/**
@@ -61,40 +58,10 @@ public class TransmissionUnit extends VehicleComponent{
 	 * @return Widerstand
 	 */
 	public float move(float force){
-		if(currentGear!=N)
-			try{
-				float resistanceFactor = transmission[currentGear];
-				float resultingForce = force * transmission[currentGear];
-				float resistanceOutput = 0;
-				
-				//Widerstände der einzelnen Räder berechnen
-				List<Float> resistances = new LinkedList<>();
-				for(Wheel wheel: wheels){
-					resistances.add(wheel.getResistance());
-				}
-				float sumR = 0;
-				for(float r : resistances){
-					sumR += r;
-				}
-				float splittedForce = resultingForce/wheels.size();
-				//Räder antreiben
-				for(int i=0; i<wheels.size(); i++){
-					//anteilForce = 1/R; anteilR = (resistances.get(i)/sumR);
-					float rResult = wheels.get(i).move(sumR/resistances.get(i) * splittedForce);
-					resistanceOutput += rResult;
-				}
-				resistanceOutput*=resistanceFactor;
-				
-				return resistanceOutput;
-			}catch(ArithmeticException e){
-			}
+		if(currentGear!=N) return 1;
 		return 0;
 	}
 	
-	public void addWheel(Wheel wheel){
-		wheels.add(wheel);
-	}
-
 	public String getCurrentGearAsString() {
 		if(currentGear==R)return "R";
 		if(currentGear==N)return "N";

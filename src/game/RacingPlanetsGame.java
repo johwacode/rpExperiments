@@ -34,7 +34,7 @@ import rpEngine.graphical.structs.TrackAnchor;
 import utils.math.Vector3f;
 
 public class RacingPlanetsGame {
-	private static final String version = "v.0.08-58";
+	private static final String version = "v.0.08-83"; ///////////
 	
 	public enum RPGameMode {MENUMODE, BUILDMODE, RACINGMODE}
 	private GameMode currentMode;
@@ -135,10 +135,10 @@ public class RacingPlanetsGame {
 			super(args);
 			initTerrain();
 			initEnvironment(args);
+			initCamera();
 			String[] testPlayers = {"joh","bot"};
 			new RaceController(testPlayers, scene, args);
 			initHUD();
-			initCamera();
 			initInGameMenu();
 		}
 		
@@ -194,7 +194,6 @@ public class RacingPlanetsGame {
 		}
 		
 		private void initHUD(){
-			scene.addToHUD(new ToolBoxDisplay(9.35f, 7));
 		}
 		
 		@SuppressWarnings("unchecked")

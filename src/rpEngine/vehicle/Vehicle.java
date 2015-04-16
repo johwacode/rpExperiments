@@ -1,12 +1,10 @@
 package rpEngine.vehicle;
 
-import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.util.List;
 
 import rpEngine.graphical.objects.Entity;
 import rpEngine.graphical.structs.HUDfriendly;
-import utils.math.Vector3f;
 
 public class Vehicle implements HUDfriendly {
 	private static DecimalFormat format = new DecimalFormat("###0.#");
@@ -42,15 +40,13 @@ public class Vehicle implements HUDfriendly {
 		}
 		
 	}
-
-	public Vector3f getPosition() {
-		// TODO Auto-generated method stub
-		return null;
+	
+	public VehicleParts getParts(){
+		return parts;
 	}
 
-	public Vector3f getCurrentDirection() {
-		// TODO Auto-generated method stub
-		return null;
+	public VehicleController getController(){
+		return driver;
 	}
 	
 	public List<Entity> getModel(){

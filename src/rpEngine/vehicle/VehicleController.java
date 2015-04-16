@@ -11,20 +11,14 @@ public abstract class VehicleController{
 	private String playerName; 
 	private VehiclePosition vehiclePosition;
 	
-	public static VehicleController load(String drivername, Serializable data){
-		//TODO: implement loading from Serializable
-		VehicleParts parts = new VehicleParts();
-		//TODO: implement finding initPositions for every Vehicle in this Race.(raceController)
-		Vector3f worldPosition = new Vector3f(370, 7, -20);
-		VehiclePosition position = new VehiclePosition(new Vector3f(0,0,-1), new Vector3f(0,1,0), worldPosition);
-		return new UserInteractionController(drivername, position, new Vehicle(parts));
-	}
 	
 	public VehicleController(String driverName, VehiclePosition vehiclePosition, Vehicle vehicle){
 		playerName = driverName;
 		this.vehicle = vehicle;
+		this.vehiclePosition = vehiclePosition;
+		vehicle.setController(this);
 		for(Entity entity: vehicle.getModel()){
-			entity.setPosition(vehiclePosition.worldPosition);
+			entity.setPosition(vehiclePosition.worldPosition); //TODO: Correction for Wheels (pos = worldPos + x)
 		}
 	}
 	
@@ -46,5 +40,25 @@ public abstract class VehicleController{
 	
 	protected void rotateRight(int angle){
 		//TODO ...
+	}
+
+	public void fuel(float f) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void useBreak(float f) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void turnRight(float f) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void turnLeft(float f) {
+		// TODO Auto-generated method stub
+		
 	}
 }

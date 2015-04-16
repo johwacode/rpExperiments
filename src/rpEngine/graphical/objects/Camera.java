@@ -24,6 +24,7 @@ import org.lwjgl.system.glfw.GLFW;
 import rpEngine.graphical.objects2d.DebugLine;
 import rpEngine.graphical.structs.InputHandler;
 import rpEngine.vehicle.Vehicle;
+import rpEngine.vehicle.VehiclePosition;
 import utils.math.Matrix4f;
 import utils.math.Vector3f;
 
@@ -39,7 +40,7 @@ public class Camera implements InputHandler{
 	public float yaw;		//left/right 
 	private float roll;		//Neigung
 	private CameraMode currentMode;
-	private Vehicle vehicle = null;
+	private VehiclePosition vehiclePos = null;
 	private SceneGraph scene;
 	
 	private Matrix4f viewMatrix;
@@ -63,7 +64,7 @@ public class Camera implements InputHandler{
 	}
 	
 	public void setVehicle(Vehicle vehicle){
-		this.vehicle = vehicle;
+		vehiclePos = vehicle.getController().getVehiclePosition();
 		currentMode = new ThirdPersonMode();
 		matrixUpToDate = false;
 	}
@@ -201,30 +202,32 @@ public class Camera implements InputHandler{
 		
 		@Override
 		protected void switchToNextMode(){
-			currentMode = new ThirdPersonMode(); 
+			currentMode = new ThirdPersonMode();
 		}
 		
 		@Override
 		public Vector3f getPosition() {
-			Vector3f.add(vehicle.getPosition(), new Vector3f(0,0.9f,0), position);
+			Vector3f.add(vehiclePos.worldPosition, new Vector3f(0,0.9f,0), position);
 			return position;
 		}
 		
 		@Override
 		public float getPitch(){
-			//TODO: only for flatland
-			return -2;
+			return vehiclePos.pitch;
 		}
 		
 		@Override
 		public float getYaw(){
-			float angle = (float) Math.acos(vehicle.getCurrentDirection().z / vehicle.getCurrentDirection().length());
-			if(vehicle.getCurrentDirection().x>0)angle*=-1;
-			yaw = (float) Math.toDegrees(angle);
-			return yaw;
+			return vehiclePos.yaw;
 		}
 	}
 	
+	
+	/**
+	 * 
+	 * @author joh
+	 *
+	 */
 	private class ThirdPersonMode extends CameraMode{
 		@Override
 		protected Mode getEnum(){return Mode.THIRD_PERSON;}
@@ -237,10 +240,10 @@ public class Camera implements InputHandler{
 		@Override
 		public Vector3f getPosition() {
 			Vector3f distance = new Vector3f();
-			vehicle.getCurrentDirection().negate(distance);
-			distance.scale(50);
-			distance.y-=5;
-			Vector3f.sub(vehicle.getPosition(), distance, position);
+			vehiclePos.frontDirection.negate(distance);
+			distance.scale(5);
+			distance.y-=4;
+			Vector3f.sub(vehiclePos.worldPosition, distance, position);
 			return position;
 		}
 		
@@ -252,10 +255,7 @@ public class Camera implements InputHandler{
 		
 		@Override
 		public float getYaw(){
-			float angle = (float) Math.acos(vehicle.getCurrentDirection().z / vehicle.getCurrentDirection().length());
-			if(vehicle.getCurrentDirection().x>0)angle*=-1;
-			yaw = (float) Math.toDegrees(angle);
-			return yaw;
+			return vehiclePos.yaw;
 		}
 	}
 	
@@ -265,7 +265,7 @@ public class Camera implements InputHandler{
 		
 		@Override
 		protected void switchToNextMode(){
-			if(vehicle!=null)
+			if(vehiclePos!=null)
 				currentMode = new FirstPersonMode(); 
 		}
 		

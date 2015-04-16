@@ -9,26 +9,28 @@ import static org.lwjgl.system.glfw.GLFW.GLFW_KEY_RIGHT_SHIFT;
 import static org.lwjgl.system.glfw.GLFW.GLFW_KEY_UP;
 import static org.lwjgl.system.glfw.GLFW.GLFW_PRESS;
 import static org.lwjgl.system.glfw.GLFW.glfwGetKey;
+import game.InputController;
 import rpEngine.graphical.structs.InputHandler;
 
 public class UserInteractionController extends VehicleController implements InputHandler{
 	public UserInteractionController(String driverName, VehiclePosition position, Vehicle vehicle){
 		super(driverName, position, vehicle);
+		InputController.registerHandler(this);
 	}
 	
 	public void move(long window){
 		if(glfwGetKey(window, GLFW_KEY_UP)==GLFW_PRESS){
-			//vehicle.getEngine().fuel(0.4f);
+			super.fuel(0.6f);
 		}
 		if(glfwGetKey(window, GLFW_KEY_DOWN)==GLFW_PRESS){
-			//TODO: bremsen
+			super.useBreak(0.7f);
 		}
 
 		if(glfwGetKey(window, GLFW_KEY_LEFT)==GLFW_PRESS){
-			//vehicle.getSteering().turnLeft(0.5f);
+			super.turnRight(10f);
 		}
 		if(glfwGetKey(window, GLFW_KEY_RIGHT)==GLFW_PRESS){
-			//vehicle.getSteering().turnRight(0.5f);
+			super.turnLeft(10f);
 		}
 	}
 	

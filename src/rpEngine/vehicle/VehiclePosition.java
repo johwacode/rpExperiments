@@ -2,6 +2,7 @@ package rpEngine.vehicle;
 
 import java.io.Serializable;
 
+import rpEngine.graphical.objects.Camera;
 import utils.math.Vector3f;
 
 public class VehiclePosition implements Serializable{
@@ -10,7 +11,7 @@ public class VehiclePosition implements Serializable{
 	public Vector3f worldPosition;
 	public float pitch, yaw, roll;
 	public float impulsePitch, impulseYaw, impulseRoll;
-	public Vector3f directionFront, directionRight;
+	public Vector3f directionFront, directionTop;
 	public Vector3f impulseWholeCar;
 	
 	public int weight;
@@ -25,6 +26,7 @@ public class VehiclePosition implements Serializable{
 		this.yaw = yaw;
 		this.roll = roll;
 		this.directionFront = new Vector3f(0,0,-1);
+		this.directionTop = new Vector3f(0,1,0);
 		directionFront.rotateXZ(yaw);
 		//TODO: insert pitch&roll
 		impulseWholeCar = new Vector3f(0,0,0);
@@ -37,18 +39,26 @@ public class VehiclePosition implements Serializable{
 		//TODO: trägheitseinfluss -> Impulse
 	}
 	
-	protected Vector3f rotateRight(int angle){
-		float angleRad = (float) Math.toRadians(angle);
-		float sinYaw = (float) Math.sin(yaw+90);
-		float sinPitch = (float) Math.sin(pitch+90);
-		float sinRoll = (float) Math.sin(roll+90);
+	
+	protected Vector3f rotateRight(float angle){
+		//preassumed: length of normal is always 1
+		//float sinAxisX = directionTop.x; and so on.
+		
 		Vector3f rotXYZ = new Vector3f();
-		rotXYZ.x = angleRad*sinPitch*sinYaw;
-		rotXYZ.y = angleRad*sinYaw*sinRoll;
-		rotXYZ.z = angleRad*sinPitch*sinRoll;
-		yaw += rotXYZ.y;
-		pitch += rotXYZ.z;
-		roll += rotXYZ.x;
+		rotXYZ.x = -angle*directionTop.x;
+		rotXYZ.y = -angle*directionTop.y;
+		rotXYZ.z = -angle*directionTop.z;
+		yaw -= rotXYZ.y;
+		pitch -= rotXYZ.z;
+		roll -= rotXYZ.x;
+		
+		double radians = -Math.toRadians(yaw);
+		directionFront = new Vector3f(
+				(float) (-Math.sin(radians)),
+							-0,
+				(float) (-Math.cos(radians))
+				);
+		directionFront.normalise(); 
 		return rotXYZ;
 	}
 	

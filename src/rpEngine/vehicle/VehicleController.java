@@ -50,7 +50,7 @@ public abstract class VehicleController{
 		float rotation = parts.transmissionUnit.translate(kw);
 		float speed = parts.wheels.rotate(rotation);
 		*/
-		float speed = amount;
+		float speed = amount/2;
 		vehiclePosition.moveForward(speed);
 		updateEntities();
 	}
@@ -67,14 +67,14 @@ public abstract class VehicleController{
 		
 	}
 
-	public void turnRight(int angle) {
+	public void turnRight(float angle) {
 		Vector3f rot = vehiclePosition.rotateRight(angle);
 		for(Entity e:vehicle.getModel()){
 			e.increaseRotation(rot.x, rot.y, rot.z);
 		}
 	}
 
-	public void turnLeft(int angle) {
+	public void turnLeft(float angle) {
 		Vector3f rot = vehiclePosition.rotateRight(-angle);
 		for(Entity e:vehicle.getModel()){
 			e.increaseRotation(rot.x, rot.y, rot.z);

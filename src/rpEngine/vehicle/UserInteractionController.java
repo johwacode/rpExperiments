@@ -27,10 +27,10 @@ public class UserInteractionController extends VehicleController implements Inpu
 		}
 
 		if(glfwGetKey(window, GLFW_KEY_LEFT)==GLFW_PRESS){
-			super.turnLeft(10);
+			super.turnLeft(0.8f);
 		}
 		if(glfwGetKey(window, GLFW_KEY_RIGHT)==GLFW_PRESS){
-			super.turnRight(10);
+			super.turnRight(0.8f);
 		}
 	}
 	

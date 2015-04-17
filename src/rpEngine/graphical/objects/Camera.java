@@ -65,7 +65,7 @@ public class Camera implements InputHandler{
 	
 	public void setVehicle(Vehicle vehicle){
 		vehiclePos = vehicle.getController().getVehiclePosition();
-		currentMode = new ThirdPersonMode();
+		currentMode = new FirstPersonMode();
 		matrixUpToDate = false;
 	}
 	

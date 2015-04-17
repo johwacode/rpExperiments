@@ -5,8 +5,6 @@ import utils.math.Matrix4f;
 import utils.math.Vector3f;
 
 public class Entity {
-	public static Vector3f nullVector = new Vector3f(0,0,0);
-
 	private Model model;
 	private Vector3f position;
 	private float rotX, rotY, rotZ;
@@ -26,7 +24,7 @@ public class Entity {
 	public Entity(Model model, Vector3f position, float rotX,
 			float rotY, float rotZ, float scale) {
 		this.model = model;
-		this.position = (position==null)? nullVector : position;
+		this.position = position;
 		this.rotX = rotX;
 		this.rotY = rotY;
 		this.rotZ = rotZ;
@@ -111,6 +109,10 @@ public class Entity {
 
 	public void setScale(float scale) {
 		this.scale = scale;
+		matrixUpToDate = false;
+	}
+
+	public void setMatrixOutdatedFlag() {
 		matrixUpToDate = false;
 	}
 	

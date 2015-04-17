@@ -13,10 +13,8 @@ public class Engine extends VehicleComponent{
 	private float currentRpm;
 	private int maxTemperature;
 	private float currentTemperature; //in °C
-	private float smoothness = 1;
+	private float smoothness;
 	public boolean running = false;
-	
-	private float fuelUp_tmp; 
 	
 	private Random rndGenerator = new Random();
 	
@@ -43,6 +41,8 @@ public class Engine extends VehicleComponent{
 		this.currentTemperature = 20;
 		this.weight = weight;
 		this.smoothness = smoothness;
+		
+		turnOn();
 	}
 	
 	public void turnOn(){
@@ -56,10 +56,12 @@ public class Engine extends VehicleComponent{
 	/**
 	 * "Gas geben"
 	 * @param amount [0..1]
+	 * @return 
 	 */
-	public void fuel(float amount){
-		if(!running) return;
-		fuelUp_tmp += amount;
+	public float fuel(float amount){
+		if(!running) return 0;
+		//TODO ...
+		return 1;
 	}
 
 	public int getMaxRpm() {

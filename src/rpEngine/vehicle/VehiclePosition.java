@@ -10,7 +10,7 @@ public class VehiclePosition implements Serializable{
 	public Vector3f worldPosition;
 	public float pitch, yaw, roll;
 	public float impulsePitch, impulseYaw, impulseRoll;
-	public Vector3f frontDirection;
+	public Vector3f directionFront, directionRight;
 	public Vector3f impulseWholeCar;
 	
 	public int weight;
@@ -24,10 +24,17 @@ public class VehiclePosition implements Serializable{
 		this.pitch = pitch;
 		this.yaw = yaw;
 		this.roll = roll;
-		this.frontDirection = new Vector3f(0,0,1);
-		frontDirection.rotateXZ(yaw);
+		this.directionFront = new Vector3f(0,0,-1);
+		directionFront.rotateXZ(yaw);
 		//TODO: insert pitch&roll
 		impulseWholeCar = new Vector3f(0,0,0);
+	}
+	
+	protected void moveForward(float amount){
+		worldPosition.x += amount*directionFront.x;
+		worldPosition.y += amount*directionFront.y;
+		worldPosition.z += amount*directionFront.z;
+		//TODO: trägheitseinfluss -> Impulse
 	}
 	
 	protected void increasePitch(int amount){

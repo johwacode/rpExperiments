@@ -159,6 +159,7 @@ public class Matrix4f {
 		if(angle==0) return;
 		float cos = (float) Math.cos(angle);
 		float sin = (float) Math.sin(angle);
+		/*
 		Matrix4f rot = new Matrix4f(
 							cos,	-sin,	0,		0,
 							sin,	cos,	0,		0,
@@ -166,14 +167,15 @@ public class Matrix4f {
 							0,		0,		0,		1
 							);
 		dest = product(src, rot, dest);
+		*/
 		float t0 = src.m00*cos + src.m01*sin;
 		float t1 = src.m10*cos + src.m11*sin;
 		float t2 = src.m20*cos + src.m21*sin;
 		float t3 = src.m30*cos + src.m31*sin;
-		dest.m01 = src.m01*-sin + src.m02*cos;
-		dest.m11 = src.m11*-sin + src.m12*cos;
-		dest.m21 = src.m21*-sin + src.m22*cos;
-		dest.m31 = src.m31*-sin + src.m32*cos;
+		dest.m01 = src.m01*-sin + src.m01*cos;
+		dest.m11 = src.m11*-sin + src.m11*cos;
+		dest.m21 = src.m21*-sin + src.m21*cos;
+		dest.m31 = src.m31*-sin + src.m31*cos;
 		dest.m00 = t0;
 		dest.m10 = t1;
 		dest.m20 = t2;

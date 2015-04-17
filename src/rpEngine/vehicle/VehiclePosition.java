@@ -37,6 +37,22 @@ public class VehiclePosition implements Serializable{
 		//TODO: trägheitseinfluss -> Impulse
 	}
 	
+	protected Vector3f rotateRight(int angle){
+		float angleRad = (float) Math.toRadians(angle);
+		float sinYaw = (float) Math.sin(yaw+90);
+		float sinPitch = (float) Math.sin(pitch+90);
+		float sinRoll = (float) Math.sin(roll+90);
+		Vector3f rotXYZ = new Vector3f();
+		rotXYZ.x = angleRad*sinPitch*sinYaw;
+		rotXYZ.y = angleRad*sinYaw*sinRoll;
+		rotXYZ.z = angleRad*sinPitch*sinRoll;
+		yaw += rotXYZ.y;
+		pitch += rotXYZ.z;
+		roll += rotXYZ.x;
+		return rotXYZ;
+	}
+	
+	
 	protected void increasePitch(int amount){
 		//TODO: refresh pitch, impulsePitch and frontDirection
 		/*

@@ -55,6 +55,9 @@ public abstract class VehicleController{
 		updateEntities();
 	}
 	
+	/**
+	 * sets the MatrixUpToDateFlag of every relevant Entity to False -> recognize entity-transformation-changes 
+	 */
 	private void updateEntities(){
 		for(Entity e:vehicle.getModel()) e.setMatrixOutdatedFlag();
 	}
@@ -64,13 +67,18 @@ public abstract class VehicleController{
 		
 	}
 
-	public void turnRight(float f) {
-		// TODO Auto-generated method stub
-		
+	public void turnRight(int angle) {
+		Vector3f rot = vehiclePosition.rotateRight(angle);
+		for(Entity e:vehicle.getModel()){
+			e.increaseRotation(rot.x, rot.y, rot.z);
+		}
 	}
 
-	public void turnLeft(float f) {
-		// TODO Auto-generated method stub
-		
+	public void turnLeft(int angle) {
+		Vector3f rot = vehiclePosition.rotateRight(-angle);
+		for(Entity e:vehicle.getModel()){
+			e.increaseRotation(rot.x, rot.y, rot.z);
+		}
+		updateEntities();
 	}
 }

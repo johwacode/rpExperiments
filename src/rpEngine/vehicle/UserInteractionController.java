@@ -4,6 +4,10 @@ import static org.lwjgl.system.glfw.GLFW.GLFW_KEY_DOWN;
 import static org.lwjgl.system.glfw.GLFW.GLFW_KEY_END;
 import static org.lwjgl.system.glfw.GLFW.GLFW_KEY_LEFT;
 import static org.lwjgl.system.glfw.GLFW.GLFW_KEY_RIGHT;
+import static org.lwjgl.system.glfw.GLFW.GLFW_KEY_W;
+import static org.lwjgl.system.glfw.GLFW.GLFW_KEY_S;
+import static org.lwjgl.system.glfw.GLFW.GLFW_KEY_Q;
+import static org.lwjgl.system.glfw.GLFW.GLFW_KEY_E;
 import static org.lwjgl.system.glfw.GLFW.GLFW_KEY_RIGHT_CONTROL;
 import static org.lwjgl.system.glfw.GLFW.GLFW_KEY_RIGHT_SHIFT;
 import static org.lwjgl.system.glfw.GLFW.GLFW_KEY_UP;
@@ -32,6 +36,20 @@ public class UserInteractionController extends VehicleController implements Inpu
 		if(glfwGetKey(window, GLFW_KEY_RIGHT)==GLFW_PRESS){
 			super.turnRight(0.5f*3.1416f);
 		}
+		/*
+		//Just Testwise
+		if(glfwGetKey(window, GLFW_KEY_W)==GLFW_PRESS){
+			vehiclePosition.rotateFrontUp(-0.1f);
+		}
+		if(glfwGetKey(window, GLFW_KEY_S)==GLFW_PRESS){
+			vehiclePosition.rotateFrontUp(0.1f);
+		}
+		if(glfwGetKey(window, GLFW_KEY_Q)==GLFW_PRESS){
+			vehiclePosition.rotateRollRight(-0.1f);
+		}
+		if(glfwGetKey(window, GLFW_KEY_E)==GLFW_PRESS){
+			vehiclePosition.rotateRollRight(-0.1f);
+		}*/
 	}
 	
 	public boolean processInput(int key, int action) {

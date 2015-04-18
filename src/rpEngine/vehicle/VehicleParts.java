@@ -20,7 +20,7 @@ public class VehicleParts implements Serializable{
 		engine = new Engine("r170slk200kompressorEngine", 120, 1998, 4, 230, 5300, 120, 120, 0.8f);
 		transmissionUnit = new TransmissionUnit("porsche91503Transmission", 15, 4.4285f, 3.181f, 1.833f, 1.261f, 0.9615f, 0.7586f);
 		wheels = new Wheels(235, 55, 18, 0.7f);
-		chassis = new Chassis("blockChassis", 1, 1, 1, 700, 1, 1, 0.3f, "cube2", "metal");
+		chassis = new Chassis("blockChassis", 1, 1, 1, 700, 1, 1, 0.3f, "mustang_v3", "metal");
 		steering = new Steering(0.5f);
 	}
 	

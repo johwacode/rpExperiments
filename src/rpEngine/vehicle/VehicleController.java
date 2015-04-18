@@ -7,7 +7,7 @@ import utils.math.Vector3f;
 public abstract class VehicleController{
 	private Vehicle vehicle;
 	private String playerName; 
-	private VehiclePosition vehiclePosition;
+	protected VehiclePosition vehiclePosition;
 	private VehicleParts parts;
 	
 	
@@ -71,7 +71,7 @@ public abstract class VehicleController{
 		vehiclePosition.rotateRight(angle);
 		for(Entity e:vehicle.getModel()){
 			e.setRotX(vehiclePosition.roll);
-			e.setRotY(vehiclePosition.yaw);
+			e.setRotY(-vehiclePosition.yaw);
 			e.setRotZ(vehiclePosition.pitch);
 		}
 		updateEntities();
@@ -81,7 +81,7 @@ public abstract class VehicleController{
 		vehiclePosition.rotateRight(-angle);
 		for(Entity e:vehicle.getModel()){
 			e.setRotX(vehiclePosition.roll);
-			e.setRotY(vehiclePosition.yaw);
+			e.setRotY(-vehiclePosition.yaw);
 			e.setRotZ(vehiclePosition.pitch);
 		}
 		updateEntities();

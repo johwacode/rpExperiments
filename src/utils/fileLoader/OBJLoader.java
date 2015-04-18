@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import rpEngine.graphical.model.Loader;
@@ -32,10 +33,12 @@ public class OBJLoader {
 		List<Vector2f> textures = new ArrayList<Vector2f>();
 		List<Vector3f> normals = new ArrayList<Vector3f>();
 		List<Integer> indices = new ArrayList<Integer>();
+		List<String> faces = new LinkedList<>();
 		try {
 			while (true) {
 				line = reader.readLine();
-				if (line.startsWith("v ")) {
+				if(line == null) break;
+				else if (line.startsWith("v ")) {
 					String[] currentLine = line.split(" ");
 					Vector3f vertex = new Vector3f((float) Float.valueOf(currentLine[1]),
 							(float) Float.valueOf(currentLine[2]),
@@ -54,23 +57,17 @@ public class OBJLoader {
 							(float) Float.valueOf(currentLine[2]),
 							(float) Float.valueOf(currentLine[3]));
 					normals.add(normal);
-				} else if (line.startsWith("f ")) {
-					break;
-				}
+				} else if (line.startsWith("f ")) faces.add(line);
 			}
-			while (line != null && line.startsWith("f ")) {
-				String[] currentLine = line.split(" ");
-				String[] vertex1 = currentLine[1].split("/");
-				String[] vertex2 = currentLine[2].split("/");
-				String[] vertex3 = currentLine[3].split("/");
-				processVertex(vertex1, vertices, indices);
-				processVertex(vertex2, vertices, indices);
-				processVertex(vertex3, vertices, indices);
-				line = reader.readLine();
-			}
+			
+			if(faces.get(0).contains("//")) processFacesNormals(faces, vertices, indices);
+			else if(faces.get(0).split(" ")[1].split("/").length==2) processFacesTextured(faces, vertices, indices);
+			else processFacesNormalsAndTextures(faces, vertices, indices);
+			
 			reader.close();
 		} catch (Exception e) {
 			System.err.println("Error reading the obj-file \""+objFileName+"\"");
+			e.printStackTrace();
 			System.exit(-1);
 		}
 
@@ -82,6 +79,56 @@ public class OBJLoader {
 		int[] indicesArray = convertIndicesListToArray(indices);
 		
 		return Loader.loadEntityToVAO(verticesArray, texturesArray, normalsArray, indicesArray, furthest);
+	}
+
+	private static void processFacesNormalsAndTextures(List<String> faces,
+			List<Vertex> vertices, List<Integer> indices) {
+		for(String face: faces){
+			String[] currentLine = face.split(" ");
+			String[] vertex1 = currentLine[1].split("/");
+			String[] vertex2 = currentLine[2].split("/");
+			String[] vertex3 = currentLine[3].split("/");
+			processVertex(vertex1, vertices, indices);
+			processVertex(vertex2, vertices, indices);
+			processVertex(vertex3, vertices, indices);
+		}
+		
+	}
+
+	/**
+	 * doesn't work! don't use!
+	 */
+	private static void processFacesTextured(List<String> faces,
+			List<Vertex> vertices, List<Integer> indices) {
+		//as: "f 2/1 3/1 4/1"
+		for(String face: faces){
+			String[] currentLine = face.split(" ");
+			String[][] vertex = new String[3][3];
+			for(int i=0; i<3; i++){
+				String tmp[] = currentLine[i+1].split("/");
+				vertex[i][0] = tmp[0];
+				vertex[i][1] = tmp[1];
+				vertex[i][2] = "1";
+				processVertex(vertex[i], vertices, indices);
+			}
+		}
+	}
+
+	
+	private static void processFacesNormals(List<String> faces,
+			List<Vertex> vertices, List<Integer> indices) {
+		//as "f 2//1 3//1 4//1"
+		for(String face: faces){
+			String[] currentLine = face.split(" ");
+			String[][] vertex = new String[3][3];
+			for(int i=0; i<3; i++){
+				String tmp[] = currentLine[i+1].split("/");
+				vertex[i][0] = tmp[0];
+				vertex[i][1] = "1";
+				vertex[i][2] = tmp[2];
+				processVertex(vertex[i], vertices, indices);
+			}
+		}
 	}
 
 	private static void processVertex(String[] vertex, List<Vertex> vertices, List<Integer> indices) {

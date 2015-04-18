@@ -207,7 +207,13 @@ public class Camera implements InputHandler{
 		
 		@Override
 		public Vector3f getPosition() {
-			Vector3f.add(vehiclePos.worldPosition, new Vector3f(0,0.7f,0), position);
+			Vector3f.add(vehiclePos.worldPosition, new Vector3f(0,0.67f,0), position);
+			position.x -= 0.2f*vehiclePos.directionRight.x;
+			position.y -= 0.2f*vehiclePos.directionRight.y;
+			position.z -= 0.2f*vehiclePos.directionRight.z;
+			position.x -= 0.07f*vehiclePos.directionFront.x;
+			position.y -= 0.07f*vehiclePos.directionFront.y;
+			position.z -= 0.07f*vehiclePos.directionFront.z;
 			return position;
 		}
 		

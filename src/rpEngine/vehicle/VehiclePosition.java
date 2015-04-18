@@ -76,7 +76,7 @@ public class VehiclePosition implements Serializable{
 		//if(directionFront.y<=0)angle*=-1;
 		pitch = (float) Math.toDegrees(angle)-90;
 
-		angle = (float) Math.acos(-directionTop.y);
+		angle = (float) Math.acos(directionTop.y);
 		if(directionTop.z<=0)angle*=-1;
 		roll = (float) Math.toDegrees(angle);
 		

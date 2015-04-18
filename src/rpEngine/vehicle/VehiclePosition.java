@@ -11,7 +11,7 @@ public class VehiclePosition implements Serializable{
 	public Vector3f worldPosition;
 	public float pitch, yaw, roll;
 	public float impulsePitch, impulseYaw, impulseRoll;
-	public Vector3f directionFront, directionTop;
+	public Vector3f directionFront, directionTop, directionRight;
 	public Vector3f impulseWholeCar;
 	
 	public int weight;
@@ -27,8 +27,8 @@ public class VehiclePosition implements Serializable{
 		this.roll = roll;
 		this.directionFront = new Vector3f(0,0,-1);
 		this.directionTop = new Vector3f(0,1,0);
-		directionFront.rotateXZ(yaw);
-		//TODO: insert pitch&roll
+		this.directionRight = new Vector3f(1,0,0);
+		rotateRight(yaw);
 		impulseWholeCar = new Vector3f(0,0,0);
 	}
 	
@@ -39,37 +39,49 @@ public class VehiclePosition implements Serializable{
 		//TODO: trägheitseinfluss -> Impulse
 	}
 	
-	
-	protected Vector3f rotateRight(float angle){
-		//preassumed: length of normal is always 1
-		//float sinAxisX = directionTop.x; and so on.
+	protected void rotateRight(float angleRAD){
+		/* rotation around directionTop:
+		 * -directionFront&directionRight are rotated around top-Axis
+		 * -yaw, roll & pitch get updated
+		 */
+		directionFront.rotateAroundAxis(angleRAD*-0.0174f, directionTop);
+		directionFront.normalise();
+		directionRight.rotateAroundAxis(angleRAD*-0.0174f, directionTop);
+		directionRight.normalise();	
 		
-		Vector3f rotXYZ = new Vector3f();
-		rotXYZ.x = -angle*directionTop.x;
-		rotXYZ.y = -angle*directionTop.y;
-		rotXYZ.z = -angle*directionTop.z;
-		yaw -= rotXYZ.y;
-		pitch -= rotXYZ.z;
-		roll -= rotXYZ.x;
-		
-		double radians = -Math.toRadians(yaw);
-		directionFront = new Vector3f(
-				(float) (-Math.sin(radians)),
-							-0,
-				(float) (-Math.cos(radians))
-				);
-		directionFront.normalise(); 
-		return rotXYZ;
+		updatePitchYawRoll();
 	}
 	
 	
-	protected void increasePitch(int amount){
-		//TODO: refresh pitch, impulsePitch and frontDirection
-		/*
-		 *--->XZ to yaw
-		float angle = (float) Math.acos(vehicle.getCurrentDirection().z / vehicle.getCurrentDirection().length());
-		if(vehiclePos.frontDirection.x>0)angle*=-1;
+	protected void rotateFrontUp(float angleRAD){
+		directionFront.rotateAroundAxis(angleRAD*-0.0174f, directionRight);
+		directionFront.normalise();
+		directionTop.rotateAroundAxis(angleRAD*-0.0174f, directionRight);
+		directionTop.normalise();
+		
+		updatePitchYawRoll();
+	}
+	
+	protected void rotateRollRight(float angleRAD){
+		directionRight.rotateAroundAxis(angleRAD*-0.0174f, directionFront);
+		directionRight.normalise();
+		directionTop.rotateAroundAxis(angleRAD*-0.0174f, directionFront);
+		directionTop.normalise();
+		
+		updatePitchYawRoll();
+	}
+
+	private void updatePitchYawRoll(){
+		float angle = (float) Math.acos(-directionFront.y);
+		//if(directionFront.y<=0)angle*=-1;
+		pitch = (float) Math.toDegrees(angle)-90;
+
+		angle = (float) Math.acos(-directionTop.y);
+		if(directionTop.z<=0)angle*=-1;
+		roll = (float) Math.toDegrees(angle);
+		
+		angle = (float) Math.acos(-directionFront.z);
+		if(directionFront.x<=0)angle*=-1;
 		yaw = (float) Math.toDegrees(angle);
-		*/
 	}
 }

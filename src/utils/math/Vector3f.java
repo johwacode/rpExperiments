@@ -143,6 +143,51 @@ public class Vector3f implements Serializable{
 		z = sinX + cos*z;
 	}
 	
+	public void rotateAroundAxis(float angle, Vector3f rotationAxis){
+		Vector3f q2;
+		   float d;
+		   /* Step 1 */
+		   rotationAxis.normalise();
+		   d = (float) Math.sqrt(rotationAxis.y*rotationAxis.y + rotationAxis.z*rotationAxis.z);
+
+		   /* Step 2 */
+		   if (d != 0) {
+			  q2 = new Vector3f();
+		      q2.x = this.x;
+		      q2.y = this.y * rotationAxis.z / d - this.z * rotationAxis.y / d;
+		      q2.z = this.y * rotationAxis.y / d + this.z * rotationAxis.z / d;
+		   } else {
+		      q2 = this;
+		   }
+
+		   /* Step 3 */
+		   this.x = q2.x * d - q2.z * rotationAxis.x;
+		   this.y = q2.y;
+		   this.z = q2.x * rotationAxis.x + q2.z * d;
+
+		   /* Step 4 */
+		   float sin = (float) Math.sin(angle);
+		   float cos = (float) Math.cos(angle);
+		   
+		   q2.x = this.x * cos - this.y * sin;
+		   q2.y = this.x * sin + this.y * cos;
+		   q2.z = this.z;
+
+		   /* Inverse of step 3 */
+		   this.x =   q2.x * d + q2.z * rotationAxis.x;
+		   this.y =   q2.y;
+		   this.z = - q2.x * rotationAxis.x + q2.z * d;
+
+		   /* Inverse of step 2 */
+		   if (d != 0) {
+		      q2.y =   this.y * rotationAxis.z / d + this.z * rotationAxis.y / d;
+		      q2.z = - this.y * rotationAxis.y / d + this.z * rotationAxis.z / d;
+
+		      this.y = q2.y;
+		      this.z = q2.z;
+		   }
+	}
+	
 	public boolean equals(Vector3f vec){
 		return (x==vec.x && y==vec.y && z==vec.z);
 	}

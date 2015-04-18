@@ -68,16 +68,21 @@ public abstract class VehicleController{
 	}
 
 	public void turnRight(float angle) {
-		Vector3f rot = vehiclePosition.rotateRight(angle);
+		vehiclePosition.rotateRight(angle);
 		for(Entity e:vehicle.getModel()){
-			e.increaseRotation(rot.x, rot.y, rot.z);
+			e.setRotX(vehiclePosition.roll);
+			e.setRotY(vehiclePosition.yaw);
+			e.setRotZ(vehiclePosition.pitch);
 		}
+		updateEntities();
 	}
 
 	public void turnLeft(float angle) {
-		Vector3f rot = vehiclePosition.rotateRight(-angle);
+		vehiclePosition.rotateRight(-angle);
 		for(Entity e:vehicle.getModel()){
-			e.increaseRotation(rot.x, rot.y, rot.z);
+			e.setRotX(vehiclePosition.roll);
+			e.setRotY(vehiclePosition.yaw);
+			e.setRotZ(vehiclePosition.pitch);
 		}
 		updateEntities();
 	}

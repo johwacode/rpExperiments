@@ -25,6 +25,10 @@ import static org.lwjgl.system.glfw.GLFW.glfwTerminate;
 import static org.lwjgl.system.glfw.GLFW.glfwWindowHint;
 import static org.lwjgl.system.glfw.GLFW.glfwWindowShouldClose;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.nio.ByteBuffer;
 
 import org.lwjgl.opengl.GL11;
@@ -180,17 +184,17 @@ public class RPloopStart {
  
     public static void main(String[] args) {
     	//TODO: uncomment before Export
-    	/*
+    	
     	OutputStream output;
 		try {
 			output = new FileOutputStream("rp_debugfile.log");
 			PrintStream printOut = new PrintStream(output);
 			System.setOut(printOut);
-	    	System.setErr(printOut);
+	    	//System.setErr(printOut);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
-    	*/
+    	
         new RPloopStart().execute();
     }
 }

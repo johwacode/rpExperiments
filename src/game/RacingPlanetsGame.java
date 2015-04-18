@@ -34,7 +34,7 @@ import rpEngine.graphical.structs.TrackAnchor;
 import utils.math.Vector3f;
 
 public class RacingPlanetsGame {
-	private static final String version = "v.0.08-95"; ///////////
+	private static final String version = "v.0.08-952"; ///////////
 	
 	public enum RPGameMode {MENUMODE, BUILDMODE, RACINGMODE}
 	private GameMode currentMode;
@@ -247,7 +247,7 @@ public class RacingPlanetsGame {
 		private int maxViewDistance = 3;
 		private MenuController menuController;
 		
-		public BuildMode(Serializable args) {
+		public BuildMode(Serializable[] args) {
 			super(args);
 			initTerrain();
 			initEnvironment(args);
@@ -331,7 +331,7 @@ public class RacingPlanetsGame {
 		}
 		
 		@SuppressWarnings("unchecked")
-		private void initEnvironment(Serializable args){
+		private void initEnvironment(Serializable[] args){
 			//sun
 			scene.addLight(new Light(new Vector3f(300, -40, -10), new Vector3f(0.4f, 0.4f, 0.4f)));
 			//spots
@@ -341,8 +341,13 @@ public class RacingPlanetsGame {
 			scene.addLight(new Light(new Vector3f(370, 8, -80), new Vector3f(2,2,0), attenuation));
 			ChunkMap chunkMap = new ChunkMap(0, 800, -800, 0);
 			if(args != null){
-					//TODO: organize more flexible and for more datatypes
-					List<Serializable> dataList = (List<Serializable>) args;
+					List<Serializable> dataList = null;
+					for(Serializable arg: args){ //TODO encapsulate this, check Datatypes (as param).
+						try{
+							dataList = (List<Serializable>) arg;
+						}catch(ClassCastException e){
+						}
+					}
 					for(Serializable data: dataList){
 						try{
 							SerializableCurveData curveData = (SerializableCurveData) data;

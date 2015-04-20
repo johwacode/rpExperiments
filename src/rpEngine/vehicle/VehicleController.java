@@ -58,7 +58,7 @@ public abstract class VehicleController{
 	/**
 	 * sets the MatrixUpToDateFlag of every relevant Entity to False -> recognize entity-transformation-changes 
 	 */
-	private void updateEntities(){
+	protected void updateEntities(){
 		for(Entity e:vehicle.getModel()) e.setMatrixOutdatedFlag();
 	}
 

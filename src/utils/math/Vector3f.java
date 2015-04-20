@@ -157,7 +157,7 @@ public class Vector3f implements Serializable{
 		      q2.y = this.y * rotationAxis.z / d - this.z * rotationAxis.y / d;
 		      q2.z = this.y * rotationAxis.y / d + this.z * rotationAxis.z / d;
 		   } else {
-		      q2 = this;
+		      q2 = this.duplicate();
 		   }
 
 		   /* Step 3 */

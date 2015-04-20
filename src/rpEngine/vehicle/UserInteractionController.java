@@ -36,20 +36,24 @@ public class UserInteractionController extends VehicleController implements Inpu
 		if(glfwGetKey(window, GLFW_KEY_RIGHT)==GLFW_PRESS){
 			super.turnRight(0.5f*3.1416f);
 		}
-		/*
+		
 		//Just Testwise
 		if(glfwGetKey(window, GLFW_KEY_W)==GLFW_PRESS){
 			vehiclePosition.rotateFrontUp(-0.1f);
+			//updateEntities();
 		}
 		if(glfwGetKey(window, GLFW_KEY_S)==GLFW_PRESS){
 			vehiclePosition.rotateFrontUp(0.1f);
+			//updateEntities();
 		}
 		if(glfwGetKey(window, GLFW_KEY_Q)==GLFW_PRESS){
 			vehiclePosition.rotateRollRight(-0.1f);
+			//updateEntities();
 		}
 		if(glfwGetKey(window, GLFW_KEY_E)==GLFW_PRESS){
-			vehiclePosition.rotateRollRight(-0.1f);
-		}*/
+			vehiclePosition.rotateRollRight(0.1f);
+			//updateEntities();
+		}
 	}
 	
 	public boolean processInput(int key, int action) {

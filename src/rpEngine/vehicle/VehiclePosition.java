@@ -72,16 +72,22 @@ public class VehiclePosition implements Serializable{
 	}
 
 	private void updatePitchYawRoll(){
-		float angle = (float) Math.acos(-directionFront.y);
-		//if(directionFront.y<=0)angle*=-1;
-		pitch = (float) Math.toDegrees(angle)-90;
+		//TODO: catch exceptions more smoothly.( x/0, acos(1.__), acos(-1.__)
+		//TODO further: insert roll into view-matrix.
 
-		angle = (float) Math.acos(directionTop.y);
-		if(directionTop.z<=0)angle*=-1;
+		float angle = (float) ((Math.abs(directionFront.x)==1)? Math.PI :
+			Math.asin(-directionFront.y/(1-(directionFront.x*directionFront.x))));
+		//if(directionFront.z<=0)angle*=-1;
+		pitch = (float) Math.toDegrees(angle);
+
+		/*angle = (float) Math.acos(directionTop.y);
+		if(directionTop.x<=0)angle*=-1;
 		roll = (float) Math.toDegrees(angle);
-		
-		angle = (float) Math.acos(-directionFront.z);
+		*/
+		float lengthXZ = 1-(directionFront.y*directionFront.y);
+		angle = (float) (lengthXZ==0 || lengthXZ<=Math.abs(directionFront.z)? 0 : Math.acos(-directionFront.z/(lengthXZ)));
 		if(directionFront.x<=0)angle*=-1;
 		yaw = (float) Math.toDegrees(angle);
+		
 	}
 }

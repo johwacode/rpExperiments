@@ -39,20 +39,16 @@ public class UserInteractionController extends VehicleController implements Inpu
 		
 		//Just Testwise
 		if(glfwGetKey(window, GLFW_KEY_W)==GLFW_PRESS){
-			vehiclePosition.rotateFrontUp(-0.1f);
-			//updateEntities();
+			turnFrontUp(-0.15f);
 		}
 		if(glfwGetKey(window, GLFW_KEY_S)==GLFW_PRESS){
-			vehiclePosition.rotateFrontUp(0.1f);
-			//updateEntities();
+			turnFrontUp(0.15f);
 		}
 		if(glfwGetKey(window, GLFW_KEY_Q)==GLFW_PRESS){
-			vehiclePosition.rotateRollRight(-0.1f);
-			//updateEntities();
+			//vehiclePosition.rotateRollRight(-0.1f);
 		}
 		if(glfwGetKey(window, GLFW_KEY_E)==GLFW_PRESS){
-			vehiclePosition.rotateRollRight(0.1f);
-			//updateEntities();
+			//vehiclePosition.rotateRollRight(0.1f);
 		}
 	}
 	

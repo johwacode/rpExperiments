@@ -4,7 +4,10 @@ import static org.lwjgl.system.glfw.GLFW.GLFW_CURSOR;
 import static org.lwjgl.system.glfw.GLFW.GLFW_CURSOR_DISABLED;
 import static org.lwjgl.system.glfw.GLFW.GLFW_CURSOR_NORMAL;
 import static org.lwjgl.system.glfw.GLFW.GLFW_KEY_ESCAPE;
+import static org.lwjgl.system.glfw.GLFW.GLFW_KEY_F4;
+import static org.lwjgl.system.glfw.GLFW.GLFW_KEY_LEFT_ALT;
 import static org.lwjgl.system.glfw.GLFW.GLFW_PRESS;
+import static org.lwjgl.system.glfw.GLFW.glfwGetKey;
 import static org.lwjgl.system.glfw.GLFW.glfwSetInputMode;
 import game.InputController;
 
@@ -49,17 +52,18 @@ public abstract class InGameMenu extends Menu{
 
 		@Override
 		public boolean processInput(int key, int action) {
-			if(action==GLFW_PRESS&&key==GLFW_KEY_ESCAPE){
-				if(isActive)deactivateThis();
-				else activate();
-				return true;
-			}
 			if(action!=GLFW_PRESS) return false;
 			switch(key){
 			case GLFW_KEY_ESCAPE:
 				if(isActive)deactivateThis();
 				else activate();
 				return true;
+			case GLFW_KEY_F4:
+				if(glfwGetKey(InputController.getWindow(), GLFW_KEY_LEFT_ALT)==GLFW_PRESS){
+					controller.getGame().quitGame();
+					return true;
+				}
+				return false;
 			default: return false;
 			}
 		}

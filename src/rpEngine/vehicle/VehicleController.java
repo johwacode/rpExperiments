@@ -7,7 +7,7 @@ import utils.math.Vector3f;
 public abstract class VehicleController{
 	private Vehicle vehicle;
 	private String playerName; 
-	protected VehiclePosition vehiclePosition;
+	private VehiclePosition vehiclePosition;
 	private VehicleParts parts;
 	
 	
@@ -58,32 +58,32 @@ public abstract class VehicleController{
 	/**
 	 * sets the MatrixUpToDateFlag of every relevant Entity to False -> recognize entity-transformation-changes 
 	 */
-	protected void updateEntities(){
-		for(Entity e:vehicle.getModel()) e.setMatrixOutdatedFlag();
+	private void updateEntities(){
+		for(Entity e:vehicle.getModel()){
+			e.setRotX(-vehiclePosition.pitch);
+			e.setRotY(-vehiclePosition.yaw);
+			e.setRotZ(vehiclePosition.roll);
+			e.setMatrixOutdatedFlag();
+		}
 	}
 
 	public void useBreak(float f) {
 		// TODO Auto-generated method stub
 		
 	}
+	
+	public void turnFrontUp(float angle) {
+		vehiclePosition.rotateFrontUp(angle);
+		updateEntities();
+	}
 
 	public void turnRight(float angle) {
 		vehiclePosition.rotateRight(angle);
-		for(Entity e:vehicle.getModel()){
-			e.setRotX(vehiclePosition.roll);
-			e.setRotY(-vehiclePosition.yaw);
-			e.setRotZ(vehiclePosition.pitch);
-		}
 		updateEntities();
 	}
 
 	public void turnLeft(float angle) {
 		vehiclePosition.rotateRight(-angle);
-		for(Entity e:vehicle.getModel()){
-			e.setRotX(vehiclePosition.roll);
-			e.setRotY(-vehiclePosition.yaw);
-			e.setRotZ(vehiclePosition.pitch);
-		}
 		updateEntities();
 	}
 }

@@ -247,8 +247,10 @@ public class Camera implements InputHandler{
 		public Vector3f getPosition() {
 			Vector3f distance = vehiclePos.directionFront.duplicate();
 			distance.scale(5);
-			distance.y-=4;
 			Vector3f.sub(vehiclePos.worldPosition, distance, position);
+			distance = vehiclePos.directionTop.duplicate();
+			distance.scale(3.5f);
+			Vector3f.add(position, distance, position);
 			return position;
 		}
 		

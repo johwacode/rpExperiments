@@ -34,7 +34,7 @@ import rpEngine.graphical.structs.TrackAnchor;
 import utils.math.Vector3f;
 
 public class RacingPlanetsGame {
-	private static final String version = "v.0.08-96"; ///////////
+	private static final String version = "v.0.08-98"; ///////////
 	
 	public enum RPGameMode {MENUMODE, BUILDMODE, RACINGMODE}
 	private GameMode currentMode;

@@ -2,7 +2,6 @@ package rpEngine.vehicle;
 
 import java.io.Serializable;
 
-import rpEngine.graphical.objects.Camera;
 import utils.math.Vector3f;
 
 public class VehiclePosition implements Serializable{
@@ -15,6 +14,7 @@ public class VehiclePosition implements Serializable{
 	public Vector3f impulseWholeCar;
 	
 	public int weight;
+	public float width, length, height;
 	
 	public VehiclePosition(Vector3f worldPosition){
 		this(worldPosition, -2, 0, 0);
@@ -28,8 +28,11 @@ public class VehiclePosition implements Serializable{
 		this.directionFront = new Vector3f(0,0,-1);
 		this.directionTop = new Vector3f(0,1,0);
 		this.directionRight = new Vector3f(1,0,0);
-		rotateRight(yaw);
+		rotateRight((float)Math.toRadians(yaw));
 		impulseWholeCar = new Vector3f(0,0,0);
+		width = 1.4f;
+		length = 3;
+		height = 0.8f;
 	}
 	
 	protected void moveForward(float amount){
@@ -74,18 +77,22 @@ public class VehiclePosition implements Serializable{
 	private void updatePitchYawRoll(){
 		//TODO further: insert roll into view-matrix.
 
-		float angle = (float) Math.atan2(-directionFront.y, -directionFront.z);
-		if(directionFront.z>=-0.1)
-			angle+=Math.PI;
-		pitch = (float) Math.toDegrees(angle);
+		float angle = (float) Math.atan2(directionFront.x, -directionFront.z);
+		yaw = (float) Math.toDegrees(angle);
 
 		/*angle = (float) Math.acos(directionTop.y);
 		if(directionTop.x<=0)angle*=-1;
 		roll = (float) Math.toDegrees(angle);
 		*/
 		
-		angle = (float) Math.atan2(directionFront.x, -directionFront.z);
-		yaw = (float) Math.toDegrees(angle);
+		if(Math.abs(Math.abs(yaw)-90)>2.8){ //at least a little less better.
+			angle = (float) Math.atan2(-directionFront.y, -directionFront.z);
+			if(directionFront.z>=-0.00000005) angle+=Math.PI;
+			pitch = (float) Math.toDegrees(angle);
+			//System.out.println(angle);
+		}
+		else {
 		
+		}		
 	}
 }

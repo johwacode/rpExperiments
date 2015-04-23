@@ -189,7 +189,7 @@ public class RPloopStart {
 		try {
 			output = new FileOutputStream("rp_debugfile.log");
 			PrintStream printOut = new PrintStream(output);
-			System.setOut(printOut);
+			//System.setOut(printOut);
 	    	//System.setErr(printOut);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();

@@ -37,8 +37,8 @@ public class Camera implements InputHandler{
 
 	private Vector3f position;
 	public float pitch;	//(Höhe)
-	public float yaw;		//left/right 
-	private float roll;		//Neigung
+	public float yaw;	//left/right 
+	private float roll;	//Neigung
 	private CameraMode currentMode;
 	private VehiclePosition vehiclePos = null;
 	private SceneGraph scene;

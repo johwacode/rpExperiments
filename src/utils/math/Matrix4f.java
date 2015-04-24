@@ -12,6 +12,13 @@ public class Matrix4f {
 	private static final float NEAR_PLANE = 0.1f;
 	private static final float FAR_PLANE = 1000;
 	
+	/**
+	 * first Number = row, second one = column. <br/>
+	 * m00, m01, m02, m03, <br/>
+  	 * m10, m11, m12, m13, <br/>
+  	 * m20, m21, m22, m23, <br/>
+  	 * m30, m31, m32, m33; <br/>
+	 */
 	public float m00, m01, m02, m03,
 			  	 m10, m11, m12, m13,
 			  	 m20, m21, m22, m23,
@@ -262,6 +269,66 @@ public class Matrix4f {
 		dest.m22 = src.m22 * vec.z;
 		dest.m32 = src.m32 * vec.z;
 		return dest;
+	}
+	
+	/**
+	 * transforms vertexPosition as in:
+	 * vec4 worldPosition = transformationMatrix * vec4(position, 1.0);
+	 * @param x, y, z of the vertex.
+	 * result: worldPosition.xyz -> no 4th dimension
+	 */
+	public Vector3f multiplyWithVector3fAndOne(float x, float y, float z){
+		return new Vector3f(
+				x*m00+y*m01+z*m02+m03,
+				x*m10+y*m11+z*m12+m13,
+				x*m20+y*m21+z*m22+m23
+				);
+	}
+	
+	public float calcDeterminant(){
+		return  m00*m11*m22*m33 + m00*m12*m23*m31 + m00*m13*m21*m32 +
+				m01*m10*m23*m32 + m01*m12*m20*m33 + m01*m13*m22*m30 +
+				m02*m10*m21*m33 + m02*m11*m23*m30 + m02*m13*m20*m31 +
+				m03*m10*m20*m31 + m03*m11*m20*m32 + m03*m12*m21*m30 -
+				m00*m11*m23*m32 - m00*m12*m21*m33 - m00*m13*m22*m31 -
+				m01*m10*m22*m33 - m01*m12*m23*m30 - m01*m13*m20*m32 -
+				m02*m10*m23*m31 - m02*m11*m20*m33 - m02*m13*m21*m30 -
+				m03*m10*m21*m32 - m03*m11*m22*m30 - m03*m12*m20*m31;
+	}
+	
+	/**
+	 * only works for transformationMatrices (a.k.a. last row = (0,0,0,1))
+	 */
+	public Matrix4f getInverse(){
+		if(m30!=0 || m31!=0 || m32!=0 || m33!=1)throw new IllegalArgumentException("building the inverse only works with transformationMatrixes! (matrix was: "+this+")");
+		float det = calcDeterminant();
+		if (det==0) return null;
+		else{
+			Matrix4f adj = new Matrix4f(
+					m11*m22 - m12*m21,
+					m02*m21 - m01*m22,
+					m01*m12 - m02*m11,
+					m01*m13*m23 + m02*m11*m23 + m03*m12*m21 - m01*m12*m23 - m02*m13*m21 - m03*m11*m22,
+					
+					m12*m20 - m10*m22,
+					m00*m22 - m02*m20,
+					m02*m10 - m00*m12,
+					m00*m12*m23 + m02*m13*m20 + m03*m10*m22 - m00*m13*m22 - m02*m10*m23 - m03*m12*m20,
+					
+					m10*m21 - m11*m20,
+					m01*m20 - m00*m21,
+					m00*m11 - m01*m10,
+					m00*m13*m21 + m01*m10*m23 + m03*m11*m20 - m00*m11*m23 - m01*m13*m20 - m03*m10*m21,
+					
+					0,
+					0,
+					0,
+					m00*m11*m22 + m01*m12*m20 + m02*m10*m21 - m00*m12*m21 - m01*m10*m22 - m02*m11*m20
+					);
+			float f = 1/det;
+			scale(new Vector3f(f, f, f), adj, adj);
+			return adj;
+		}
 	}
 	
 	public static Matrix4f createTransformationMatrix(Vector3f translation,

@@ -1,11 +1,13 @@
 package rpEngine.graphical.objects;
 
+import rpEngine.graphical.model.BoundingBox;
 import rpEngine.graphical.model.Model;
 import utils.math.Matrix4f;
 import utils.math.Vector3f;
 
 public class Entity {
 	private Model model;
+	private BoundingBox boundingBox;
 	private Vector3f position;
 	private float rotX, rotY, rotZ;
 	private float scale;
@@ -29,6 +31,7 @@ public class Entity {
 		this.rotY = rotY;
 		this.rotZ = rotZ;
 		this.scale = scale;
+		BoundingBox.generateBox(model.getVao().getVertices());
 	}
 	
 	public Matrix4f getTransformationMatrix(){

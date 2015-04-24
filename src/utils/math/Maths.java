@@ -12,13 +12,19 @@ public class Maths {
 	/**
 	 * checks whether a point is inside the given Box. The BoxSides are parallel to the CoordinateAxes
 	 * @param point the point to check
-	 * @param boxMinXYZ the minimal x, y and z -values of the box; 
-	 * @param boxMaxXYZ the maximal values.
+	 * 
+	 * @param minx
+	 * @param maxx
+	 * @param miny
+	 * @param maxy
+	 * @param minz
+	 * @param maxz
+	 * @param x, y, z the minimal/maximal x, y and z -values of the box;
 	 * @return true, if point is inside(borderlines included), false otherwise
 	 */
-	public static boolean pointIsInBox(Vector3f point, Vector3f boxMinXYZ, Vector3f boxMaxXYZ){
-		return (point.x >= boxMinXYZ.x && point.x <= boxMaxXYZ.x
-				&& point.y >= boxMinXYZ.y && point.y <= boxMaxXYZ.y
-				&& point.z >= boxMinXYZ.z && point.z <= boxMaxXYZ.z);
+	public static boolean pointIsInBox(Vector3f point, float minx, float maxx, float miny, float maxy, float minz, float maxz){
+		return (point.x >= minx && point.x <= maxx
+				&& point.y >= miny && point.y <= maxy
+				&& point.z >= minz && point.z <= maxz);
 	}
 }

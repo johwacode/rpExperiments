@@ -27,4 +27,8 @@ public class VAObject {
 	public float getFurthestDistance() {
 		return furthestDistance;
 	}
+
+	public float[] getVertices() {
+		return vertexData;
+	}
 }

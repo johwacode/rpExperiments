@@ -72,7 +72,7 @@ public class Camera implements InputHandler{
 	/**
 	 * @return true if collision is detected, false otherwise. Also adjusts the height, if needed. (still little rough)
 	 */
-	public boolean checkForCollision(Vector3f direction){
+	public boolean checkForCollision(Vector3f direction, float distance){
 		//create testpoint
 		Vector3f testPoint = Vector3f.add(position, direction);
 		//set yMin=terrain.height, yMax=250;
@@ -85,10 +85,10 @@ public class Camera implements InputHandler{
 		//If no intersection save highestBeneath and lowestAbove
 		try{
 			for(Curve curve: scene.getChunkMap().getModels(testPoint.x, testPoint.z)){
-				Vector3f p = curve.getClosestIntersection(testPoint, direction);
+				Vector3f p = curve.getClosestIntersection(testPoint, direction, distance);
 				if(p!=null){
 					float distSQ = Vector3f.sub(testPoint, p).length2();
-					if(distSQ<2) return true;	
+					if(distSQ<distance*distance) return true;	
 				}
 			}
 			//if playerleaves ChunkMap:
@@ -301,7 +301,7 @@ public class Camera implements InputHandler{
 			if(glfwGetKey(window, GLFW_KEY_LEFT_SHIFT)==GLFW_PRESS){
 				direction.y-=0.2;
 			}
-			if(direction.length2()>0 && !checkForCollision(direction)){
+			if(direction.length2()>0 && !checkForCollision(direction, 1.4f)){
 				Vector3f.add(position, direction, position);
 				matrixUpToDate = false;
 			}

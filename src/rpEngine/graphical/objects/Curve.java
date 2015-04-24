@@ -287,12 +287,12 @@ public class Curve extends Entity{
 		}
 	}
 	
-	public Vector3f getClosestIntersection(Vector3f point, Vector3f direction){
+	public Vector3f getClosestIntersection(Vector3f point, Vector3f direction, float maximumDistance){
 		Vector3f[] results = new Vector3f[2];
 		int n=0;
 		for(int i=0; i<data.anchors.size()-1 || n==2; i++){
 			//TODO: find OutOfArea-Exception-causing array. (size~33/37)
-			results[n] = getClosestIntersectionWitharea(data.anchors.get(i), data.anchors.get(i+1), point, direction);
+			results[n] = getClosestIntersectionWitharea(data.anchors.get(i), data.anchors.get(i+1), point, direction, maximumDistance);
 			if(results[n]!=null) n++;
 		}
 		if(n==0) return null;
@@ -304,9 +304,10 @@ public class Curve extends Entity{
 	
 	/**
 	 * 
+	 * @param maximumDistance 
 	 * @return null if no intersection, result else.
 	 */
-	private Vector3f getClosestIntersectionWitharea(TrackAnchor current, TrackAnchor next, Vector3f point, Vector3f direction){
+	private Vector3f getClosestIntersectionWitharea(TrackAnchor current, TrackAnchor next, Vector3f point, Vector3f direction, float maximumDistance){
 		//intersection with a plane:
 		float nDotDir = Vector3f.dot(current.getNormal(), direction);
 		if(nDotDir == 0) return null; //TODO: check additionally for collision from side
@@ -314,9 +315,13 @@ public class Curve extends Entity{
 		float lambda = (current.getnDotPos()-Vector3f.dot(current.getNormal(), point))/nDotDir;
 		Vector3f pointInPlane = direction.duplicate();
 		pointInPlane.scale(lambda);
-		Vector3f.add(pointInPlane, point, pointInPlane);
-		if(current.isPointInside(pointInPlane))	return pointInPlane;
-		else return null;
+		
+		if(pointInPlane.length()>maximumDistance) return null;
+		else{
+			Vector3f.add(pointInPlane, point, pointInPlane);
+			if(current.isPointInside(pointInPlane))	return pointInPlane;
+			else return null;
+		}
 	}
 	
 	private void initBarycentricTesting(){

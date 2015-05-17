@@ -119,4 +119,8 @@ public class Entity {
 		matrixUpToDate = false;
 	}
 	
+	public boolean collidesWith(Entity otherEntity){
+		//TODO: detaillize.
+		return boundingBox.intersects(getTransformationMatrix(), otherEntity.boundingBox, otherEntity.getTransformationMatrix());
+	}	
 }

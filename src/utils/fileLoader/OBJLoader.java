@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import rpEngine.graphical.model.CollidableFacesObject;
 import rpEngine.graphical.model.Loader;
 import rpEngine.graphical.model.VAObject;
 import rpEngine.graphical.structs.Vertex;
@@ -17,6 +18,8 @@ import utils.math.Vector3f;
 public class OBJLoader {
 	
 	private static final String RES_LOC = "/res/models/";
+	
+	private static CollidableFacesObject test = new CollidableFacesObject();
 
 	public static VAObject loadOBJ(String objFileName) {
 		InputStream in = null;
@@ -78,6 +81,8 @@ public class OBJLoader {
 				texturesArray, normalsArray);
 		int[] indicesArray = convertIndicesListToArray(indices);
 		
+		test.printSizes();
+		
 		return Loader.loadEntityToVAO(verticesArray, texturesArray, normalsArray, indicesArray, furthest);
 	}
 
@@ -88,9 +93,11 @@ public class OBJLoader {
 			String[] vertex1 = currentLine[1].split("/");
 			String[] vertex2 = currentLine[2].split("/");
 			String[] vertex3 = currentLine[3].split("/");
-			processVertex(vertex1, vertices, indices);
-			processVertex(vertex2, vertices, indices);
-			processVertex(vertex3, vertices, indices);
+			test.add(
+				processVertex(vertex1, vertices, indices),
+				processVertex(vertex2, vertices, indices),
+				processVertex(vertex3, vertices, indices)
+				);
 		}
 		
 	}
@@ -131,7 +138,11 @@ public class OBJLoader {
 		}
 	}
 
-	private static void processVertex(String[] vertex, List<Vertex> vertices, List<Integer> indices) {
+	/**
+	 * translates data into a Vertex. Additionally verifies, whether a vertex is already set. 
+	 * @return vertex.getPosition().
+	 */
+	private static Vector3f processVertex(String[] vertex, List<Vertex> vertices, List<Integer> indices) {
 		int index = Integer.parseInt(vertex[0]) - 1;
 		Vertex currentVertex = vertices.get(index);
 		int textureIndex = Integer.parseInt(vertex[1]) - 1;
@@ -144,6 +155,7 @@ public class OBJLoader {
 			dealWithAlreadyProcessedVertex(currentVertex, textureIndex, normalIndex, indices,
 					vertices);
 		}
+		return currentVertex.getPosition();
 	}
 
 	private static int[] convertIndicesListToArray(List<Integer> indices) {

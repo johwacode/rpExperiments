@@ -28,6 +28,14 @@ public class Vector3f implements Serializable{
 		return new Vector3f(x, y, z);
 	}
 
+	/**
+	 * multiplies the vector by the given scalar.
+	 * <br/>
+	 * <b>code:</b><br/>
+	 * <i>x*=scale;</i><br/>
+	 * <i>y*=scale;</i><br/>
+	 * <i>z*=scale;</i><br/>
+	 */
 	public void scale(float scale) {
 		x*=scale;
 		y*=scale;

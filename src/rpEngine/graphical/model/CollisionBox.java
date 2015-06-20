@@ -29,6 +29,10 @@ public class CollisionBox {
 		components = new ArrayList();
 	}
 	
+	public CollisionBox(Vector3f[] corners) {
+		// TODO Auto-generated constructor stub
+	}
+
 	public CollisionEvent collidesWith(CollisionBox otherBox){
 		return null;
 	}
@@ -43,6 +47,15 @@ public class CollisionBox {
 	
 	public float getSizeSq(){
 		return sizeSq;
+	}
+	
+	public Vector3f getCenter(){
+		return center;
+	}
+	
+	public float getDistanceTo(CollisionBox otherBox){
+		//TODO
+		return 0;
 	}
 	
 	

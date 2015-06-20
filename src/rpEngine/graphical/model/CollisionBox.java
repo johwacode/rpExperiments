@@ -17,23 +17,41 @@ import utils.math.Vector3f;
  * so big Faces are threatened in Detail, while smaller ones hopefully don't overflow the Stack 
  * 
  */
-public class CollidableFacesObject {
+public class CollisionBox {
 	public static final int BLOCK_SIZE = 5;
 	
-	private List<Face> faces;
+	private List<CollisionBox> components;
+	private Vector3f center;
+	/**squared max-size from center*/
+	private float sizeSq;
 	
-	public CollidableFacesObject(){
-		faces = new ArrayList();
+	public CollisionBox(){
+		components = new ArrayList();
 	}
+	
+	public CollisionEvent collidesWith(CollisionBox otherBox){
+		return null;
+	}
+	
 	
 	public void add(Vector3f...corners){
-		faces.add(new Face(corners));
+		Face f = new Face(corners);
+		if(f.size>BLOCK_SIZE){
+			components.add(f);
+		}
 	}
+	
+	public float getSizeSq(){
+		return sizeSq;
+	}
+	
+	
+	
 	
 	public void printSizes(){
 		List<Integer> sizes = new LinkedList<>();
-		for(Face f: faces){
-			sizes.add(f.size);
+		for(CollisionBox c: components){
+			sizes.add((int)c.getSizeSq());
 		}
 		ListPrinter.plot(sizes);
 	}
@@ -41,8 +59,9 @@ public class CollidableFacesObject {
 	
 	/**
 	 * An area, defined by usually 3 points. (at least in TRIANGLE-mode)
+	 * -> Vectorbased structure to store areas above BlockSize.
 	 */
-	public class Face{
+	public class Face extends CollisionBox{
 		private List<Vector3f> corners;
 		private Vector3f center;
 		/** sq(largest distance from Center) */

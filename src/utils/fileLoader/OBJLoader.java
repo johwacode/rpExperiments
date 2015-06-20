@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import rpEngine.graphical.model.CollidableFacesObject;
+import rpEngine.graphical.model.CollisionBox;
 import rpEngine.graphical.model.Loader;
 import rpEngine.graphical.model.VAObject;
 import rpEngine.graphical.structs.Vertex;
@@ -19,7 +19,7 @@ public class OBJLoader {
 	
 	private static final String RES_LOC = "/res/models/";
 	
-	private static CollidableFacesObject test = new CollidableFacesObject();
+	private static CollisionBox test = new CollisionBox();
 
 	public static VAObject loadOBJ(String objFileName) {
 		InputStream in = null;

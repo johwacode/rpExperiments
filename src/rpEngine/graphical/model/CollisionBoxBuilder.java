@@ -1,11 +1,14 @@
 package rpEngine.graphical.model;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import javafx.util.Pair;
+import utils.math.Maths;
 import utils.math.Vector3f;
 
 public class CollisionBoxBuilder {
@@ -14,9 +17,11 @@ public class CollisionBoxBuilder {
 	 * the size is stored, that both Boxes would have, if they were combined with eachother.
 	 */
 	private Map<CollisionBox, List<Pair<CollisionBox, Float>>> combiningMap;
+	private List<Float> valueList;
 	
 	public CollisionBoxBuilder(){
 		combiningMap = new HashMap<>();
+		valueList = new LinkedList<>();
 	}
 	
 	public void addPart(Vector3f... corners){
@@ -46,12 +51,46 @@ public class CollisionBoxBuilder {
 		return Math.max(biggerOne , (Math.min(a.getSizeSq(), b.getSizeSq())+centerDistance));
 	}
 	
+	
 	public CollisionBox finalizeBox(){
-		
-		
-		
-		
-		
-		return null;
+		if(combiningMap.isEmpty()) throw new IllegalStateException("Box must not be empty!");
+		while(combiningMap.size()>1){
+			Collections.sort(valueList);
+			float size = valueList.get(0);
+			//find min-sized-Pair
+			CollisionBox key = null;
+			Pair<CollisionBox, Float> partner = null;
+			for(CollisionBox k: combiningMap.keySet()){
+				for(Pair<CollisionBox, Float> pair : combiningMap.get(k)){
+					if(Maths.floatEquals(pair.getValue(), size)){
+						key = k;
+						partner = pair;
+						break;
+					}
+				}
+				if(key!=null) break;
+			}
+			
+			//combine both
+				float combinedSize = partner.getValue();
+			  //-> key contains value
+				if(Maths.floatEquals(key.getSizeSq(), combinedSize) && partner.getKey().getSizeSq() < combinedSize){
+					
+				}
+			
+			  //-> value contains key
+				else if(Maths.floatEquals(partner.getKey().getSizeSq(), combinedSize) && key.getSizeSq() < combinedSize ){
+					
+				}
+			  //-> new one containing both
+				else{
+					
+				}
+				
+			//replace values
+		}
+		CollisionBox maxBox = (CollisionBox) combiningMap.keySet().toArray()[0];
+		combiningMap = new HashMap<>();
+		return maxBox;
 	}
 }

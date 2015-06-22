@@ -10,6 +10,13 @@ public class Maths {
 	}
 	
 	/**
+	 * a == b with epsilon = 0.00000001f
+	 */
+	public static boolean floatEquals(float a, float b){
+		return Math.abs(a-b) < 0.00000001f;
+	}
+	
+	/**
 	 * checks whether a point is inside the given Box. The BoxSides are parallel to the CoordinateAxes
 	 * @param point the point to check
 	 * 

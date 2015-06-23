@@ -23,7 +23,7 @@ public class CollisionBox {
 	private List<CollisionBox> components;
 	private Vector3f center;
 	/**squared max-size from center*/
-	private float sizeSq;
+	private float radiusSq;
 	
 	public CollisionBox(){
 		components = new ArrayList();
@@ -31,6 +31,13 @@ public class CollisionBox {
 	
 	public CollisionBox(Vector3f[] corners) {
 		// TODO Auto-generated constructor stub
+	}
+
+	public CollisionBox(CollisionBox childOne, CollisionBox childTwo, float radiusSq, Vector3f center) {
+		components.add(childOne);
+		components.add(childTwo);
+		this.radiusSq= radiusSq;
+		this.center = center;
 	}
 
 	public CollisionEvent collidesWith(CollisionBox otherBox){
@@ -45,8 +52,8 @@ public class CollisionBox {
 		}
 	}
 	
-	public float getSizeSq(){
-		return sizeSq;
+	public float getRadiusSq(){
+		return radiusSq;
 	}
 	
 	public Vector3f getCenter(){
@@ -64,7 +71,7 @@ public class CollisionBox {
 	public void printSizes(){
 		List<Integer> sizes = new LinkedList<>();
 		for(CollisionBox c: components){
-			sizes.add((int)c.getSizeSq());
+			sizes.add((int)c.getRadiusSq());
 		}
 		ListPrinter.plot(sizes);
 	}
@@ -103,5 +110,10 @@ public class CollisionBox {
 				size = Math.min(size, (int) (Vector3f.sub(center, corners.get(i)).length2()*100));
 			}
 		}
+	}
+
+
+	public void addChild(CollisionBox smallerBox) {
+		components.add(smallerBox);
 	}
 }

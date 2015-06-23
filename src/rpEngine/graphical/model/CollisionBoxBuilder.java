@@ -44,11 +44,11 @@ public class CollisionBoxBuilder {
 	
 	private float getCombinedSize(CollisionBox a, CollisionBox b){
 		//get size of the bigger Box
-		float biggerOne = Math.max(a.getSizeSq(), b.getSizeSq());
+		float biggerOne = Math.max(a.getRadiusSq(), b.getRadiusSq());
 		//calc size between both centerPoints
 		float centerDistance = Vector3f.sub(a.getCenter(), b.getCenter()).length2();
 		//return either the biggerone - containing the other - or add the distance to the size of the smaller one.
-		return Math.max(biggerOne , (Math.min(a.getSizeSq(), b.getSizeSq())+centerDistance));
+		return Math.max(biggerOne , (Math.min(a.getRadiusSq(), b.getRadiusSq())+centerDistance));
 	}
 	
 	
@@ -72,25 +72,36 @@ public class CollisionBoxBuilder {
 			}
 			
 			//combine both
-				float combinedSize = partner.getValue();
-			  //-> key contains value
-				if(Maths.floatEquals(key.getSizeSq(), combinedSize) && partner.getKey().getSizeSq() < combinedSize){
-					
-				}
+			float combinedSize = partner.getValue();
 			
-			  //-> value contains key
-				else if(Maths.floatEquals(partner.getKey().getSizeSq(), combinedSize) && key.getSizeSq() < combinedSize ){
-					
-				}
-			  //-> new one containing both
-				else{
-					
-				}
+			boolean isKeyBiggerThanPartner = key.getRadiusSq() > partner.getKey().getRadiusSq();
+			CollisionBox biggerSphere = (isKeyBiggerThanPartner)? key : partner.getKey(),
+						 smallerSphere = (isKeyBiggerThanPartner)? partner.getKey() : key;
+			
+			  //if no sphere contains the other one -> new bigger Box around both selected ones. 
+			if(biggerSphere.getRadiusSq() + smallerSphere.getRadiusSq() > combinedSize){
+				CollisionBox parent = new CollisionBox(key, partner.getKey(), combinedSize, calcCenter(biggerSphere, smallerSphere, combinedSize));
+			}
+			
+			
+			  //bigger sphere contains the smaller one -> add smaller box as child of the bigger one
+			else{
+				biggerSphere.addChild(smallerSphere);
+			}
 				
 			//replace values
+			
+			
 		}
 		CollisionBox maxBox = (CollisionBox) combiningMap.keySet().toArray()[0];
 		combiningMap = new HashMap<>();
 		return maxBox;
+	}
+
+	private Vector3f calcCenter(CollisionBox biggerBox, CollisionBox smallerBox, float radiusSq) {
+		Vector3f direction = Vector3f.sub(smallerBox.getCenter(), biggerBox.getCenter());
+		direction.normalise();
+		direction.scale((float) (Math.sqrt(radiusSq)-Math.sqrt(biggerBox.getRadiusSq())));
+		return Vector3f.add(biggerBox.getCenter(), direction);
 	}
 }

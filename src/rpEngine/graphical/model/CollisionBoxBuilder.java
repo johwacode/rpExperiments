@@ -1,8 +1,8 @@
 package rpEngine.graphical.model;
 
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -55,8 +55,9 @@ public class CollisionBoxBuilder {
 	public CollisionBox finalizeBox(){
 		if(combiningMap.isEmpty()) throw new IllegalStateException("Box must not be empty!");
 		while(combiningMap.size()>1){
+			//search best pair a.k.a. smallest pair of Boxes.
 			Collections.sort(valueList);
-			float size = valueList.get(0);
+			float size = valueList.remove(0);
 			//find min-sized-Pair
 			CollisionBox key = null;
 			Pair<CollisionBox, Float> partner = null;
@@ -80,17 +81,67 @@ public class CollisionBoxBuilder {
 			
 			  //if no sphere contains the other one -> new bigger Box around both selected ones. 
 			if(biggerSphere.getRadiusSq() + smallerSphere.getRadiusSq() > combinedSize){
-				CollisionBox parent = new CollisionBox(key, partner.getKey(), combinedSize, calcCenter(biggerSphere, smallerSphere, combinedSize));
+				
+				CollisionBox result = new CollisionBox(key, partner.getKey(), combinedSize, calcCenter(biggerSphere, smallerSphere, combinedSize));
+				
+				//remove old keys
+				for(Pair<CollisionBox, Float> p : combiningMap.remove(biggerSphere)){
+					valueList.remove(p.getValue());
+				}
+				for(Pair<CollisionBox, Float> p : combiningMap.remove(smallerSphere)){
+					valueList.remove(p.getValue());
+				}
+				
+				LinkedList<Pair<CollisionBox, Float>> resultsSizeList = new LinkedList<>();
+				
+				//remove old values, add new ones.
+				for(CollisionBox k : combiningMap.keySet()){
+					Iterator<Pair<CollisionBox, Float>> listIterator = combiningMap.get(k).iterator();
+					int counter = 0;
+				    while(counter<2 && listIterator.hasNext()){
+				    	Pair<CollisionBox, Float> p = listIterator.next();
+				    	if(p.getKey()==smallerSphere || p.getKey()==biggerSphere){
+				    		valueList.remove(p.getValue());
+				    		counter++;
+				    		listIterator.remove();
+				    	}
+				    }
+				    
+				    //add combinedSize(key, result) into key's List and into result's one.
+				    float keyPlusResultSize = getCombinedSize(k, result);
+				    resultsSizeList.add(new Pair<CollisionBox, Float>(k, keyPlusResultSize));
+				    combiningMap.get(k).add(new Pair<CollisionBox, Float>(result, keyPlusResultSize));
+				    //add value twice, because of possibility of same-sized-object
+				    valueList.add(keyPlusResultSize);
+				    valueList.add(keyPlusResultSize);
+				}
+				
+				combiningMap.put(result, resultsSizeList);
 			}
 			
 			
 			  //bigger sphere contains the smaller one -> add smaller box as child of the bigger one
 			else{
 				biggerSphere.addChild(smallerSphere);
-			}
 				
-			//replace values
-			
+				//remove deprecated key
+				for(Pair<CollisionBox, Float> p : combiningMap.remove(smallerSphere)){
+					valueList.remove(p.getValue());
+				}
+				
+				//remove old values, add new ones.
+				for(CollisionBox k : combiningMap.keySet()){
+					Iterator<Pair<CollisionBox, Float>> listIterator = combiningMap.get(k).iterator();
+				    while(listIterator.hasNext()){
+				    	Pair<CollisionBox, Float> p = listIterator.next();
+				    	if(p.getKey()==smallerSphere){
+				    		valueList.remove(p.getValue());
+				    		listIterator.remove();
+				    		break;
+				    	}
+				    }
+				}
+			}
 			
 		}
 		CollisionBox maxBox = (CollisionBox) combiningMap.keySet().toArray()[0];

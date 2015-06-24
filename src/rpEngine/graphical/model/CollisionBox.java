@@ -116,4 +116,13 @@ public class CollisionBox {
 	public void addChild(CollisionBox smallerBox) {
 		components.add(smallerBox);
 	}
+	
+	/**
+	 * count of it's children and their children +1 (itself)
+	 */
+	public int getWeight(){
+		int weight = 1;
+		for(CollisionBox child: components) weight += child.getWeight();
+		return weight;
+	}
 }

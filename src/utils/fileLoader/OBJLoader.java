@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import rpEngine.graphical.model.CollisionBox;
+import rpEngine.graphical.model.CollisionBoxBuilder;
 import rpEngine.graphical.model.Loader;
 import rpEngine.graphical.model.VAObject;
 import rpEngine.graphical.structs.Vertex;
@@ -19,7 +19,7 @@ public class OBJLoader {
 	
 	private static final String RES_LOC = "/res/models/";
 	
-	private static CollisionBox test = new CollisionBox();
+	private static CollisionBoxBuilder collisionBoxBuilder = new CollisionBoxBuilder();
 
 	public static VAObject loadOBJ(String objFileName) {
 		InputStream in = null;
@@ -81,8 +81,8 @@ public class OBJLoader {
 				texturesArray, normalsArray);
 		int[] indicesArray = convertIndicesListToArray(indices);
 		
-		test.printSizes();
 		
+		collisionBoxBuilder.finalizeBox();
 		return Loader.loadEntityToVAO(verticesArray, texturesArray, normalsArray, indicesArray, furthest);
 	}
 
@@ -93,7 +93,7 @@ public class OBJLoader {
 			String[] vertex1 = currentLine[1].split("/");
 			String[] vertex2 = currentLine[2].split("/");
 			String[] vertex3 = currentLine[3].split("/");
-			test.add(
+			collisionBoxBuilder.addPart(
 				processVertex(vertex1, vertices, indices),
 				processVertex(vertex2, vertices, indices),
 				processVertex(vertex3, vertices, indices)

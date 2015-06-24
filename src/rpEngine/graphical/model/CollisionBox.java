@@ -21,19 +21,22 @@ public class CollisionBox {
 	public static final int BLOCK_SIZE = 5;
 	
 	private List<CollisionBox> components;
-	private Vector3f center;
+	protected Vector3f center;
 	/**squared max-size from center*/
-	private float radiusSq;
+	protected float radiusSq;
 	
-	public CollisionBox(){
-		components = new ArrayList();
+	private CollisionBox(){
+		components = new ArrayList<>();
 	}
 	
-	public CollisionBox(Vector3f[] corners) {
-		// TODO Auto-generated constructor stub
+	public static CollisionBox create(Vector3f[] corners) {
+		CollisionBox box = new Face(corners);
+		if(box.getRadiusSq()>BLOCK_SIZE) return box;
+		else return new BlockBox(corners);
 	}
 
 	public CollisionBox(CollisionBox childOne, CollisionBox childTwo, float radiusSq, Vector3f center) {
+		this();
 		components.add(childOne);
 		components.add(childTwo);
 		this.radiusSq= radiusSq;
@@ -45,13 +48,6 @@ public class CollisionBox {
 	}
 	
 	
-	public void add(Vector3f...corners){
-		Face f = new Face(corners);
-		if(f.size>BLOCK_SIZE){
-			components.add(f);
-		}
-	}
-	
 	public float getRadiusSq(){
 		return radiusSq;
 	}
@@ -59,13 +55,6 @@ public class CollisionBox {
 	public Vector3f getCenter(){
 		return center;
 	}
-	
-	public float getDistanceTo(CollisionBox otherBox){
-		//TODO
-		return 0;
-	}
-	
-	
 	
 	
 	public void printSizes(){
@@ -77,15 +66,33 @@ public class CollisionBox {
 	}
 	
 	
+	public void addChild(CollisionBox smallerBox) {
+		components.add(smallerBox);
+	}
+	
+	/**
+	 * count of it's children and their children +1 (itself)
+	 */
+	public int getWeight(){
+		int weight = 1;
+		for(CollisionBox child: components) weight += child.getWeight();
+		return weight;
+	}
+	
+	@Override
+	public boolean equals(Object object){
+		if(!(object instanceof CollisionBox)) return false;
+		return super.equals(object) ||
+				(((CollisionBox) object).getRadiusSq() == this.getRadiusSq() && ((CollisionBox) object).getCenter() == this.getCenter());
+	}
+	
+	
 	/**
 	 * An area, defined by usually 3 points. (at least in TRIANGLE-mode)
 	 * -> Vectorbased structure to store areas above BlockSize.
 	 */
-	public class Face extends CollisionBox{
+	public static class Face extends CollisionBox{
 		private List<Vector3f> corners;
-		private Vector3f center;
-		/** sq(largest distance from Center) */
-		private int size;
 		
 		private Face(Vector3f...vector3fs){
 			if(vector3fs.length==0) throw new java.lang.ExceptionInInitializerError("no empty Faces allowed. Please insert at least one parameter");
@@ -105,24 +112,29 @@ public class CollisionBox {
 			}
 			center.scale(1/corners.size());
 			//set Face-size
-			size = Integer.MAX_VALUE;
+			radiusSq = Integer.MAX_VALUE;
 			for(int i=0; i<corners.size(); i++){
-				size = Math.min(size, (int) (Vector3f.sub(center, corners.get(i)).length2()*100));
+				radiusSq = Math.min(radiusSq, (int) (Vector3f.sub(center, corners.get(i)).length2()*100));
 			}
 		}
 	}
-
-
-	public void addChild(CollisionBox smallerBox) {
-		components.add(smallerBox);
-	}
 	
-	/**
-	 * count of it's children and their children +1 (itself)
-	 */
-	public int getWeight(){
-		int weight = 1;
-		for(CollisionBox child: components) weight += child.getWeight();
-		return weight;
+	public static class BlockBox extends CollisionBox{
+		private BlockBox(Vector3f...vector3fs){
+			float x = vector3fs[0].x,
+				y = vector3fs[0].y,
+				z = vector3fs[0].z;
+			//TODO: test, whether /2 is close enough to not ignore points on the edge.
+			//else: use all of the points and arithmetically calulate center.
+			x -= x%(BLOCK_SIZE/2);
+			y -= y%(BLOCK_SIZE/2);
+			z -= z%(BLOCK_SIZE/2);
+			center = new Vector3f(x,y,z);
+		}
+		
+		@Override
+		public float getRadiusSq(){
+			return BLOCK_SIZE;
+		}
 	}
 }

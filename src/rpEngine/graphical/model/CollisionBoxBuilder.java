@@ -25,11 +25,10 @@ public class CollisionBoxBuilder {
 	}
 	
 	public void addPart(Vector3f... corners){
-		CollisionBox newBox = new CollisionBox(corners);
+		CollisionBox newBox = CollisionBox.create(corners);
 		
-		for(CollisionBox key: combiningMap.keySet()){
-			//TODO: check, whether Box equals already known block
-		}
+		if(combiningMap.containsKey(newBox)) return;
+		
 		 
 		List<Pair<CollisionBox, Float>> ownList = new LinkedList<>();
 		//update every old key

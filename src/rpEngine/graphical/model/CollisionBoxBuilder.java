@@ -27,7 +27,11 @@ public class CollisionBoxBuilder {
 	public void addPart(Vector3f... corners){
 		CollisionBox newBox = CollisionBox.create(corners);
 		
-		if(combiningMap.containsKey(newBox)) return;
+		System.out.println("current size: " +combiningMap.size() +", "+valueList.size());
+		if(combiningMap.size()>3000) return;
+		
+		if(combiningMap.containsKey(newBox))
+			return;
 		
 		 
 		List<Pair<CollisionBox, Float>> ownList = new LinkedList<>();

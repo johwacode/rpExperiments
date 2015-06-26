@@ -72,19 +72,11 @@ public class CollisionBoxBuilder {
 		
 		//case: both exist next to each other (eventually colliding)
 		else{
-			//decide, which box is the bigger one
-			CollisionBox bigger, smaller;
-			if(toInsert.getRadiusSq() > comparing.getRadiusSq()){
-				bigger = toInsert; smaller = comparing;
-			} else{
-				bigger = comparing; smaller = toInsert;
-			}
 			//calc size
-			float centerDistance = Vector3f.sub(bigger.getCenter(), smaller.getCenter()).length();
-			float radiusSq = (float) ((Math.sqrt(bigger.getRadiusSq()) + centerDistance + Math.sqrt(smaller.getRadiusSq()))*0.5);
-			radiusSq *= radiusSq;
+			float centerDistance = Vector3f.sub(toInsert.getCenter(), comparing.getCenter()).length();
+			float radius = (float) ((Math.sqrt(toInsert.getRadiusSq()) + centerDistance + Math.sqrt(comparing.getRadiusSq()))*0.5);
 			//create container
-			CollisionBox container = new CollisionBox(toInsert, comparing, radiusSq, calcCenter(bigger, smaller, radiusSq));
+			CollisionBox container = new CollisionBox(toInsert, comparing, radius*radius, calcCenter(toInsert, comparing, radius));
 			//store result
 			if(parent==null) root = container;
 			else parent.replaceChild(comparing, container);
@@ -107,10 +99,17 @@ public class CollisionBoxBuilder {
 		return outerR >= delta;
 	}
 
-	private Vector3f calcCenter(CollisionBox biggerBox, CollisionBox smallerBox, float radiusSq) {
+	private Vector3f calcCenter(CollisionBox boxA, CollisionBox boxB, float radius) {
+		//decide, which box is the bigger one
+		CollisionBox biggerBox, smallerBox;
+		if(boxA.getRadiusSq() > boxB.getRadiusSq()){
+			biggerBox = boxA; smallerBox = boxB;
+		} else{
+			biggerBox = boxB; smallerBox = boxA;
+		}
 		Vector3f direction = Vector3f.sub(smallerBox.getCenter(), biggerBox.getCenter());
 		direction.normalise();
-		direction.scale((float) (Math.sqrt(radiusSq)-Math.sqrt(biggerBox.getRadiusSq())));
+		direction.scale((float) (radius-Math.sqrt(biggerBox.getRadiusSq())));
 		return Vector3f.add(biggerBox.getCenter(), direction);
 	}
 

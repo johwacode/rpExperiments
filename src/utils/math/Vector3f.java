@@ -197,7 +197,7 @@ public class Vector3f implements Serializable{
 	}
 	
 	public boolean equals(Vector3f vec){
-		return (x==vec.x && y==vec.y && z==vec.z);
+		return (Maths.floatEquals(x, vec.x) && Maths.floatEquals(y, vec.y) && Maths.floatEquals(z, vec.z));
 	}
 	
 	@Override

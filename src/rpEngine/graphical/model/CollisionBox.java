@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import utils.math.ListPrinter;
+import utils.math.Maths;
 import utils.math.Vector3f;
 
 /**
@@ -18,15 +19,18 @@ import utils.math.Vector3f;
  * 
  */
 public class CollisionBox {
-	public static final int BLOCK_SIZE = 5;
+	public static enum State{FACE, BLOCK, CONTAINER}; 
+	
+	public static final int BLOCK_SIZE = 15;
 	
 	private List<CollisionBox> components;
 	protected Vector3f center;
 	/**squared max-size from center*/
 	protected float radiusSq;
+	public State state;
 	
 	private CollisionBox(){
-		components = new ArrayList<>();
+		components = new LinkedList<>();
 	}
 	
 	public static CollisionBox create(Vector3f[] corners) {
@@ -41,6 +45,7 @@ public class CollisionBox {
 		components.add(childTwo);
 		this.radiusSq= radiusSq;
 		this.center = center;
+		state = State.CONTAINER;
 	}
 
 	public CollisionEvent collidesWith(CollisionBox otherBox){
@@ -70,6 +75,11 @@ public class CollisionBox {
 		components.add(smallerBox);
 	}
 	
+	public void replaceChild(CollisionBox toReplace, CollisionBox newChild) {
+		components.remove(toReplace);
+		addChild(newChild);
+	}
+	
 	/**
 	 * count of it's children and their children +1 (itself)
 	 */
@@ -82,8 +92,10 @@ public class CollisionBox {
 	@Override
 	public boolean equals(Object object){
 		if(!(object instanceof CollisionBox)) return false;
-		return super.equals(object) ||
-				(((CollisionBox) object).getRadiusSq() == this.getRadiusSq() && ((CollisionBox) object).getCenter() == this.getCenter());
+		return super.equals(object) || (
+				this.state==((CollisionBox) object).state &&
+				Maths.floatEquals(((CollisionBox) object).getRadiusSq(), this.getRadiusSq()) &&
+				((CollisionBox) object).getCenter().equals(this.getCenter()));
 	}
 	
 	
@@ -98,6 +110,7 @@ public class CollisionBox {
 			if(vector3fs.length==0) throw new java.lang.ExceptionInInitializerError("no empty Faces allowed. Please insert at least one parameter");
 			corners= new ArrayList<>();
 			addPoints(vector3fs);
+			state = State.FACE;
 		}
 		private void addPoints(Vector3f...points){
 			for(Vector3f point:points){
@@ -110,7 +123,7 @@ public class CollisionBox {
 			for(Vector3f corner: corners){
 				center = Vector3f.add(center, corner);
 			}
-			center.scale(1/corners.size());
+			center.scale(1.0f/corners.size());
 			//set Face-size
 			radiusSq = Integer.MAX_VALUE;
 			for(int i=0; i<corners.size(); i++){
@@ -130,11 +143,26 @@ public class CollisionBox {
 			y -= y%(BLOCK_SIZE/2);
 			z -= z%(BLOCK_SIZE/2);
 			center = new Vector3f(x,y,z);
+			
+			state = State.BLOCK;
 		}
 		
 		@Override
 		public float getRadiusSq(){
 			return BLOCK_SIZE;
 		}
+	}
+
+	public boolean hasChildren() {
+		return !components.isEmpty();
+	}
+	
+	public List<CollisionBox> getChildren(){
+		return components;
+	}
+	
+	@Override
+	public String toString(){
+		return "CollisionBox "+state+" c:"+center+" r²:"+getRadiusSq()+" ~"+components.size()+" children";
 	}
 }

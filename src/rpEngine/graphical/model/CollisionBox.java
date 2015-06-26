@@ -21,7 +21,7 @@ import utils.math.Vector3f;
 public class CollisionBox {
 	public static enum State{FACE, BLOCK, CONTAINER}; 
 	
-	public static final int BLOCK_SIZE = 15;
+	public static final int BLOCK_SIZE = 14;
 	
 	private List<CollisionBox> components;
 	protected Vector3f center;
@@ -29,8 +29,12 @@ public class CollisionBox {
 	protected float radiusSq;
 	public State state;
 	
+	private static int lastID = 0;
+	public int id;
+	
 	private CollisionBox(){
 		components = new LinkedList<>();
+		id = lastID++;
 	}
 	
 	public static CollisionBox create(Vector3f[] corners) {
@@ -125,9 +129,9 @@ public class CollisionBox {
 			}
 			center.scale(1.0f/corners.size());
 			//set Face-size
-			radiusSq = Integer.MAX_VALUE;
+			radiusSq = Float.MAX_VALUE;
 			for(int i=0; i<corners.size(); i++){
-				radiusSq = Math.min(radiusSq, (int) (Vector3f.sub(center, corners.get(i)).length2()*100));
+				radiusSq = Math.min(radiusSq, Vector3f.sub(center, corners.get(i)).length2()*100);
 			}
 		}
 	}
@@ -151,6 +155,19 @@ public class CollisionBox {
 		public float getRadiusSq(){
 			return BLOCK_SIZE;
 		}
+		
+		@Override
+		public void addChild(CollisionBox smallerBox) {
+			super.components.add(smallerBox);
+		}
+		
+		@Override
+		public void replaceChild(CollisionBox toReplace, CollisionBox newChild) {
+			super.components.remove(toReplace);
+			addChild(newChild);
+		}
+		
+		
 	}
 
 	public boolean hasChildren() {
@@ -159,6 +176,18 @@ public class CollisionBox {
 	
 	public List<CollisionBox> getChildren(){
 		return components;
+	}
+	
+	public String printKey(int level){
+		String tree = "";
+		for(int i=0; i<level; i++){
+			tree+=" -";
+		}
+		tree += this.toString() + " (#" + id + ")" + System.lineSeparator();
+		for(CollisionBox child : components){
+			tree += child.printKey(level+1);
+		}
+		return tree;
 	}
 	
 	@Override

@@ -2,11 +2,11 @@ package rpEngine.graphical.model;
 
 import java.util.Iterator;
 
+import rpEngine.graphical.model.CollisionBox.State;
 import utils.math.Vector3f;
 
 public class CollisionBoxBuilder {
 	private CollisionBox root;
-	private int weight = 0;
 	private int maxDepth = 0;
 	private int curDepth;
 	
@@ -16,11 +16,6 @@ public class CollisionBoxBuilder {
 		
 		if(root==null) root = CollisionBox.create(corners);
 		else if(insertInTree(CollisionBox.create(corners), root, null) &&curDepth>maxDepth) maxDepth=curDepth;
-		
-		weight = root.getWeight();
-		System.out.println("Part inserted. new tree-size: " + weight + ", depth: " + maxDepth);
-		if(weight>8000)
-			System.out.println("stop");
 	}
 	
 	private boolean insertInTree(CollisionBox toInsert, CollisionBox comparing, CollisionBox parent){
@@ -29,7 +24,7 @@ public class CollisionBoxBuilder {
 			System.out.println("watch here");//TODO: doesn't happen, but still some identically Blocks contain each other. WHY?! 
 		curDepth++;
 		//case: toInsert contains other
-		if(contains(toInsert, comparing)){
+		if(toInsert.state!=State.BLOCK && contains(toInsert, comparing)){
 			toInsert.addChild(comparing);
 			if(parent==null) root = toInsert;
 			else parent.replaceChild(comparing, toInsert);
@@ -43,21 +38,24 @@ public class CollisionBoxBuilder {
 				return true;
 			}
 			else{
-				//Does toInsert contain any of comparings children?
-				Iterator<CollisionBox> itr = comparing.getChildren().iterator();
-				boolean foundContained = false;
-				while(itr.hasNext()){
-					CollisionBox current = itr.next();
-					
-					if(contains(toInsert, current)){
-						foundContained = true;
-						toInsert.addChild(current);
-						itr.remove();
+				Iterator<CollisionBox> itr;
+				if(toInsert.state!=State.BLOCK){
+					//Does toInsert contain any of comparings children?
+					itr = comparing.getChildren().iterator();
+					boolean foundContained = false;
+					while(itr.hasNext()){
+						CollisionBox current = itr.next();
+						
+						if(contains(toInsert, current)){
+							foundContained = true;
+							toInsert.addChild(current);
+							itr.remove();
+						}
 					}
-				}
-				if(foundContained){
-					comparing.addChild(toInsert);
-					return true;
+					if(foundContained){
+						comparing.addChild(toInsert);
+						return true;
+					}
 				}
 				//does a child of comparing contain toInsert?
 				itr = comparing.getChildren().iterator();
@@ -82,9 +80,9 @@ public class CollisionBoxBuilder {
 				bigger = comparing; smaller = toInsert;
 			}
 			//calc size
-			float centerDistance = Vector3f.sub(bigger.getCenter(), smaller.getCenter()).length2();
-			if(centerDistance < bigger.getRadiusSq()) centerDistance -= (bigger.getRadiusSq()-centerDistance); //case of overlapping
-			float radiusSq = bigger.getRadiusSq() + centerDistance + smaller.radiusSq;
+			float centerDistance = Vector3f.sub(bigger.getCenter(), smaller.getCenter()).length();
+			float radiusSq = (float) ((Math.sqrt(bigger.getRadiusSq()) + centerDistance + Math.sqrt(smaller.getRadiusSq()))*0.5);
+			radiusSq *= radiusSq;
 			//create container
 			CollisionBox container = new CollisionBox(toInsert, comparing, radiusSq, calcCenter(bigger, smaller, radiusSq));
 			//store result
@@ -119,6 +117,10 @@ public class CollisionBoxBuilder {
 	public CollisionBox finalizeBox() {
 		CollisionBox result = root;
 		root = null;
+		//debugStuff
+		System.out.println("Part inserted. new tree-size: " + result.getWeight() + ", depth: " + maxDepth);
+		System.out.println("======TREE:========");
+		System.out.println(result.printKey(0));
 		return result;
 	}
 }

@@ -45,7 +45,7 @@ public class ChunkMap {
 				registerModel(x,z, curve);
 				first = false;
 				tmpX = x; tmpZ = z;
-				System.out.println("entry in "+x+", "+z);
+				//System.out.println("entry in "+x+", "+z);
 			}
 			else if(x!=tmpX || z!=tmpZ){
 					registerModel(x,z, curve);

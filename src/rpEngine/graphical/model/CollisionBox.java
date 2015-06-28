@@ -52,8 +52,48 @@ public class CollisionBox {
 		state = State.CONTAINER;
 	}
 
+	/**
+	 * detects Collisions with other CollisionBoxes in detail
+	 * 
+	 * @param otherBox //TODO: add flags for degree of detail
+	 * @return CollisionEvent
+	 */
 	public CollisionEvent collidesWith(CollisionBox otherBox){
-		return null;
+		CollisionEvent e = new CollisionEvent();
+		return collidesWith(otherBox, e);
+	}
+	
+	/**
+	 * loops the CollisionDetection through the CollisionTree		</br>
+	 * ------------------------------------------------------		</br>
+	 * 																</br>
+	 * !! to extend/override by subclasses !!						</br>
+	 * [-> if(realCollision) add Data to CollisionEvent e;]			</br>
+	 */
+	private CollisionEvent collidesWith(CollisionBox otherBox, CollisionEvent e){
+		if(intersectsNoChild(otherBox)){
+			for(CollisionBox child: components){
+				child.collidesWith(otherBox, e);
+			}
+		}
+		return e;
+	}
+	
+	/**
+	 * returns intersection without caring for children. -> no details
+	 * @param other CollisionBox
+	 * @returns true, if 				  centerDistance  <  r1 + r2										<br/>
+	 * 					<=>			   	  centerDistance² <  r1² + r2² + 2*r1*r2							<br/>
+	 * 					<=> centerDistance² - (r1² + r2²) <  2*r1*r2										<br/>
+	 * 	 				<=> (centerDistance² - r1²) - r2² <  2*r1*r2										<br/>
+	 */
+	public boolean intersectsNoChild(CollisionBox other){
+		float centerDistance = Vector3f.sub(this.getCenter(), other.getCenter()).length2();
+		centerDistance -= this.getRadiusSq();
+		if(centerDistance<0) return true;
+		centerDistance -= other.getRadiusSq();
+		if(centerDistance<0) return true;
+		return (centerDistance < Math.sqrt(this.getRadiusSq()) * Math.sqrt(other.getRadiusSq()) * 2);
 	}
 	
 	

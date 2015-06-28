@@ -77,13 +77,11 @@ public class OBJLoader {
 		float[] verticesArray = new float[vertices.size() * 3];
 		float[] texturesArray = new float[vertices.size() * 2];
 		float[] normalsArray = new float[vertices.size() * 3];
-		float furthest = convertDataToArrays(vertices, textures, normals, verticesArray,
+		convertDataToArrays(vertices, textures, normals, verticesArray,
 				texturesArray, normalsArray);
 		int[] indicesArray = convertIndicesListToArray(indices);
 		
-		
-		collisionBoxBuilder.finalizeBox();
-		return Loader.loadEntityToVAO(verticesArray, texturesArray, normalsArray, indicesArray, furthest);
+		return Loader.loadEntityToVAO(verticesArray, texturesArray, normalsArray, indicesArray, collisionBoxBuilder.finalizeBox());
 	}
 
 	private static void processFacesNormalsAndTextures(List<String> faces,
@@ -158,6 +156,9 @@ public class OBJLoader {
 		return currentVertex.getPosition();
 	}
 
+	/**
+	 * same as indices.toArray(new Integer[0]), except result is an int[]
+	 */
 	private static int[] convertIndicesListToArray(List<Integer> indices) {
 		int[] indicesArray = new int[indices.size()];
 		for (int i = 0; i < indicesArray.length; i++) {
@@ -166,15 +167,23 @@ public class OBJLoader {
 		return indicesArray;
 	}
 
-	private static float convertDataToArrays(List<Vertex> vertices, List<Vector2f> textures,
+	/**
+	 * converts Data from Lists into GL-compatible Arrays												</br>
+	 * e.g.: List<Vertex>((ax, ay, az),(bx,by,bz),..) -> vertex[] = {ax, ay, az, bx, by, bz, ...}		</br>
+	 * 
+	 * @param vertices input
+	 * @param textures input
+	 * @param normals input
+	 * 
+	 * @param verticesArray output
+	 * @param texturesArray output
+	 * @param normalsArray output
+	 */
+	private static void convertDataToArrays(List<Vertex> vertices, List<Vector2f> textures,
 			List<Vector3f> normals, float[] verticesArray, float[] texturesArray,
 			float[] normalsArray) {
-		float furthestPoint = 0;
 		for (int i = 0; i < vertices.size(); i++) {
 			Vertex currentVertex = vertices.get(i);
-			if (currentVertex.getLength() > furthestPoint) {
-				furthestPoint = currentVertex.getLength();
-			}
 			Vector3f position = currentVertex.getPosition();
 			Vector2f textureCoord = textures.get(currentVertex.getTextureIndex());
 			Vector3f normalVector = normals.get(currentVertex.getNormalIndex());
@@ -187,7 +196,6 @@ public class OBJLoader {
 			normalsArray[i * 3 + 1] = normalVector.y;
 			normalsArray[i * 3 + 2] = normalVector.z;
 		}
-		return furthestPoint;
 	}
 
 	private static void dealWithAlreadyProcessedVertex(Vertex previousVertex, int newTextureIndex,

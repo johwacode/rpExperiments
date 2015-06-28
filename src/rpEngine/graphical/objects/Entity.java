@@ -1,6 +1,5 @@
 package rpEngine.graphical.objects;
 
-import javafx.geometry.BoundingBox;
 import rpEngine.graphical.model.Model;
 import utils.math.Matrix4f;
 import utils.math.Vector3f;

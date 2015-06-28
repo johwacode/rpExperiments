@@ -38,21 +38,21 @@ public class Loader {
 							  float[] textureCoords,
 							  float[] normals,
 							  int[] indices,
-							  float furthestDistance){
+							  CollisionBox collisionBox){
 		int vaoID = createVAO();
 		bindIndicesBuffer(indices);
 		storeDateInAttributeList(0, 3, positions);
 		storeDateInAttributeList(1, 2, textureCoords);
 		storeDateInAttributeList(2, 3, normals);
 		unbindVAO();
-		return new VAObject(vaoID, indices.length, positions, furthestDistance);
+		return new VAObject(vaoID, indices.length, collisionBox);
 	}
 	
 	public static VAObject loadPositionOnlyVAO(float[] positions){
 		int vaoID = createVAO();
 		storeDateInAttributeList(0, 3, positions);
 		unbindVAO();
-		return new VAObject(vaoID, positions.length/3, positions);
+		return new VAObject(vaoID, positions.length/3);
 	}
 	
 	public static VAObject loadBillboardToVAO(
@@ -63,7 +63,7 @@ public class Loader {
 		storeDateInAttributeList(0, 3, vertices);
 		storeDateInAttributeList(1, 2, textureCoords);
 		unbindVAO();
-		return new VAObject(vaoID, 4, vertices, 0.1f);
+		return new VAObject(vaoID, 4);
 	}
 	
 	
@@ -79,7 +79,7 @@ public class Loader {
 		storeDateInAttributeList(2, 3, normals);
 		storeDateInAttributeList(3, 1, terrainType);
 		unbindVAO();
-		return new VAObject(vaoID, indices.length, textureCoords);
+		return new VAObject(vaoID, indices.length);
 		}
 	
 	public static Model2D load2DToVAO(float[] positions,
@@ -91,7 +91,7 @@ public class Loader {
 		storeDateInAttributeList(0, 2, positions);
 		storeDateInAttributeList(1, 2, textureCoords);
 		unbindVAO();
-		VAObject vao = new VAObject(vaoID, indices.length, positions);
+		VAObject vao = new VAObject(vaoID, indices.length);
 		return new Model2D(vao, textur);
 	}
 	
@@ -108,7 +108,7 @@ public class Loader {
 		int vbo2 = createEmptyBuffer(2, 3, buffersize, GL15.GL_STREAM_DRAW);
 		stream.setVBOPositionsID(vbo2);
 		unbindVAO();
-		return new VAObject(vaoID, 4, vertices, 0.1f);
+		return new VAObject(vaoID, 4);
 	}
 	
 	public static void storeBufferSubData(int bufferLocation, float[] data, int particleCount){

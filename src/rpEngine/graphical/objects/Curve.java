@@ -70,8 +70,7 @@ public class Curve extends Entity{
 	 * @param preview
 	 */
 	public static Curve create(TrackAnchor anchorStart, float angleXZ,
-			float height, float distance, float pitch, boolean preview){ 
-		Texture texture = (preview)? previewTexture : asphalt; 
+			float height, float distance, float pitch, boolean preview){
 		SerializableCurveData sd = new SerializableCurveData(anchorStart, angleXZ, height, distance, pitch);
 		return (preview)? new Curve(sd, previewTexture) : new Curve(sd);
 	}
@@ -175,7 +174,7 @@ public class Curve extends Entity{
 				textureCoords,
 				normals,
 				generateIndices(stepCount, ROWS),
-				furthestDistance(data)),
+				null), //TODO: add CollisionBox
 				texture);
 	}
 	
@@ -248,11 +247,6 @@ public class Curve extends Entity{
 			}
 		}
 		return indices;
-	}
-	
-	private static float furthestDistance(SerializableCurveData data){
-		//TODO
-		return 0;
 	}
 
 	public static class SerializableCurveData implements Serializable{

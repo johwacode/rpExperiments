@@ -2,18 +2,16 @@ package rpEngine.graphical.model;
 
 public class VAObject {
 	private int id, count;
-	private float[] vertexData;
-	private float furthestDistance;
-
-	public VAObject(int id, int count, float[] vertexData, float furthestDistance){
+	private CollisionBox collisionBox;
+	
+	public VAObject(int id, int count){
 		this.id = id;
 		this.count = count;
-		this.vertexData = vertexData;
-		this.furthestDistance = furthestDistance;
 	}
 	
-	public VAObject(int id, int count, float[] vertexData){
-		this(id, count, vertexData, -1);
+	public VAObject(int id, int count, CollisionBox collisionBox){
+		this(id, count);
+		this.collisionBox = collisionBox;
 	}
 
 	public int getId() {
@@ -22,13 +20,5 @@ public class VAObject {
 
 	public int getVertexCount() {
 		return count;
-	}
-
-	public float getFurthestDistance() {
-		return furthestDistance;
-	}
-
-	public float[] getVertices() {
-		return vertexData;
 	}
 }

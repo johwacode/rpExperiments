@@ -339,7 +339,7 @@ public class Matrix4f {
 		rotateX((float) Math.toRadians(rx), matrix, matrix);
 		rotateY((float) Math.toRadians(ry), matrix, matrix);
 		rotateZ((float) Math.toRadians(rz), matrix, matrix);
-		scale(new Vector3f(scale, scale, scale), matrix, matrix);
+		if(scale!=1) scale(new Vector3f(scale, scale, scale), matrix, matrix);
 		return matrix;
 	}
 

@@ -107,6 +107,9 @@ public class Entity {
 		return scale;
 	}
 
+	/**
+	 * deprecated: scales the Entity. Not implemented to CollisionBox
+	 */
 	public void setScale(float scale) {
 		this.scale = scale;
 		matrixUpToDate = false;

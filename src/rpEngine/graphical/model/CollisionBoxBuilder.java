@@ -1,6 +1,7 @@
 package rpEngine.graphical.model;
 
 import java.util.Iterator;
+import java.util.List;
 
 import rpEngine.graphical.model.CollisionBox.State;
 import utils.math.Vector3f;
@@ -19,58 +20,18 @@ public class CollisionBoxBuilder {
 	}
 	
 	private boolean insertInTree(CollisionBox toInsert, CollisionBox comparing, CollisionBox parent){
-		//debugstuff
-		if(toInsert.id==117){
-			System.out.println(root.printTree(0));
-			System.out.println("insert "+toInsert+", compare with "+comparing);
-		}
 		if(toInsert.equals(comparing)) return false; 
 		curDepth++;
-		//case: toInsert contains other
-		if(toInsert.state!=State.BLOCK && contains(toInsert, comparing)){
+				
+		//case: comparing contains toInsert
+		if(contains(comparing, toInsert)) return insertSubNode(toInsert, comparing);
+		
+		//case: toInsert contains comparing
+		else if(toInsert.state!=State.BLOCK && contains(toInsert, comparing)){
 			toInsert.addChild(comparing);
 			if(parent==null) root = toInsert;
 			else parent.replaceChild(comparing, toInsert);
 			return true;
-		}
-		
-		//case: other contains toInsert
-		else if(contains(comparing, toInsert)){
-			if(!comparing.hasChildren()){
-				comparing.addChild(toInsert);
-				return true;
-			}
-			else{
-				Iterator<CollisionBox> itr;
-				if(toInsert.state!=State.BLOCK){
-					//Does toInsert contain any of comparings children?
-					itr = comparing.getChildren().iterator();
-					boolean foundContained = false;
-					while(itr.hasNext()){
-						CollisionBox current = itr.next();
-						
-						if(contains(toInsert, current)){
-							foundContained = true;
-							toInsert.addChild(current);
-							itr.remove();
-						}
-					}
-					if(foundContained){
-						comparing.addChild(toInsert);
-						return true;
-					}
-				}
-				//does a child of comparing contain toInsert?
-				itr = comparing.getChildren().iterator();
-				while(itr.hasNext()){
-					CollisionBox current = itr.next();
-					if(contains(current, toInsert))
-						return insertInTree(toInsert, current, comparing);
-				}
-				//if no child-interaction: toInsert becomes a new child.
-				comparing.addChild(toInsert);
-				return true;
-			}
 		}
 		
 		//case: both exist next to each other (eventually colliding)
@@ -80,10 +41,10 @@ public class CollisionBoxBuilder {
 			//store result
 			if(parent==null) root = container;
 			else parent.replaceChild(comparing, container);
-			
 			return true;
 		}
 	}
+	
 	
 	/**
 	 * creates a container, that contains the given CollisionBoxes a and b.
@@ -142,6 +103,101 @@ public class CollisionBoxBuilder {
 		//add the scaled result to the bigerBox's center.
 		return Vector3f.add(biggerBox.getCenter(), direction);
 	}
+	
+	
+	
+	private CollisionBox combineLowestXZ(List<CollisionBox> elements){
+		CollisionBox[] lowestXZ = new CollisionBox[2];
+		for(CollisionBox box: elements){
+			if(lowestXZ[0]==null) lowestXZ[0] = box;
+			else if(lowestXZ[0].getCenter().x>box.getCenter().x ||
+				   (lowestXZ[0].getCenter().x==box.getCenter().x && 
+					lowestXZ[0].getCenter().z>box.getCenter().z)){
+							lowestXZ[1] = lowestXZ[0];
+							lowestXZ[0] = box;
+			}
+			else {
+				if(lowestXZ[1]==null) lowestXZ[1] = box;
+				else if(lowestXZ[1].getCenter().x>box.getCenter().x ||
+					   (lowestXZ[1].getCenter().x==box.getCenter().x && 
+						lowestXZ[1].getCenter().z>box.getCenter().z)){
+								lowestXZ[1] = box;
+				}
+			}
+		}
+		return createContainer(lowestXZ[0], lowestXZ[1]);
+	}
+	
+	private boolean insertSubNode(CollisionBox toInsert, CollisionBox containing){
+		if(!containing.hasChildren()){
+			containing.addChild(toInsert);
+			return true;
+		}
+		else{
+			Iterator<CollisionBox> itr;
+			if(toInsert.state!=State.BLOCK){
+				//Does toInsert contain any of comparings children?
+				itr = containing.getChildren().iterator();
+				boolean foundContained = false;
+				while(itr.hasNext()){
+					CollisionBox current = itr.next();
+					
+					if(contains(toInsert, current)){
+						foundContained = true;
+						toInsert.addChild(current);
+						itr.remove();
+					}
+				}
+				if(foundContained){
+					containing.addChild(toInsert);
+					return true;
+				}
+			}
+			//does a child of comparing contain toInsert?
+			itr = containing.getChildren().iterator();
+			while(itr.hasNext()){
+				CollisionBox current = itr.next();
+				if(contains(current, toInsert)){
+					if(toInsert.equals(containing)) return false;
+					else{
+						curDepth++;
+						return insertSubNode(toInsert, current);
+					}
+				}
+			}
+			//if no child-interaction: toInsert becomes a new child.
+			containing.addChild(toInsert);
+			
+			//but: if to many children: split them up.
+			if(containing.getChildren().size() > 3){
+				splitNode(containing);
+			}	
+			return true;
+		}
+	}
+	
+
+	/** TODO!!!!!
+	 * should split up a Node so that there a not to many children in the same one.
+	 * sincerely it doesn't work well
+	 * -> often removes all of the children and so creates only cons. 
+	 */
+	private void splitNode(CollisionBox comparing){
+		CollisionBox container = combineLowestXZ(comparing.getChildren());
+		// move each box that is contained in container into it.
+		Iterator<CollisionBox> itr = comparing.getChildren().iterator();
+		while(itr.hasNext()){
+			CollisionBox current = itr.next();
+			
+			if(contains(container, current)){
+				container.addChild(current);
+				itr.remove();
+			}
+		}
+		if(comparing.hasChildren()) comparing.addChild(container);
+		else System.out.println("gnaaaaaarrrrrffff!");
+	}
+	
 
 	public CollisionBox finalizeBox() {
 		CollisionBox result = root;

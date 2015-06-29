@@ -6,6 +6,7 @@ import java.util.List;
 
 import utils.math.ListPrinter;
 import utils.math.Maths;
+import utils.math.Matrix4f;
 import utils.math.Vector3f;
 
 /**
@@ -58,9 +59,9 @@ public class CollisionBox {
 	 * @param otherBox //TODO: add flags for degree of detail
 	 * @return CollisionEvent
 	 */
-	public CollisionEvent collidesWith(CollisionBox otherBox){
+	public CollisionEvent collidesWith(CollisionBox otherBox, Matrix4f transformationOfThis, Matrix4f transformationOfOther){
 		CollisionEvent e = new CollisionEvent();
-		return collidesWith(otherBox, e);
+		return collidesWith(otherBox, transformationOfThis, transformationOfOther, e);
 	}
 	
 	/**
@@ -70,10 +71,10 @@ public class CollisionBox {
 	 * !! to extend/override by subclasses !!						</br>
 	 * [-> if(realCollision) add Data to CollisionEvent e;]			</br>
 	 */
-	private CollisionEvent collidesWith(CollisionBox otherBox, CollisionEvent e){
-		if(intersectsNoChild(otherBox)){
+	private CollisionEvent collidesWith(CollisionBox otherBox, Matrix4f transformationOfThis, Matrix4f transformationOfOther, CollisionEvent e){
+		if(intersectsNoChild(otherBox, transformationOfThis, transformationOfOther)){
 			for(CollisionBox child: components){
-				child.collidesWith(otherBox, e);
+				child.collidesWith(otherBox, transformationOfThis, transformationOfOther, e);
 			}
 		}
 		return e;
@@ -87,8 +88,15 @@ public class CollisionBox {
 	 * 					<=> centerDistance² - (r1² + r2²) <  2*r1*r2										<br/>
 	 * 	 				<=> (centerDistance² - r1²) - r2² <  2*r1*r2										<br/>
 	 */
-	public boolean intersectsNoChild(CollisionBox other){
-		float centerDistance = Vector3f.sub(this.getCenter(), other.getCenter()).length2();
+	public boolean intersectsNoChild(CollisionBox other, Matrix4f transformationOfThis, Matrix4f transformationOfOtherMatrix4f){
+		//transform CenterPoints
+		Vector3f c = this.getCenter();
+		Vector3f centerThis = transformationOfThis.multiplyWithVector3fAndOne(c.x, c.y, c.z);
+		c = other.getCenter();
+		Vector3f centerOther = transformationOfThis.multiplyWithVector3fAndOne(c.x, c.y, c.z);
+		
+		//check (centerDistance² - r1²) - r2² <  2*r1*r2 stepwise
+		float centerDistance = Vector3f.sub(centerThis, centerOther).length2();
 		centerDistance -= this.getRadiusSq();
 		if(centerDistance<0) return true;
 		centerDistance -= other.getRadiusSq();

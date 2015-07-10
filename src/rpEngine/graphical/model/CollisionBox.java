@@ -22,7 +22,7 @@ import utils.math.Vector3f;
 public class CollisionBox {
 	public static enum State{FACE, BLOCK, CONTAINER}; 
 	
-	public static final float BLOCK_SIZE = 0.1f;
+	public static final float BLOCK_SIZE = 0.05f;
 	
 	private List<CollisionBox> components;
 	protected Vector3f center;

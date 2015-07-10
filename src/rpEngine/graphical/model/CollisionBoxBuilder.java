@@ -104,30 +104,6 @@ public class CollisionBoxBuilder {
 		return Vector3f.add(biggerBox.getCenter(), direction);
 	}
 	
-	
-	
-	private CollisionBox combineLowestXZ(List<CollisionBox> elements){
-		CollisionBox[] lowestXZ = new CollisionBox[2];
-		for(CollisionBox box: elements){
-			if(lowestXZ[0]==null) lowestXZ[0] = box;
-			else if(lowestXZ[0].getCenter().x>box.getCenter().x ||
-				   (lowestXZ[0].getCenter().x==box.getCenter().x && 
-					lowestXZ[0].getCenter().z>box.getCenter().z)){
-							lowestXZ[1] = lowestXZ[0];
-							lowestXZ[0] = box;
-			}
-			else {
-				if(lowestXZ[1]==null) lowestXZ[1] = box;
-				else if(lowestXZ[1].getCenter().x>box.getCenter().x ||
-					   (lowestXZ[1].getCenter().x==box.getCenter().x && 
-						lowestXZ[1].getCenter().z>box.getCenter().z)){
-								lowestXZ[1] = box;
-				}
-			}
-		}
-		return createContainer(lowestXZ[0], lowestXZ[1]);
-	}
-	
 	private boolean insertSubNode(CollisionBox toInsert, CollisionBox containing){
 		if(!containing.hasChildren()){
 			containing.addChild(toInsert);
@@ -177,35 +153,63 @@ public class CollisionBoxBuilder {
 	}
 	
 
-	/** TODO!!!!!
-	 * should split up a Node so that there a not to many children in the same one.
-	 * sincerely it doesn't work well
-	 * -> often removes all of the children and so creates only cons. 
+	/**
+	 * splits up a Node so that there a not to many children in the same one.
 	 */
-	private void splitNode(CollisionBox comparing){
-		CollisionBox container = combineLowestXZ(comparing.getChildren());
-		// move each box that is contained in container into it.
-		Iterator<CollisionBox> itr = comparing.getChildren().iterator();
-		while(itr.hasNext()){
-			CollisionBox current = itr.next();
+	private void splitNode(CollisionBox node){
+		
+		CollisionBox container = createLowerContainer(node.getChildren(), node.getRadiusSq());
+		
+		if(container != null){
+			/*
+			System.out.println("----split up Node-----");
+			System.out.println("before:");
+			System.out.println(node.printTree(0));
+			*/
+			node.getChildren().removeAll(container.getChildren());
 			
-			if(contains(container, current)){
-				container.addChild(current);
-				itr.remove();
+			Iterator<CollisionBox> itr = node.getChildren().iterator();
+			while(itr.hasNext()){
+				CollisionBox current = itr.next();
+				
+				if(contains(container, current)){
+					container.addChild(current);
+					itr.remove();
+				}
+			}
+			node.addChild(container);
+			/*
+			System.out.println("after:");
+			System.out.println(node.printTree(0));
+			*/
+		}
+	}
+	
+	/**
+	 * searches a given List of CollisionBoxes for a pair, that combined size is lower
+	 * than maxRadiusSq.
+	 * @param list a list of CBs (children of the upper node)
+	 * @param maxRadiusSq upper Bound (size of the upper node)
+	 * @return null if no possible combination found, else the new container.
+	 */
+	private CollisionBox createLowerContainer(List<CollisionBox> list, float maxRadiusSq){
+		for(int i=0; i<list.size()-1; i++){
+			for(int j=i+1; j<list.size(); j++){
+				CollisionBox combined = createContainer(list.get(i), list.get(j));
+				if(combined.getRadiusSq()<maxRadiusSq) return combined;
 			}
 		}
-		if(comparing.hasChildren()) comparing.addChild(container);
-		else System.out.println("gnaaaaaarrrrrffff!");
+		return null;
 	}
 	
 
 	public CollisionBox finalizeBox() {
 		CollisionBox result = root;
 		root = null;
+		System.out.println(System.lineSeparator() + "Collision-Tree ready. size: " + result.getWeight() + ", depth: " + maxDepth);
 		//debugStuff
-		System.out.println(System.lineSeparator() + "Tree ready. size: " + result.getWeight() + ", depth: " + maxDepth);
-		System.out.println("======TREE:========");
-		System.out.println(result.printTree(0));
+		//System.out.println("======TREE:========");
+		//System.out.println(result.printTree(0));
 		return result;
 	}
 }

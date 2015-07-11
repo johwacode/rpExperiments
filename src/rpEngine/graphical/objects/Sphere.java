@@ -7,7 +7,7 @@ import utils.fileLoader.OBJLoader;
 import utils.math.Vector3f;
 
 public class Sphere extends Entity {
-	private static VAObject vao = OBJLoader.loadOBJ("sphere");
+	private static VAObject vao = OBJLoader.loadOBJ("sphere", false);
 	private float radius;
 
 	public Sphere(Vector3f position, float size, Texture texture) {

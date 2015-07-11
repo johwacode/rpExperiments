@@ -39,7 +39,7 @@ public class Chassis extends VehicleComponent{
 	}
 
 	public Entity getModel() {
-		Model model = new Model(OBJLoader.loadOBJ(modelFilename), new Texture(Loader.loadTexture(textureFilename, true)));
+		Model model = new Model(modelFilename, textureFilename, true);
 		return new Entity(model, new Vector3f(), 0, 0, 0, 1);
 	}
 }

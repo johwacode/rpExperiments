@@ -202,14 +202,16 @@ public class CollisionBoxBuilder {
 		return null;
 	}
 	
-
-	public CollisionBox finalizeBox() {
-		CollisionBox result = root;
-		root = null;
-		System.out.println(System.lineSeparator() + "Collision-Tree ready. size: " + result.getWeight() + ", depth: " + maxDepth);
-		//debugStuff
-		//System.out.println("======TREE:========");
-		//System.out.println(result.printTree(0));
-		return result;
+	public CollisionBox getResult(){
+		return root;
+	}
+	
+	public static class nullBuilder extends CollisionBoxBuilder{
+		@Override
+		public void addPart(Vector3f... corners){}
+		@Override
+		public CollisionBox getResult(){
+			return null;
+		}
 	}
 }

@@ -5,8 +5,10 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import rpEngine.graphical.model.CollisionBoxBuilder;
 import rpEngine.graphical.model.Loader;
@@ -18,10 +20,14 @@ import utils.math.Vector3f;
 public class OBJLoader {
 	
 	private static final String RES_LOC = "/res/models/";
+	private static Map<String, VAObject> knownVAOs = new HashMap<>();
 	
-	private static CollisionBoxBuilder collisionBoxBuilder = new CollisionBoxBuilder();
 
-	public static VAObject loadOBJ(String objFileName) {
+	public static VAObject loadOBJ(String objFileName, boolean collisionBoxNeeded) {
+		if(knownVAOs.containsKey(objFileName) && (!collisionBoxNeeded || knownVAOs.get(objFileName).hasCollisionBox())) return knownVAOs.get(objFileName);
+		
+		CollisionBoxBuilder collisionBoxBuilder = collisionBoxNeeded? new CollisionBoxBuilder.nullBuilder() : new CollisionBoxBuilder();
+		
 		InputStream in = null;
 		try {
 			in = Loader.class.getResourceAsStream(RES_LOC + objFileName + ".obj");
@@ -65,7 +71,7 @@ public class OBJLoader {
 			
 			if(faces.get(0).contains("//")) processFacesNormals(faces, vertices, indices);
 			else if(faces.get(0).split(" ")[1].split("/").length==2) processFacesTextured(faces, vertices, indices);
-			else processFacesNormalsAndTextures(faces, vertices, indices);
+			else processFacesNormalsAndTextures(faces, vertices, indices, collisionBoxBuilder);
 			
 			reader.close();
 		} catch (Exception e) {
@@ -80,12 +86,15 @@ public class OBJLoader {
 		convertDataToArrays(vertices, textures, normals, verticesArray,
 				texturesArray, normalsArray);
 		int[] indicesArray = convertIndicesListToArray(indices);
+
+		VAObject vao = Loader.loadEntityToVAO(verticesArray, texturesArray, normalsArray, indicesArray, collisionBoxBuilder.getResult()); 
+		knownVAOs.put(objFileName, vao);
 		
-		return Loader.loadEntityToVAO(verticesArray, texturesArray, normalsArray, indicesArray, collisionBoxBuilder.finalizeBox());
+		return vao;
 	}
 
 	private static void processFacesNormalsAndTextures(List<String> faces,
-			List<Vertex> vertices, List<Integer> indices) {
+			List<Vertex> vertices, List<Integer> indices, CollisionBoxBuilder collisionBoxBuilder) {
 		for(String face: faces){
 			String[] currentLine = face.split(" ");
 			String[] vertex1 = currentLine[1].split("/");

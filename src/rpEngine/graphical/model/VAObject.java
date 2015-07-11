@@ -21,4 +21,8 @@ public class VAObject {
 	public int getVertexCount() {
 		return count;
 	}
+	
+	public boolean hasCollisionBox(){
+		return collisionBox==null;
+	}
 }

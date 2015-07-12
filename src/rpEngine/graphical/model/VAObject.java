@@ -22,7 +22,11 @@ public class VAObject {
 		return count;
 	}
 	
+	public CollisionBox getCollisionBox(){
+		return collisionBox;
+	}
+	
 	public boolean hasCollisionBox(){
-		return collisionBox==null;
+		return collisionBox!=null;
 	}
 }

@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import rpEngine.graphical.model.CollisionBox;
 import rpEngine.graphical.objects.Entity;
 
 public class VehicleParts implements Serializable{
@@ -40,5 +41,11 @@ public class VehicleParts implements Serializable{
 		models = new ArrayList<>();
 		models.add(chassis.getModel());
 		models.addAll(wheels.getModels());
+		/* TODO
+		CollisionBox cb = chassis.getModel().getCollisionBox();
+		if(cb!=null){
+			models.addAll(chassis.getModel().getCollisionBox().getRenderStuff());
+		}
+		*/
 	}
 }

@@ -1,10 +1,7 @@
 package rpEngine.vehicle;
 
-import rpEngine.graphical.model.Loader;
 import rpEngine.graphical.model.Model;
-import rpEngine.graphical.model.Texture;
 import rpEngine.graphical.objects.Entity;
-import utils.fileLoader.OBJLoader;
 import utils.math.Vector3f;
 
 public class Chassis extends VehicleComponent{

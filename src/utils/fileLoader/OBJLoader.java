@@ -26,7 +26,7 @@ public class OBJLoader {
 	public static VAObject loadOBJ(String objFileName, boolean collisionBoxNeeded) {
 		if(knownVAOs.containsKey(objFileName) && (!collisionBoxNeeded || knownVAOs.get(objFileName).hasCollisionBox())) return knownVAOs.get(objFileName);
 		
-		CollisionBoxBuilder collisionBoxBuilder = collisionBoxNeeded? new CollisionBoxBuilder.nullBuilder() : new CollisionBoxBuilder();
+		CollisionBoxBuilder collisionBoxBuilder = collisionBoxNeeded? new CollisionBoxBuilder() : new CollisionBoxBuilder.nullBuilder();
 		
 		InputStream in = null;
 		try {

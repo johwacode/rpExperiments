@@ -1,5 +1,6 @@
 package rpEngine.graphical.objects;
 
+import rpEngine.graphical.model.CollisionBox;
 import rpEngine.graphical.model.Model;
 import utils.math.Matrix4f;
 import utils.math.Vector3f;
@@ -39,6 +40,10 @@ public class Entity {
 			matrixUpToDate = true;
 		}
 		return transformationMatrix;
+	}
+	
+	public CollisionBox getCollisionBox(){
+		return model.getVao().getCollisionBox();
 	}
 	
 	public void increasePosition(Vector3f direction){

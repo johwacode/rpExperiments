@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import rpEngine.graphical.objects.Entity;
+import rpEngine.graphical.objects.Sphere;
 import utils.math.ListPrinter;
 import utils.math.Maths;
 import utils.math.Matrix4f;
@@ -122,6 +124,16 @@ public class CollisionBox {
 		ListPrinter.plot(sizes);
 	}
 	
+	public List<Entity> getRenderStuff(){
+		List<CollisionBox> blocks = getRenderStuff(new LinkedList<CollisionBox>());
+		List<Entity> entities = new LinkedList<>();
+		for(CollisionBox box : blocks) entities.add(new Sphere(box.getCenter(), (float) Math.sqrt(BLOCK_SIZE)));
+		return entities;
+	}
+	protected List<CollisionBox> getRenderStuff(List<CollisionBox> list){
+		for(CollisionBox child: components) getRenderStuff(list);
+		return list;
+	}
 	
 	public void addChild(CollisionBox smallerBox) {
 		components.add(smallerBox);
@@ -215,6 +227,11 @@ public class CollisionBox {
 			addChild(newChild);
 		}
 		
+		@Override
+		protected List<CollisionBox> getRenderStuff(List<CollisionBox> list){
+			list.add(this);
+			return list;
+		}
 		
 	}
 
